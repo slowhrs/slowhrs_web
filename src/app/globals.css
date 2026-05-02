@@ -1,26 +1,167 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:        #050505;
+  --bg-2:      #0a0a0a;
+  --ink:       #ededeb;
+  --ink-dim:   rgba(237,237,235,0.55);
+  --ink-faint: rgba(237,237,235,0.22);
+  --red:       #e60016;
+  --red-bright:#ff1a2e;
+  --red-deep:  #9c0010;
+  --red-dim:   rgba(230,0,22,0.15);
+  --asphalt:   #1a1a1a;
+  --asphalt-2: #232323;
+  --border:    rgba(237,237,235,0.08);
+  --border-2:  rgba(237,237,235,0.18);
+  --mono:      'Courier Prime', 'Courier New', ui-monospace, monospace;
+  --serif:     'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+  --sans:      -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-brand-bg: var(--bg);
+  --color-brand-ink: var(--ink);
+  --color-brand-ink-dim: var(--ink-dim);
+  --color-brand-red: var(--red);
+  --color-brand-border: var(--border);
+  --color-brand-border-2: var(--border-2);
+  --font-serif: var(--serif);
+  --font-mono: var(--mono);
+  --font-sans: var(--sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(230,0,22,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(230,0,22,0.03) 0%, transparent 50%);
+  background-color: var(--bg);
+}
+
+/* Base utility for sharp pixels */
+.pixel, img.pixel {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* =========================================================
+   OVERLAYS (GRAIN & SCANLINES)
+   ========================================================= */
+.overlay-grain {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9000;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation: grain 3s steps(4) infinite;
+}
+
+@keyframes grain {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-2%, 1%); }
+  50%  { transform: translate(1%, -1%); }
+  75%  { transform: translate(-1%, 2%); }
+  100% { transform: translate(0,0); }
+}
+
+.overlay-scan {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 8999;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.1) 0px,
+      rgba(0,0,0,0.1) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity: 0.12;
+}
+
+/* =========================================================
+   CUSTOM CURSOR
+   ========================================================= */
+@media (hover: hover) and (pointer: fine) {
+  html, body, a, button, input, select, textarea, [role="button"] { cursor: none; }
+
+  .cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    width: 28px; height: 36px;
+    transform: translate(-4px, -2px);
+    transition: transform 0.15s ease;
+    background-image: url('/assets/icons/curserarrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 4px rgba(230,0,22,0.7));
+  }
+  .cursor.is-hover { transform: translate(-4px, -2px) scale(1.2); }
+}
+
+/* =========================================================
+   TICKER ANIMATION
+   ========================================================= */
+@keyframes ticker {
+  0%   { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(-50%,0,0); }
+}
+.animate-ticker {
+  animation: ticker 50s linear infinite;
+  will-change: transform;
+}
+
+/* =========================================================
+   BLINK & FLICKER ANIMATIONS
+   ========================================================= */
+@keyframes blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100%{ opacity: 0.15; }
+}
+.animate-blink { animation: blink 1.4s steps(2) infinite; }
+.animate-blink-fast { animation: blink 1s steps(2) infinite; }
+
+@keyframes flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; filter: drop-shadow(0 0 30px rgba(230,0,22,0.5)); }
+  20%,24%,55% { opacity: 0.65; filter: drop-shadow(0 0 14px rgba(230,0,22,0.3)); }
+}
+.animate-flicker { animation: flicker 4s infinite; }
+
+/* =========================================================
+   CLICK BURST
+   ========================================================= */
+.click-burst {
+  position: fixed;
+  width: 80px; height: 80px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  animation: burst 0.55s cubic-bezier(0.2,0.8,0.4,1) forwards;
+  background-image: url('/assets/widgets/red_explode.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px rgba(230,0,22,0.6));
+}
+@keyframes burst {
+  0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+  60%  { transform: translate(-50%, -50%) scale(1.4) rotate(40deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.2) rotate(80deg); opacity: 0; }
 }
