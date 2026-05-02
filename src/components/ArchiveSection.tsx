@@ -7,7 +7,7 @@ import Image from "next/image";
 const ARCHIVE_ITEMS = [
   {
     id: "runway_01",
-    title: "ACT III: THE FINALE",
+    title: "RUNWAY FILE 001",
     category: "RUNWAY",
     date: "10.28.25",
     type: "video",
@@ -17,7 +17,7 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "drop_fw25",
-    title: "FW25 UNIFORM DROP",
+    title: "DROP FILE 003",
     category: "DROPS",
     date: "09.15.25",
     type: "video",
@@ -27,7 +27,7 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "casting_la",
-    title: "OPEN CASTING - LA",
+    title: "CASTING FILE 004",
     category: "CASTING",
     date: "08.02.25",
     type: "image",
@@ -37,7 +37,7 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "bts_film",
-    title: "SHORT FILM: BEHIND THE SCENES",
+    title: "PRIVATE CALENDAR FILE",
     category: "BEHIND THE SCENES",
     date: "07.20.25",
     type: "image",
@@ -47,7 +47,7 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "nightlife_04",
-    title: "THE WAREHOUSE SHOW",
+    title: "NIGHTLIFE FILE 002",
     category: "NIGHTLIFE",
     date: "06.10.25",
     type: "video",
@@ -57,7 +57,7 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "reel_02",
-    title: "SUMMER CAPSULE ARCHIVE",
+    title: "CLOTHING REEL FILE",
     category: "CLOTHING REELS",
     date: "05.05.25",
     type: "video",

@@ -2,12 +2,12 @@ import Image from "next/image";
 
 export default function DropsSection() {
   const products = [
-    { title: "SLOWHRS WAXED DENIM", type: "Pants", price: "$220", badge: "LIMITED", desc: "Waxed black denim built for after-hours movement." },
-    { title: "PRIVATE SOCIETY TANK", type: "Top", price: "$65", badge: "MEMBERS FIRST", desc: "Entry layer for the private calendar." },
-    { title: "RUNWAY ARCHIVE TEE", type: "Top", price: "$85", badge: "RUNWAY", desc: "A piece pulled from the show file." },
-    { title: "RED ROOM THERMAL", type: "Top", price: "$110", badge: "GONE", desc: "Cold room base layer with red signal energy." },
-    { title: "AFTERHOURS JORTS", type: "Bottoms", price: "$180", badge: "SAMPLE", desc: "Cut for long nights and flash photos." },
-    { title: "FAST LIFE SAMPLE", type: "Outerwear", price: "$350", badge: "1 OF 1", desc: "Limited sample from the fast life file." }
+    { title: "SLOWHRS WAXED DENIM", type: "Pants", price: "PRICE TBA", badge: "LIMITED", desc: "Waxed black denim built for after-hours movement." },
+    { title: "PRIVATE SOCIETY TANK", type: "Top", price: "MEMBERS FIRST", badge: "MEMBERS FIRST", desc: "Entry layer for the private calendar." },
+    { title: "RUNWAY ARCHIVE TEE", type: "Top", price: "PRICE TBA", badge: "RUNWAY", desc: "A piece pulled from the show file." },
+    { title: "RED ROOM THERMAL", type: "Top", price: "PRICE TBA", badge: "GONE", desc: "Cold room base layer with red signal energy." },
+    { title: "AFTERHOURS JORTS", type: "Bottoms", price: "PRICE TBA", badge: "SAMPLE", desc: "Cut for long nights and flash photos." },
+    { title: "FAST LIFE SAMPLE", type: "Outerwear", price: "PRICE TBA", badge: "1 OF 1", desc: "Limited sample from the fast life file." }
   ];
 
   return (

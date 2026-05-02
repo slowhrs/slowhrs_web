@@ -122,19 +122,19 @@ export default function EventsSection() {
 
           {[
             {
-              title: "DESTROY LONELY CLUB",
+              title: "PRIVATE CALENDAR FILE",
               date: "03.14.25",
               status: "ARCHIVE LIVE",
               video: "/assets/events/destroy_lonely.mp4"
             },
             {
-              title: "JSTAPARTY NYE",
+              title: "NIGHTLIFE FILE 002",
               date: "12.31.24",
               status: "CAMERA READY ONLY",
               video: "/assets/events/newyears.mp4"
             },
             {
-              title: "SECRET WAREHOUSE",
+              title: "RUNWAY FILE 001",
               date: "11.10.24",
               status: "MEMBERS FIRST",
               video: null
