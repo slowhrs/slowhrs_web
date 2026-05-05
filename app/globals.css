@@ -60,12 +60,12 @@ body {
 }
 
 /* =========================================================
-   OVERLAYS (GRAIN & SCANLINES)
+   OVERLAYS (GRAIN & SCANLINES) — reduced for v2
    ========================================================= */
 .overlay-grain {
   position: fixed; inset: 0;
   pointer-events: none; z-index: 9000;
-  opacity: 0.06;
+  opacity: 0.04;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   animation: grain 3s steps(4) infinite;
@@ -90,41 +90,66 @@ body {
       transparent 1px,
       transparent 3px
     );
-  opacity: 0.12;
+  opacity: 0.18;
 }
 
 /* =========================================================
-   CUSTOM CURSOR
+   CUSTOM CURSOR — v2: dot + ring system
    ========================================================= */
 @media (hover: hover) and (pointer: fine) {
   html, body, a, button, input, select, textarea, [role="button"] { cursor: none; }
 
-  .cursor {
+  .cursor-dot {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+    transition: background-color 0.15s ease;
+  }
+
+  .cursor-ring {
     position: fixed;
     pointer-events: none;
     z-index: 9998;
-    width: 28px; height: 36px;
-    transform: translate(-4px, -2px);
-    transition: transform 0.15s ease;
-    background-image: url('/assets/icons/curserarrow.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 0 4px rgba(230,0,22,0.7));
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(237,237,235,0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, border-color 0.15s ease;
   }
-  .cursor.is-hover { transform: translate(-4px, -2px) scale(1.2); }
-}
 
-/* =========================================================
-   TICKER ANIMATION
-   ========================================================= */
-@keyframes ticker {
-  0%   { transform: translate3d(0,0,0); }
-  100% { transform: translate3d(-50%,0,0); }
-}
-.animate-ticker {
-  animation: ticker 50s linear infinite;
-  will-change: transform;
+  .cursor-dot.is-hover {
+    background: var(--red);
+  }
+
+  .cursor-ring.is-hover {
+    width: 36px;
+    height: 36px;
+    border-color: var(--red);
+  }
+
+  .cursor-label {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    transform: translate(16px, -50%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .cursor-label.is-visible {
+    opacity: 1;
+  }
 }
 
 /* =========================================================
@@ -144,26 +169,24 @@ body {
 .animate-flicker { animation: flicker 4s infinite; }
 
 /* =========================================================
-   CLICK BURST
+   PAGE TRANSITIONS
    ========================================================= */
-.click-burst {
-  position: fixed;
-  width: 80px; height: 80px;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%) scale(0) rotate(0deg);
-  animation: burst 0.55s cubic-bezier(0.2,0.8,0.4,1) forwards;
-  background-image: url('/assets/widgets/red_explode.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  image-rendering: pixelated;
-  filter: drop-shadow(0 0 8px rgba(230,0,22,0.6));
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
 }
-@keyframes burst {
-  0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
-  60%  { transform: translate(-50%, -50%) scale(1.4) rotate(40deg); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(2.2) rotate(80deg); opacity: 0; }
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.3; transform: scale(0.98); }
+}
+
+/* =========================================================
+   CARD GLOW BREATHE
+   ========================================================= */
+@keyframes cardBreathe {
+  0%, 100% { box-shadow: 0 0 20px rgba(230,0,22,0.3), inset 0 0 20px rgba(230,0,22,0.05); }
+  50%      { box-shadow: 0 0 40px rgba(230,0,22,0.6), inset 0 0 30px rgba(230,0,22,0.1); }
 }
 
 /* =========================================================
@@ -182,8 +205,7 @@ body {
     opacity: 0.03 !important;
   }
   
-  .cursor {
+  .cursor-dot, .cursor-ring, .cursor-label {
     display: none !important;
   }
 }
-

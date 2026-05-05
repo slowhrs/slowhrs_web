@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Courier_Prime } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
+import GrainOverlay from "@/components/GrainOverlay";
+import PersistentNav from "@/components/PersistentNav";
+import AmbientCorner from "@/components/AmbientCorner";
+import CustomCursor from "@/components/CustomCursor";
+import LenisProvider from "@/components/LenisProvider";
+import { SITE_META } from "@/lib/constants";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -25,23 +30,23 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://slowhrs.com"), // Placeholder domain
-  title: "SLOWHRS | Private Creative Society Los Angeles",
-  description: "SLOWHRS is a private creative society in Los Angeles built around fashion, film, nightlife, clothing drops, event recaps, and member access.",
+  metadataBase: new URL(SITE_META.url),
+  title: `${SITE_META.name} | ${SITE_META.tagline}`,
+  description: SITE_META.description,
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "SLOWHRS | Private Creative Society",
-    description: "Fashion, film, nightlife, and private access from the city after dark.",
-    url: "https://slowhrs.com",
-    siteName: "SLOWHRS",
+    title: `${SITE_META.name} | Private Creative Society`,
+    description: SITE_META.description,
+    url: SITE_META.url,
+    siteName: SITE_META.name,
     images: [
       {
-        url: "/assets/logos/logo_main.png", // Fallback OG image
+        url: "/assets/logos/logo_main.png",
         width: 1200,
         height: 630,
-        alt: "SLOWHRS Logo",
+        alt: "SLOWHRS",
       },
     ],
     locale: "en_US",
@@ -49,8 +54,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SLOWHRS | Private Creative Society",
-    description: "Fashion, film, nightlife, and private access from the city after dark.",
+    title: `${SITE_META.name} | Private Creative Society`,
+    description: SITE_META.description,
     images: ["/assets/logos/logo_main.png"],
   },
 };
@@ -63,12 +68,20 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${courier.variable}`}>
       <body className="antialiased font-sans">
-        {/* Global Overlays */}
-        <div className="overlay-grain"></div>
-        <div className="overlay-scan"></div>
-        
-        {/* Children will contain the Nav, Ticker, and Page content */}
-        {children}
+        <LenisProvider>
+          {/* Global Overlays */}
+          <GrainOverlay />
+
+          {/* Persistent Chrome */}
+          <PersistentNav />
+          <AmbientCorner />
+
+          {/* Route Content */}
+          {children}
+
+          {/* Custom Cursor (desktop only) */}
+          <CustomCursor />
+        </LenisProvider>
       </body>
     </html>
   );

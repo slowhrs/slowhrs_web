@@ -1,35 +1,82 @@
-# SLOWHRS Project Rules — for all AI agents
+# AGENTS.md — SLOWHRS v2.0
 
-## Project
-Next.js App Router. Components in `src/components/`. Routes in `app/`.
-Assets in `public/assets/{logos,widgets,icons,characters,videos,events,drops,media}`.
-Deployed at https://slowhrs.com via Vercel.
+## Brand
 
-## Brand register
-Editorial fashion society. Los Angeles. Private. Premium first, playful never.
-References: Slam Jam, Mubi, Boiler Room, Phoebe Philo. NEVER: arcade game, hacker LARP, crypto.
+SLOWHRS is a private creative society in Los Angeles built around fashion, film, nightlife, and member access. The site is an immersive, art-first web experience — a building with five rooms.
 
-## Sticker budget (HARD CAP)
-≤ 10 visible pixel asset instances on the page at any scroll position.
-Allowed: logo_main (×4), press_start, Onthelist, members_first, gone, locked, Access, TheListkeeper, vhscam_live. That's it.
-Forbidden in current page: cart, heart_full, heart_empty, CD, slowhrs_folder, archive_pixel_border, savedisk.
-Conditionally allowed: slowhrs_ticket — ONLY in AccessSection success state, never elsewhere.
+## Architecture
 
-## Forbidden copy patterns
-- Sci-fi system labels: "SYS_", "SYSTEM BOOT", "SYS_VERSION", "[CAM 01]"
-- Hacker-LARP: "[REC_FILE]", "[DATA_RESTRICTED]", ".dat" filenames, fake file sizes ("45MB"), "DECRYPT", "SECURE TRANSMISSION", "SIGNAL ACTIVE", "TRANSMISSION_LOG"
-- Game-UI: "HP:", "FILE_#", inventory labels, "PRESS START" outside the loader
-- Vague commerce: "PRICE TBA", "NO ITEMS"
-- Repeated formula headlines: "The X Moves Y" (max 2 across the site)
+```
+/                  → Threshold (interactive entry — "what time is it")
+/events            → Cinema room (event recaps, nightlife, documented rooms)
+/drops             → Showroom (member-first clothing drops)
+/inquiries         → Direct line (production, event, collab, casting requests)
+/news              → Feed (recaps, announcements, proof the room happened)
+/membership        → The card (heart-meter system, application, tier progression)
+```
 
-## Asset reference map
-Use these exact paths:
-- /assets/events/block_party.mp4 (NOT /assets/media/...)
-- /assets/drops/fast_life_reel.mp4 (substitute for the missing /assets/media/Clothing_reel.mp4)
-- /assets/events/destroy_lonely.mp4
-- /assets/events/newyears.mp4
-- /assets/videos/hero-recap.mp4 (lobby only, do not duplicate)
+## Threshold Logic
 
-## When in doubt
-Cut. Never add a pixel asset to a section that didn't have one in the budget table.
-The user's words: "i dont like how it look so goofy." That bar holds.
+| Answer        | Routes to    |
+|---------------|-------------|
+| `late`        | `/events`   |
+| `early`       | `/drops`    |
+| `i don't know`| `/news`    |
+
+Stored in `localStorage` key: `slowhrs_entry`. Return visitors get a greeting and skip the question.
+
+## Pixel Asset Budget (6 max)
+
+| Asset | Where |
+|---|---|
+| `logo_main.png` | Threshold, nav, footer |
+| `gone.png` | Sold-out drop cards only |
+| `members_first.png` | One priority drop card |
+| `TheListkeeper.png` | `/events`, ambient bottom-right, half-cropped |
+| `Onthelist.png` | Beneath Listkeeper, one instance |
+| CSS dot+ring cursor | Custom cursor, desktop only |
+
+## Forbidden Assets
+
+Never reference in JSX: `press_start`, `Access.png`, `locked.png`, `vhscam_live`, `cart.png`, `heart_full`, `heart_empty`, `CD.png`, `slowhrs_folder`, `archive_pixel_border`, `savedisk`, `slowhrs_ticket`, `be-camera-ready`, `no-energy-no-entry`, `waitlist`, `keycard-chip`, `files-tab`, `approved.png`, `click-burst`, `red_explode`.
+
+## Forbidden Copy
+
+Never use in any copy:
+`SYS_099`, `SYS_VERSION`, `SYSTEM BOOT_`, `END OF TAPE`, `DECRYPT FULL`, `SECURE TRANSMISSION`, `SIGNAL ACTIVE`, `TRANSMISSION_LOG`, `FILE_04: LISTKEEPER`, `HP: 66`, `PRICE TBA`, `NO ITEMS`, `NO FOOTAGE`, `[REC_FILE]`, `[DATA_RESTRICTED]`, `[CAM 01]`, `PRESS START`, `TERMINAL FEED`, `MEMBER EXCLUSIVE`, `ARCHIVE PROCESSING`, `CAMERA READY ONLY`.
+
+Never use words: `transmission`, `signal`, `terminal`, `channel`, `decrypt`.
+
+Only fake-tech words allowed: `live`, `loading`, `gone` (all literal, not metaphor).
+
+## Voice Rules
+
+- Hero lines: lowercase italic Cormorant Garamond
+- Labels and metadata: mono uppercase Courier Prime
+- Never invent system-LARP text
+- Never use emoji
+- No NYC. SLOWHRS is Los Angeles.
+
+## Animation Libraries
+
+| Library | Purpose |
+|---|---|
+| GSAP 3 + ScrollTrigger | Entry sequence, scroll-pinned moments, text reveals, card breathing |
+| Motion (Framer Motion) | Component animations: hovers, form states, page transitions, layoutId |
+| Lenis | Smooth scroll desktop only (disabled on mobile) |
+
+## Performance
+
+- Lighthouse Performance ≥ 90 mobile
+- LCP < 2.5s
+- All animations gate on `prefers-reduced-motion: no-preference`
+- Videos: `preload="metadata"`, lazy via IntersectionObserver
+- Pixel PNGs: max 64px via `next/image` with `unoptimized`, `image-rendering: pixelated`
+
+## Data Layer
+
+- `src/lib/membership.ts` — mock member data, swappable with Posh later
+- `src/lib/events.ts` — event data with real video paths
+- `src/lib/drops.ts` — product data
+- `src/lib/news.ts` — feed entries
+- `src/lib/constants.ts` — nav links, threshold answers, tier defs
