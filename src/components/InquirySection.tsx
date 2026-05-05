@@ -21,7 +21,6 @@ export default function InquirySection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    // Simulate network request
     setTimeout(() => {
       setStatus("success");
     }, 1500);
@@ -34,17 +33,17 @@ export default function InquirySection() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 relative z-10">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
-            INQUIRY / TERMINAL
+            INQUIRY / DIRECT LINE
           </div>
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[4rem] text-brand-ink leading-none mb-6">
-            Send The Signal
+            Inquiries
           </h2>
           <p className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] text-brand-ink/60 max-w-[50ch] leading-[1.6] uppercase">
-            For event recaps, production, collaborations, vendors, models, performers, sponsors, and private bookings.
+            Direct line. Reviewed within 48 hours.
           </p>
         </div>
 
-        {/* Camcorder Accent */}
+        {/* Camcorder Accent — one allowed instance */}
         <div className="hidden lg:flex flex-col items-end gap-3 opacity-80 mix-blend-screen">
           <Image 
             src="/assets/icons/vhscam_live.png" 
@@ -53,10 +52,6 @@ export default function InquirySection() {
             height={40} 
             className="pixel"
           />
-          <div className="flex items-center gap-2 font-mono text-[8px] tracking-[0.2em] text-brand-red uppercase">
-            <div className="w-1.5 h-1.5 bg-brand-red rounded-full animate-blink shadow-[0_0_8px_var(--red)]"></div>
-            SIGNAL ACTIVE
-          </div>
         </div>
       </div>
 
@@ -65,7 +60,7 @@ export default function InquirySection() {
         {/* Terminal Header */}
         <div className="flex items-center justify-between p-4 border-b border-brand-border bg-black/40">
           <div className="font-mono text-[9px] tracking-[0.2em] text-brand-ink/40 uppercase">
-            SECURE TRANSMISSION
+            INQUIRY TERMINAL
           </div>
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-brand-ink/20"></div>
@@ -166,7 +161,7 @@ export default function InquirySection() {
                     className="w-full sm:w-auto shrink-0 border border-brand-red/40 bg-brand-red/5 px-8 py-4 transition-all duration-300 hover:border-brand-red hover:bg-brand-red/10 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     <span className="font-mono text-[10px] tracking-[0.25em] text-brand-red uppercase whitespace-nowrap">
-                      {status === "submitting" ? "TRANSMITTING..." : "SEND TRANSMISSION"}
+                      {status === "submitting" ? "TRANSMITTING..." : "SEND INQUIRY"}
                     </span>
                     <span className="font-serif italic text-[1.2rem] text-brand-red leading-none">→</span>
                   </button>

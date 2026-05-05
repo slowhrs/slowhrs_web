@@ -36,11 +36,7 @@ export default function FooterSection() {
               Fashion, film, nightlife, and private access from the city after dark.
             </p>
             
-            {/* Final tape detail */}
-            <div className="mt-4 flex items-center gap-2 opacity-50">
-               <Image src="/assets/icons/vhscam_live.png" alt="" width={12} height={12} className="pixel grayscale" />
-               <span className="font-mono text-[8px] tracking-[0.3em] text-brand-ink/40 uppercase">END OF TAPE.</span>
-            </div>
+
           </div>
 
           {/* Connect Column */}
@@ -79,7 +75,7 @@ export default function FooterSection() {
           
           <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/20 uppercase flex flex-col md:items-end gap-1">
             <span>© {currentYear} SLOWHRS. ALL RIGHTS RESERVED.</span>
-            <span>SYS_VERSION 1.0</span>
+
           </div>
         </div>
 

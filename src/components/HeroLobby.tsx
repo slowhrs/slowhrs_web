@@ -12,12 +12,12 @@ export default function HeroLobby() {
           loop 
           muted 
           playsInline 
-          className="w-full h-full object-cover filter brightness-[0.55] contrast-[1.05] saturate-[1.1]"
+          className="w-full h-full object-cover filter brightness-[0.7] contrast-[1.05] saturate-[1.1]"
         >
           <source src="/assets/videos/hero-recap.mp4" type="video/mp4" />
         </video>
-        {/* Dark Cinematic Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/85"></div>
+        {/* Bottom-only gradient mask — not a uniform overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,rgba(230,0,22,0.12)_0%,transparent_55%)]"></div>
       </div>
 
@@ -81,17 +81,16 @@ export default function HeroLobby() {
           />
         </div>
 
-        {/* Secondary CTAs */}
-        <div className="flex flex-wrap gap-6 font-mono text-[10px] tracking-[0.25em] uppercase text-brand-ink-dim">
+        {/* Secondary CTAs — thin nav row beneath PRESS START */}
+        <div className="flex flex-wrap gap-0 font-mono text-[10px] tracking-[0.25em] uppercase text-brand-ink-dim">
           {[
             { text: "Apply For Access", href: "#access" },
             { text: "View Events", href: "#events" },
             { text: "Shop Drops", href: "#drops" },
             { text: "Send Inquiry", href: "#inquiry" }
           ].map((cta) => (
-            <Link key={cta.text} href={cta.href} className="inline-flex items-center gap-2 pb-1.5 border-b border-brand-border-2 transition-colors hover:text-brand-red hover:border-brand-red group">
+            <Link key={cta.text} href={cta.href} className="inline-flex items-center gap-2 px-4 py-2 border-b border-brand-border-2 transition-colors hover:text-brand-red hover:border-brand-red group text-[10px]">
               {cta.text}
-              <span className="text-brand-red transition-transform group-hover:translate-x-1">→</span>
             </Link>
           ))}
         </div>
