@@ -1,69 +1,67 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
-// Simulated archive database
 const ARCHIVE_ITEMS = [
   {
-    id: "runway_01",
-    title: "RUNWAY FILE 001",
-    category: "RUNWAY",
-    date: "10.28.25",
+    id: "block_party",
+    title: "Block Party — 2025",
+    subtitle: "LA's biggest crew run · Hosted by hardlyeverhome, waseelwav, lovechildww",
+    category: "Events",
+    date: "2025",
     type: "video",
-    src: "/assets/media/block_party.mp4", // Using the real block party video as a runway/event stand-in
-    icon: "/assets/icons/CD.png",
+    src: "/assets/events/block_party.mp4",
     duration: "02:14"
   },
   {
-    id: "drop_fw25",
-    title: "DROP FILE 003",
-    category: "DROPS",
-    date: "09.15.25",
+    id: "fast_life",
+    title: "Fast Life Campaign — 2024",
+    subtitle: "Clothing reel · Fall drop",
+    category: "Drops",
+    date: "2024",
     type: "video",
-    src: "/assets/media/Clothing_reel.mp4", // Real clothing reel
-    icon: "/assets/icons/slowhrs_folder.png",
+    src: "/assets/drops/fast_life_reel.mp4",
     duration: "00:45"
   },
   {
-    id: "casting_la",
-    title: "CASTING FILE 004",
-    category: "CASTING",
-    date: "08.02.25",
-    type: "image",
-    src: "/assets/images/placeholder.jpg", // We don't have a specific casting image, we'll use CSS fallback
-    icon: "/assets/icons/archive_pixel_border.png",
-    size: "45MB"
-  },
-  {
-    id: "bts_film",
-    title: "PRIVATE CALENDAR FILE",
-    category: "BEHIND THE SCENES",
-    date: "07.20.25",
-    type: "image",
-    src: "/assets/images/placeholder.jpg",
-    icon: "/assets/icons/savedisk.png",
-    size: "1.2GB"
-  },
-  {
-    id: "nightlife_04",
-    title: "NIGHTLIFE FILE 002",
-    category: "NIGHTLIFE",
-    date: "06.10.25",
+    id: "destroy_lonely",
+    title: "Destroy Lonely — 03.14.25",
+    subtitle: "WYA Trap Rave · Where You At LA",
+    category: "Nightlife",
+    date: "03.14.25",
     type: "video",
-    src: "/assets/media/block_party.mp4", // Re-using to show grid population without loading too many huge files
-    icon: "/assets/icons/CD.png",
+    src: "/assets/events/destroy_lonely.mp4",
     duration: "01:30"
   },
   {
-    id: "reel_02",
-    title: "CLOTHING REEL FILE",
-    category: "CLOTHING REELS",
-    date: "05.05.25",
+    id: "nye",
+    title: "NYE — 12.31.24",
+    subtitle: "New Years recap · Closed door",
+    category: "Events",
+    date: "12.31.24",
     type: "video",
-    src: "/assets/media/Clothing_reel.mp4",
-    icon: "/assets/icons/slowhrs_folder.png",
-    duration: "00:59"
+    src: "/assets/events/newyears.mp4",
+    duration: "01:15"
+  },
+  {
+    id: "dsrpt",
+    title: "Eric Bellinger × DSRPT Noise Lab",
+    subtitle: "Performance recap · Spring 24",
+    category: "Performance",
+    date: "2024",
+    type: "video",
+    src: "/assets/drops/christmas_drop.mp4",
+    duration: "00:42"
+  },
+  {
+    id: "kehlani",
+    title: "Kehlani — 2024",
+    subtitle: "Headline recap · Members + 1 only",
+    category: "Headline",
+    date: "2024",
+    type: "video",
+    src: "/assets/events/block_party.mp4",
+    duration: "02:14"
   }
 ];
 
@@ -97,72 +95,50 @@ export default function ArchiveSection() {
         {ARCHIVE_ITEMS.map((item) => (
           <div key={item.id} className="group relative border border-brand-border bg-[#050505] overflow-hidden flex flex-col h-[380px] md:h-[450px]">
             
-            {/* File Header */}
+            {/* File Header — category in red mono 9px, date right-aligned in mono 9px */}
             <div className="flex items-center justify-between p-3 border-b border-brand-border bg-[#0a0a0a] z-20">
-              <div className="flex items-center gap-2">
-                <Image src={item.icon} alt="Icon" width={14} height={14} className="opacity-70 pixel mix-blend-screen" />
-                <span className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/50 uppercase">{item.id}.dat</span>
-              </div>
-              <span className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/30 uppercase">{item.date}</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] text-brand-red uppercase">{item.category}</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] text-brand-ink/30 uppercase">{item.date}</span>
             </div>
 
             {/* Media Area */}
             <div className="relative flex-grow bg-black overflow-hidden flex items-center justify-center">
-              
-              {/* CSS Fallback for missing images/posters to avoid heavy loads */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center opacity-30 pointer-events-none z-10">
-                <div className="font-mono text-[10px] tracking-[0.4em] text-brand-ink uppercase rotate-[-90deg] origin-center translate-y-8">
-                  FILE_{item.category}
-                </div>
+              <video 
+                src={item.src} 
+                muted 
+                playsInline 
+                loop 
+                className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-60 transition-opacity duration-700 blur-[2px] group-hover:blur-0 grayscale group-hover:grayscale-0"
+                onMouseOver={e => e.currentTarget.play()}
+                onMouseOut={e => {
+                  e.currentTarget.pause();
+                  e.currentTarget.currentTime = 0;
+                }}
+              />
+              <div className="absolute inset-0 w-full h-full bg-[#111] md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">
+                 <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase">▶</span>
               </div>
-
-              {item.type === "video" ? (
-                <>
-                  {/* Desktop Hover Video (Hidden on mobile to save bandwidth/battery) */}
-                  <video 
-                    src={item.src} 
-                    muted 
-                    playsInline 
-                    loop 
-                    className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-60 transition-opacity duration-700 blur-[2px] group-hover:blur-0 grayscale group-hover:grayscale-0"
-                    onMouseOver={e => e.currentTarget.play()}
-                    onMouseOut={e => {
-                      e.currentTarget.pause();
-                      e.currentTarget.currentTime = 0;
-                    }}
-                  />
-                  {/* Static Placeholder for Mobile and Desktop Rest State */}
-                  <div className="absolute inset-0 w-full h-full bg-[#111] md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">
-                     <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase border border-brand-ink/10 px-3 py-1 bg-black/50 backdrop-blur-sm">
-                       [REC_FILE]
-                     </span>
-                  </div>
-                </>
-              ) : (
-                <div className="absolute inset-0 w-full h-full bg-[#0a0a0a] flex items-center justify-center">
-                  <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase border border-brand-ink/10 px-3 py-1 bg-black/50">
-                    [DATA_RESTRICTED]
-                  </span>
-                </div>
-              )}
               
               {/* CRT Scanline Overlay */}
               <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.02)_50%,rgba(255,255,255,0)_50%)] bg-[length:100%_4px] opacity-20 z-20"></div>
             </div>
 
-            {/* File Info Footer */}
+            {/* File Info Footer — title in italic serif, subtitle below */}
             <div className="p-5 border-t border-brand-border bg-[#050505] z-20 flex flex-col gap-3 transition-colors group-hover:bg-[#0a0a0a]">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[8px] tracking-[0.2em] text-brand-red uppercase border border-brand-red/30 bg-brand-red/5 px-2 py-0.5">
                   {item.category}
                 </span>
                 <span className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase">
-                  {item.duration || item.size}
+                  {item.duration}
                 </span>
               </div>
               <h3 className="font-serif italic text-[1.4rem] text-brand-ink leading-tight truncate">
                 {item.title}
               </h3>
+              <p className="font-mono text-[7px] tracking-[0.1em] text-brand-ink/40 uppercase truncate">
+                {item.subtitle}
+              </p>
             </div>
           </div>
         ))}
@@ -171,7 +147,7 @@ export default function ArchiveSection() {
       {/* Archive CTA */}
       <div className="mt-12 flex justify-center">
         <button className="border border-brand-ink/20 px-8 py-4 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink hover:border-brand-ink/60 transition-colors uppercase flex items-center gap-2">
-          DECRYPT FULL ARCHIVE <span className="font-serif italic text-[1rem]">→</span>
+          View Full Archive <span className="font-serif italic text-[1rem]">→</span>
         </button>
       </div>
 
