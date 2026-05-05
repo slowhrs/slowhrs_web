@@ -1,0 +1,160 @@
+.formWrap {
+  width: 100%;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(237,237,235,0.3);
+  background: none;
+  border: none;
+  padding: 6px 0;
+  cursor: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tabActive {
+  color: var(--red);
+}
+
+/* Description */
+.description {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(237,237,235,0.5);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 50ch;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fieldWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(237,237,235,0.35);
+}
+
+.required {
+  color: var(--red);
+  margin-left: 3px;
+  opacity: 0.5;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(237,237,235,0.12);
+  padding: 10px 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.3s ease;
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(237,237,235,0.15);
+  font-style: italic;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--red);
+}
+
+.textarea {
+  resize: none;
+  line-height: 1.6;
+}
+
+.select {
+  cursor: none;
+  color: rgba(237,237,235,0.15);
+}
+
+.select:valid {
+  color: var(--ink);
+}
+
+.select option {
+  background: #0a0a0a;
+  color: var(--ink);
+}
+
+/* Submit */
+.submit {
+  align-self: flex-start;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(237,237,235,0.5);
+  background: none;
+  border: none;
+  padding: 8px 0;
+  cursor: none;
+  transition: color 0.2s ease;
+}
+
+.submit:hover {
+  color: var(--ink);
+}
+
+/* Success */
+.success {
+  padding: 40px 0;
+}
+
+.successText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--red);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form, .description, .success {
+    transition: none;
+  }
+}
