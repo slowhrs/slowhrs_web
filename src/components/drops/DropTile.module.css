@@ -1,0 +1,149 @@
+.tile {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #0a0a0a;
+  cursor: none;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.tileGone {
+  opacity: 0.55;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    transform: scale(1.02);
+    border-color: var(--red);
+  }
+  .tileGone:hover {
+    opacity: 0.75;
+  }
+}
+
+.mediaWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #050505;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
+}
+
+.videoVisible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) {
+  .tile:hover .video {
+    opacity: 1;
+  }
+}
+
+.stickerWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.sticker {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.cornerMark {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid var(--red);
+  border-left: 1px solid var(--red);
+  opacity: 0.6;
+  z-index: 2;
+}
+
+.infoStrip {
+  padding: 16px 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  transition: padding 0.3s ease;
+}
+
+@media (hover: hover) {
+  .tile:hover .infoStrip {
+    padding-bottom: 22px;
+  }
+}
+
+.infoLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.collection {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(237,237,235,0.3);
+  margin-top: 4px;
+}
+
+.price {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.priceGone {
+  text-decoration: line-through;
+  color: rgba(237,237,235,0.3);
+}
+
+@media (max-width: 767px) {
+  .video {
+    opacity: 0.6;
+  }
+  .videoVisible {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
+  .video {
+    transition: none;
+  }
+}
