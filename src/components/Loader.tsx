@@ -3,15 +3,32 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+const STATUS_LINES = [
+  "BOOTING SLOWHRS_",
+  "INSERTING TAPE_",
+  "TRACKING SIGNAL_",
+  "CHECKING THE LIST_",
+  "ACCESS FILE FOUND_"
+];
+
 export default function Loader() {
   const [isOut, setIsOut] = useState(false);
+  const [statusIdx, setStatusIdx] = useState(0);
 
   useEffect(() => {
+    // Cycle through status lines
+    const interval = setInterval(() => {
+      setStatusIdx((prev) => (prev + 1) % STATUS_LINES.length);
+    }, 450);
+
     // Simple timer to remove the boot loader after a short delay
     const timer = setTimeout(() => {
       setIsOut(true);
     }, 2500);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   if (isOut) return null;
@@ -39,7 +56,7 @@ export default function Loader() {
       </div>
 
       <div className="font-mono text-[22px] tracking-[0.18em] text-brand-ink-dim uppercase text-center h-[1.2em] mb-5 leading-none">
-        SYSTEM BOOT<span className="text-brand-red animate-blink-fast">_</span>
+        {STATUS_LINES[statusIdx]}
       </div>
 
       {/* Loading Bar */}
