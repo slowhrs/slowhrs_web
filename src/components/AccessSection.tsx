@@ -21,7 +21,8 @@ export default function AccessSection() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
-            ACCESS / MEMBERSHIP
+            {/* // Application */}
+            <span className="text-brand-red">// Application</span>
           </div>
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[4rem] text-brand-ink leading-none mb-6">
             Access Is Not A Newsletter. It Is The List.
@@ -31,15 +32,13 @@ export default function AccessSection() {
           </p>
         </div>
 
-        {/* Heart Meter Accent */}
-        <div className="hidden lg:flex flex-col items-end gap-2 opacity-80 mix-blend-screen">
-          <div className="flex items-center gap-1">
-            <Image src="/assets/icons/heart_full.png" alt="Heart" width={14} height={14} className="pixel" />
-            <Image src="/assets/icons/heart_full.png" alt="Heart" width={14} height={14} className="pixel" />
-            <Image src="/assets/icons/heart_empty.png" alt="Heart Empty" width={14} height={14} className="pixel opacity-50" />
+        {/* Tier indicator — replaces HP/heart row */}
+        <div className="hidden lg:flex flex-col items-end gap-2 opacity-80">
+          <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/60 uppercase">
+            Tier 01 / Guest
           </div>
-          <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/30 uppercase">
-            HP: 66/100
+          <div className="font-mono text-[14px] tracking-[0.1em] text-brand-ink/40">
+            ▮▯▯▯
           </div>
         </div>
       </div>
@@ -109,7 +108,7 @@ export default function AccessSection() {
                     );
                   })}
                 </div>
-                <div className="font-pixel text-[8px] tracking-[0.1em] text-brand-ink/40">SYS_099</div>
+
               </div>
             </div>
           </div>
@@ -120,7 +119,11 @@ export default function AccessSection() {
           {status === "success" ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in border border-brand-border bg-[#050505] p-10">
               <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">Access Request Sent.</div>
-              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase mb-8">We will review the file.</div>
+              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase mb-6">We will review the file.</div>
+              {/* Ticket reward visual — only appears in success state */}
+              <div className="w-[80px] mb-6 opacity-80">
+                <Image src="/assets/icons/slowhrs_ticket.png" alt="Ticket" width={80} height={80} className="w-full h-auto pixel" />
+              </div>
               <button 
                 onClick={() => setStatus("idle")}
                 className="border-b border-brand-ink/30 pb-1 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase"
