@@ -1,96 +1,141 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import type { Drop } from "./drops.data";
-import { STATUS_STICKERS } from "./drops.data";
-import styles from "./DropTile.module.css";
+import Link from "next/link";
+import type { Drop } from "@/lib/data/drops";
 
 interface DropTileProps {
   drop: Drop;
-  onClick: (drop: Drop) => void;
+  index: number;
 }
 
-export default function DropTile({ drop, onClick }: DropTileProps) {
-  const tileRef = useRef<HTMLDivElement>(null);
+export default function DropTile({ drop, index }: DropTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isInView, setIsInView] = useState(false);
-
-  // IntersectionObserver: play video when in view
-  useEffect(() => {
-    const el = tileRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-        if (videoRef.current) {
-          if (entry.isIntersecting) {
-            videoRef.current.play().catch(() => {});
-          } else {
-            videoRef.current.pause();
-          }
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const sticker = STATUS_STICKERS[drop.status];
+  const [isHovering, setIsHovering] = useState(false);
   const isGone = drop.status === "gone";
+  const isReversed = index % 2 === 1;
+
+  const handleMouseEnter = () => {
+    if (drop.hoverVideo && videoRef.current) {
+      setIsHovering(true);
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      setIsHovering(false);
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  const statusLabel =
+    isGone
+      ? "sold · archive only"
+      : "available · by application ↗";
 
   return (
     <div
-      ref={tileRef}
-      className={`${styles.tile} ${isGone ? styles.tileGone : ""}`}
-      data-video-tile
-      onClick={() => onClick(drop)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter") onClick(drop); }}
-      aria-label={`View ${drop.name}`}
+      className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center py-16 md:py-24 ${
+        isReversed ? "md:direction-rtl" : ""
+      }`}
+      style={isReversed ? { direction: "rtl" } : undefined}
     >
-      {/* Video */}
-      <div className={styles.mediaWrap}>
+      {/* Image / Video */}
+      <div
+        className="relative aspect-[4/5] overflow-hidden"
+        style={isReversed ? { direction: "ltr" } : undefined}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Video as poster */}
         <video
-          ref={videoRef}
-          src={drop.videoSrc}
+          src={drop.image}
           muted
           playsInline
           loop
           preload="metadata"
-          className={`${styles.video} ${isInView ? styles.videoVisible : ""}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+            isHovering ? "opacity-0" : "opacity-100"
+          } ${isGone ? "grayscale" : ""}`}
         />
 
-        {/* Status sticker overlay */}
-        {sticker.src && (
-          <div className={styles.stickerWrap}>
+        {/* Hover video */}
+        {drop.hoverVideo && (
+          <video
+            ref={videoRef}
+            src={drop.hoverVideo}
+            muted
+            playsInline
+            loop
+            preload="none"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              isHovering ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
+
+        {/* GONE sticker */}
+        {isGone && (
+          <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src={sticker.src}
-              alt={sticker.label}
+              src="/assets/widgets/gone.png"
+              alt="sold out"
               width={120}
-              height={120}
-              className={styles.sticker}
+              height={40}
+              className="pixel w-[30%] h-auto"
             />
           </div>
         )}
 
-        {/* Red corner mark */}
-        <div className={styles.cornerMark} aria-hidden="true" />
+        {/* MEMBERS FIRST sticker */}
+        {drop.status === "members-first" && (
+          <div className="absolute top-4 right-4">
+            <Image
+              src="/assets/widgets/members_first.png"
+              alt="members first"
+              width={80}
+              height={30}
+              className="pixel"
+              style={{ width: "80px", height: "auto" }}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Info strip */}
-      <div className={styles.infoStrip}>
-        <div className={styles.infoLeft}>
-          <h3 className={styles.name}>{drop.name}</h3>
-          <p className={styles.collection}>{drop.collection}</p>
-        </div>
-        <span className={`${styles.price} ${isGone ? styles.priceGone : ""}`}>
-          {drop.price}
+      {/* Text */}
+      <div
+        className="flex flex-col justify-center"
+        style={isReversed ? { direction: "ltr" } : undefined}
+      >
+        <span className="font-mono uppercase text-[10px] tracking-[0.3em] text-red">
+          {drop.season}
         </span>
+        <h3
+          className="font-display italic text-ink-warm mt-4 leading-tight"
+          style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+        >
+          {drop.name}
+        </h3>
+        <p className="font-serif italic text-ink-warm-dim text-base mt-4 max-w-[400px] leading-relaxed">
+          {drop.blurb}
+        </p>
+        <div className="mt-6">
+          {isGone ? (
+            <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink-warm-dim">
+              sold · archive only
+            </span>
+          ) : (
+            <Link
+              href={`/inquire?subject=collab&note=${drop.id}`}
+              className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink-warm-dim hover:text-red transition-colors border-b border-ink-warm-dim/30 hover:border-red pb-0.5"
+            >
+              available · by application ↗
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
