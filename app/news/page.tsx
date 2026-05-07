@@ -1,34 +1,51 @@
-"use client";
-
-import { NEWS_ENTRIES } from "@/components/news/news.data";
-import NewsItem from "@/components/news/NewsItem";
+import { news } from "@/lib/data/news";
+import NewsItemComponent from "@/components/news/NewsItem";
 import Footer from "@/components/Footer";
+
+export const metadata = {
+  title: "SLOWHRS | news",
+  description: "drops. recap reels. casting calls. the in-between of the parties.",
+};
 
 export default function NewsPage() {
   return (
-    <>
-      <main className="min-h-screen pt-[52px]">
-        <section className="max-w-[800px] mx-auto px-5 md:px-12 py-20 md:py-32">
-          <div className="mb-16">
-            <h1
-              className="font-serif italic text-brand-ink leading-none mb-4"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
-            >
-              transmission
-            </h1>
-            <p className="font-mono text-[10px] tracking-[0.15em] text-brand-ink/30 uppercase">
-              what happened. what's coming. nothing else.
-            </p>
-          </div>
+    <main className="min-h-screen pt-[52px]" style={{ backgroundColor: "var(--color-bg-cream)" }}>
+      {/* Header */}
+      <div className="max-w-[720px] mx-auto px-6 pt-20 md:pt-28 pb-8">
+        <h1
+          className="font-display italic"
+          style={{
+            fontSize: "clamp(3rem, 8vw, 5rem)",
+            color: "var(--color-ink-warm)",
+          }}
+        >
+          dispatches.
+        </h1>
+        <p
+          className="font-serif italic mt-4 leading-relaxed"
+          style={{
+            fontSize: "clamp(1rem, 1.8vw, 1.3rem)",
+            color: "var(--color-ink-warm-dim)",
+          }}
+        >
+          drops. recap reels. casting calls.
+          <br />
+          the in-between of the parties.
+        </p>
+      </div>
 
-          <div>
-            {NEWS_ENTRIES.map((entry, i) => (
-              <NewsItem key={entry.id} entry={entry} index={i} />
-            ))}
-          </div>
-        </section>
-      </main>
+      {/* News items */}
+      <div className="max-w-[720px] mx-auto px-6 pb-24">
+        {news.map((item) => (
+          <NewsItemComponent
+            key={item.id}
+            item={item}
+            useSticker={item.id === "TX-011"}
+          />
+        ))}
+      </div>
+
       <Footer />
-    </>
+    </main>
   );
 }

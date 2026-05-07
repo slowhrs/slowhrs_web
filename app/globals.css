@@ -1,42 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --bg:        #050505;
-  --bg-2:      #0a0a0a;
-  --ink:       #ededeb;
-  --ink-dim:   rgba(237,237,235,0.55);
-  --ink-faint: rgba(237,237,235,0.22);
-  --red:       #e60016;
-  --red-bright:#ff1a2e;
-  --red-deep:  #9c0010;
-  --red-dim:   rgba(230,0,22,0.15);
-  --asphalt:   #1a1a1a;
-  --asphalt-2: #232323;
-  --border:    rgba(237,237,235,0.08);
-  --border-2:  rgba(237,237,235,0.18);
-  --mono:      'Courier Prime', 'Courier New', ui-monospace, monospace;
-  --serif:     'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  --sans:      -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-}
-
 @theme {
-  --color-brand-bg: var(--bg);
-  --color-brand-ink: var(--ink);
-  --color-brand-ink-dim: var(--ink-dim);
-  --color-brand-red: var(--red);
-  --color-brand-border: var(--border);
-  --color-brand-border-2: var(--border-2);
-  --font-serif: var(--serif);
-  --font-mono: var(--mono);
-  --font-sans: var(--sans);
+  /* Backgrounds */
+  --color-bg:           #050505;
+  --color-bg-cream:     #f5ebd9;
+  --color-asphalt:      #1a1a1a;
+  --color-asphalt-2:    #232323;
+
+  /* Inks */
+  --color-ink:          #ededeb;
+  --color-ink-warm:     #2a1f1a;
+  --color-ink-dim:      rgba(237,237,235,0.55);
+  --color-ink-faint:    rgba(237,237,235,0.22);
+  --color-ink-warm-dim: rgba(42,31,26,0.55);
+
+  /* Reds */
+  --color-red:          #e60016;
+  --color-red-bright:   #ff1a2e;
+  --color-red-deep:     #9c0010;
+
+  /* Femme accents — used SPARINGLY on /membership only */
+  --color-rose:         #f4c5c0;
+  --color-rose-deep:    #c97a78;
+  --color-gold:         #c9a961;
+
+  /* Borders */
+  --color-border:       rgba(237,237,235,0.08);
+  --color-border-2:     rgba(237,237,235,0.18);
+  --color-border-warm:  rgba(42,31,26,0.12);
+
+  /* Fonts */
+  --font-serif:   'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-mono:    'Courier Prime', 'Courier New', monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
-  background-color: var(--bg);
-  color: var(--ink);
-  font-family: var(--sans);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
   font-weight: 300;
   min-height: 100vh;
   overflow-x: hidden;
@@ -47,9 +51,9 @@ html, body {
 
 body {
   background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(230,0,22,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(230,0,22,0.03) 0%, transparent 50%);
-  background-color: var(--bg);
+    radial-gradient(ellipse at 50% 0%, rgba(230,0,22,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(230,0,22,0.02) 0%, transparent 50%);
+  background-color: var(--color-bg);
 }
 
 /* Base utility for sharp pixels */
@@ -60,7 +64,7 @@ body {
 }
 
 /* =========================================================
-   OVERLAYS (GRAIN & SCANLINES) — reduced for v2
+   OVERLAYS (GRAIN) — scanlines OFF by default
    ========================================================= */
 .overlay-grain {
   position: fixed; inset: 0;
@@ -79,25 +83,19 @@ body {
   100% { transform: translate(0,0); }
 }
 
-.overlay-scan {
-  position: fixed; inset: 0;
-  pointer-events: none; z-index: 8999;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(0,0,0,0.1) 0px,
-      rgba(0,0,0,0.1) 1px,
-      transparent 1px,
-      transparent 3px
-    );
-  opacity: 0.18;
-}
-
 /* =========================================================
-   CUSTOM CURSOR — v2: dot + ring system
+   CUSTOM CURSOR — dot + ring
    ========================================================= */
 @media (hover: hover) and (pointer: fine) {
-  html, body, a, button, input, select, textarea, [role="button"] { cursor: none; }
+  /* Native cursor is only hidden when CustomCursor JS adds .custom-cursor-active to html */
+  html.custom-cursor-active,
+  html.custom-cursor-active body,
+  html.custom-cursor-active a,
+  html.custom-cursor-active button,
+  html.custom-cursor-active input,
+  html.custom-cursor-active select,
+  html.custom-cursor-active textarea,
+  html.custom-cursor-active [role="button"] { cursor: none; }
 
   .cursor-dot {
     position: fixed;
@@ -106,7 +104,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--ink);
+    background: var(--color-ink);
     transform: translate(-50%, -50%);
     transition: background-color 0.15s ease;
   }
@@ -123,67 +121,45 @@ body {
     transition: width 0.2s ease, height 0.2s ease, border-color 0.15s ease;
   }
 
-  .cursor-dot.is-hover {
-    background: var(--red);
-  }
+  .cursor-dot.is-hover { background: var(--color-red); }
 
   .cursor-ring.is-hover {
     width: 36px;
     height: 36px;
-    border-color: var(--red);
+    border-color: var(--color-red);
   }
 
   .cursor-label {
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--ink);
+    color: var(--color-ink);
     transform: translate(16px, -50%);
     opacity: 0;
     transition: opacity 0.15s ease;
   }
 
-  .cursor-label.is-visible {
-    opacity: 1;
-  }
+  .cursor-label.is-visible { opacity: 1; }
 }
 
 /* =========================================================
-   BLINK & FLICKER ANIMATIONS
+   ANIMATIONS
    ========================================================= */
 @keyframes blink {
   0%, 49%  { opacity: 1; }
   50%, 100%{ opacity: 0.15; }
 }
 .animate-blink { animation: blink 1.4s steps(2) infinite; }
-.animate-blink-fast { animation: blink 1s steps(2) infinite; }
 
-@keyframes flicker {
-  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; filter: drop-shadow(0 0 30px rgba(230,0,22,0.5)); }
-  20%,24%,55% { opacity: 0.65; filter: drop-shadow(0 0 14px rgba(230,0,22,0.3)); }
-}
-.animate-flicker { animation: flicker 4s infinite; }
-
-/* =========================================================
-   PAGE TRANSITIONS
-   ========================================================= */
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(1.02); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; transform: scale(1); }
-  to   { opacity: 0.3; transform: scale(0.98); }
-}
-
-/* =========================================================
-   CARD GLOW BREATHE
-   ========================================================= */
 @keyframes cardBreathe {
   0%, 100% { box-shadow: 0 0 20px rgba(230,0,22,0.3), inset 0 0 20px rgba(230,0,22,0.05); }
   50%      { box-shadow: 0 0 40px rgba(230,0,22,0.6), inset 0 0 30px rgba(230,0,22,0.1); }
@@ -200,7 +176,7 @@ body {
     scroll-behavior: auto !important;
   }
   
-  .overlay-grain, .overlay-scan {
+  .overlay-grain {
     animation: none !important;
     opacity: 0.03 !important;
   }

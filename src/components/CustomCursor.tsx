@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import gsap from "gsap";
 
 export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -38,9 +37,14 @@ export default function CustomCursor() {
   }, []);
 
   useEffect(() => {
-    // Only enable on fine pointers
+    // Only enable on fine pointers (mouse, trackpad)
     if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     setIsVisible(true);
+
+    // Add class to html to hide native cursor — ONLY after JS is ready
+    document.documentElement.classList.add("custom-cursor-active");
 
     const onMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
@@ -87,6 +91,7 @@ export default function CustomCursor() {
     const rafId = requestAnimationFrame(animate);
 
     return () => {
+      document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", onMove);
       observer.disconnect();
       cancelAnimationFrame(rafId);

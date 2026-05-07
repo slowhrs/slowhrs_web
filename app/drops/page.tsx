@@ -1,42 +1,47 @@
-"use client";
-
-import { useState } from "react";
-import DropsGrid from "@/components/drops/DropsGrid";
-import DropLightbox from "@/components/drops/DropLightbox";
+import { drops } from "@/lib/data/drops";
+import DropTile from "@/components/drops/DropTile";
 import Footer from "@/components/Footer";
-import type { Drop } from "@/components/drops/drops.data";
+
+export const metadata = {
+  title: "SLOWHRS | drops",
+  description: "what we wear when we're not shooting.",
+};
 
 export default function DropsPage() {
-  const [lightboxDrop, setLightboxDrop] = useState<Drop | null>(null);
-
   return (
-    <>
-      <main className="min-h-screen pt-[52px]">
-        {/* Hero section */}
-        <section className="max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32">
-          <div className="mb-16">
-            <h1
-              className="font-serif italic text-brand-ink leading-none mb-6"
-              style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
-            >
-              drops
-            </h1>
-            <p className="font-mono text-[11px] tracking-[0.15em] text-brand-ink/40 uppercase max-w-[50ch] leading-relaxed">
-              for the room, from the room. pieces come once. members know first.
-            </p>
-          </div>
-        </section>
+    <main className="min-h-screen pt-[52px] md:pt-[52px]" style={{ backgroundColor: "var(--color-bg-cream)" }}>
+      {/* Header */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-8">
+        <h1
+          className="font-display italic"
+          style={{
+            fontSize: "clamp(3rem, 8vw, 5rem)",
+            color: "var(--color-ink-warm)",
+          }}
+        >
+          drops.
+        </h1>
+        <p
+          className="font-serif italic mt-4 max-w-[480px] leading-relaxed"
+          style={{
+            fontSize: "clamp(1rem, 1.8vw, 1.3rem)",
+            color: "var(--color-ink-warm-dim)",
+          }}
+        >
+          what we wear when we&apos;re not shooting.
+          <br />
+          limited. members get the early window.
+        </p>
+      </div>
 
-        {/* Grid */}
-        <DropsGrid onSelect={setLightboxDrop} />
+      {/* Drops */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-12 pb-24">
+        {drops.map((drop, i) => (
+          <DropTile key={drop.id} drop={drop} index={i} />
+        ))}
+      </div>
 
-        {/* Lightbox */}
-        <DropLightbox
-          drop={lightboxDrop}
-          onClose={() => setLightboxDrop(null)}
-        />
-      </main>
       <Footer />
-    </>
+    </main>
   );
 }
