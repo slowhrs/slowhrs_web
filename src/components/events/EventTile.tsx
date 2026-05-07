@@ -1,85 +1,152 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Event } from "./events.data";
-import styles from "./EventTile.module.css";
+import { useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
-interface EventTileProps {
-  event: Event;
-  onClick: (event: Event) => void;
+export interface EventData {
+  id: string;
+  name: string;
+  date: string;
+  location: string | null;
+  blurb: string | null;
+  partiful_url: string | null;
+  cover_video: string | null;
+  produced_by_slowhrs: boolean;
+  is_upcoming: boolean;
 }
 
-export default function EventTile({ event, onClick }: EventTileProps) {
-  const tileRef = useRef<HTMLDivElement>(null);
+interface EventTileProps {
+  event: EventData;
+  isFirst?: boolean;
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${mm}.${dd}.${yy}`;
+}
+
+export default function EventTile({ event, isFirst }: EventTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isInView, setIsInView] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
-
-  // IntersectionObserver: play video when in view
-  useEffect(() => {
-    const el = tileRef.current;
-    if (!el) return;
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    if (!section || !video) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(entry.isIntersecting);
-        if (videoRef.current) {
-          if (entry.isIntersecting) {
-            videoRef.current.play().catch(() => {});
-          } else {
-            videoRef.current.pause();
-          }
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
         }
       },
       { threshold: 0.3 }
     );
 
-    observer.observe(el);
+    observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
-  // Aspect ratio class
-  const aspectClass =
-    event.width === "wide" ? styles.aspectWide : styles.aspectTall;
-
   return (
-    <div
-      ref={tileRef}
-      className={`${styles.tile} ${isInView && !reducedMotion ? styles.tileRevealed : ""}`}
-      data-video-tile
-      onClick={() => onClick(event)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter") onClick(event); }}
-      aria-label={`View ${event.name}`}
+    <section
+      ref={sectionRef}
+      className="relative h-screen w-full snap-start overflow-hidden"
     >
-      <div className={`${styles.mediaWrap} ${aspectClass}`}>
-        {/* Video */}
-        <video
-          ref={videoRef}
-          src={event.videoSrc}
-          muted
-          playsInline
-          loop
-          preload="metadata"
-          className={`${styles.video} ${isInView ? styles.videoVisible : ""}`}
-        />
+      {/* Video */}
+      {event.cover_video && (
+        <>
+          <video
+            ref={videoRef}
+            src={event.cover_video}
+            muted
+            playsInline
+            loop
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Bottom gradient for text readability */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 65%, rgba(5,5,5,0.85) 100%)",
+            }}
+          />
+        </>
+      )}
 
-        {/* Red corner mark */}
-        <div className={styles.cornerMark} aria-hidden="true" />
+      {/* Content — bottom-left */}
+      <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16 max-w-[600px]">
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
+          {formatDate(event.date)}
+        </span>
+        <h2
+          className="font-display italic text-ink mt-3 leading-none"
+          style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+        >
+          {event.name}
+        </h2>
+        {event.blurb && (
+          <p className="font-serif italic text-ink-dim text-lg mt-4 max-w-[480px] leading-relaxed">
+            {event.blurb}
+          </p>
+        )}
+        <div className="mt-6">
+          {event.is_upcoming && event.partiful_url ? (
+            <a
+              href={event.partiful_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5"
+            >
+              rsvp on partiful ↗
+            </a>
+          ) : (
+            <Link
+              href={`/events#${event.id}`}
+              className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5"
+            >
+              view recap ↗
+            </Link>
+          )}
+        </div>
       </div>
 
-      {/* Metadata strip */}
-      <div className={styles.metaStrip}>
-        <h3 className={styles.name}>{event.name}</h3>
-        <p className={styles.venue}>
-          {event.venue} · {event.date}
-        </p>
-      </div>
-    </div>
+      {/* Produced by SLOWHRS — bottom-right */}
+      {event.produced_by_slowhrs && (
+        <span className="absolute bottom-8 right-6 md:right-12 z-10 font-mono text-[9px] tracking-[0.25em] text-ink-faint uppercase">
+          filmed by slowhrs
+        </span>
+      )}
+
+      {/* Listkeeper — first tile only */}
+      {isFirst && (
+        <div className="absolute bottom-0 right-0 z-10 w-[140px] overflow-hidden translate-x-[20px]">
+          <Image
+            src="/assets/characters/TheListkeeper.png"
+            alt=""
+            width={140}
+            height={280}
+            className="w-full h-auto pixel"
+            aria-hidden="true"
+          />
+          <Image
+            src="/assets/widgets/Onthelist.png"
+            alt=""
+            width={28}
+            height={28}
+            className="pixel mx-auto mt-2"
+            style={{ width: "28px", height: "auto" }}
+            aria-hidden="true"
+          />
+        </div>
+      )}
+    </section>
   );
 }
