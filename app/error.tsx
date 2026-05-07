@@ -16,7 +16,7 @@ export default function Error({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-      <h1 className="font-display italic text-6xl md:text-8xl text-red mb-6">Error</h1>
+      <h1 className="font-display italic text-2xl md:text-3xl text-red mb-6">Error</h1>
       <p className="font-mono text-xs tracking-[0.2em] text-ink-dim uppercase mb-12">
         something went wrong in the transmission
       </p>

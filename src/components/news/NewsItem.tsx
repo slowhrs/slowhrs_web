@@ -33,7 +33,8 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
             <h3
               className="font-display italic leading-tight"
               style={{
-                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
+                fontWeight: 300,
                 color: "var(--color-ink-warm)",
               }}
             >
@@ -122,7 +123,8 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
           <h3
             className="font-display italic leading-tight"
             style={{
-              fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+              fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
+              fontWeight: 300,
               color: "var(--color-ink-warm)",
               lineHeight: 1.15,
             }}

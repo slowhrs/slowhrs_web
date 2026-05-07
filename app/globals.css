@@ -119,7 +119,5 @@ body {
     opacity: 0.03 !important;
   }
   
-  .cursor-dot, .cursor-ring, .cursor-label {
-    display: none !important;
-  }
+
 }

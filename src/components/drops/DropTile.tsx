@@ -115,7 +115,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
         </span>
         <h3
           className="font-display italic text-ink-warm mt-4 leading-tight"
-          style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+          style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
         >
           {drop.name}
         </h3>

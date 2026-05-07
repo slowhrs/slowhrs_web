@@ -179,7 +179,7 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
         className="relative z-10 opacity-0 text-center"
         aria-hidden="true"
       >
-        <h1 className="font-display italic text-ink leading-none text-2xl md:text-4xl tracking-wide">
+        <h1 className="font-display italic text-ink leading-none text-xl md:text-2xl tracking-wide font-light">
           a private creative society.
         </h1>
       </div>

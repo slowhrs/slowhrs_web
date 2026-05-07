@@ -111,7 +111,7 @@ export default function PersistentNav() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`font-display italic text-2xl transition-colors ${
+                className={`font-display italic text-lg transition-colors ${
                   pathname === link.href
                     ? "text-red"
                     : "text-ink hover:text-red"

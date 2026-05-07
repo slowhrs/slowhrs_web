@@ -39,7 +39,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
         <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16">
           <h1
             className="font-display italic text-ink leading-tight tracking-wide"
-            style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 300 }}
+            style={{ fontSize: "clamp(1.2rem, 2vw, 1.8rem)", fontWeight: 300 }}
           >
             a private creative society.
           </h1>
@@ -76,7 +76,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
         <div className="max-w-[1200px] mx-auto">
           <h2
             className="font-display italic text-ink mb-12"
-            style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
+            style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)", fontWeight: 300 }}
           >
             next up.
           </h2>

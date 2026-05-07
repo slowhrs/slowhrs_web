@@ -2,7 +2,6 @@
 
 import { useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 export interface EventData {
   id: string;
@@ -29,7 +28,7 @@ function formatDate(dateStr: string): string {
   return `${mm}.${dd}.${yy}`;
 }
 
-export default function EventTile({ event, isFirst }: EventTileProps) {
+export default function EventTile({ event }: EventTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -88,7 +87,7 @@ export default function EventTile({ event, isFirst }: EventTileProps) {
         </span>
         <h2
           className="font-display italic text-ink mt-3 leading-none"
-          style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 300 }}
+          style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
         >
           {event.name}
         </h2>
@@ -125,28 +124,7 @@ export default function EventTile({ event, isFirst }: EventTileProps) {
         </span>
       )}
 
-      {/* Listkeeper — first tile only */}
-      {isFirst && (
-        <div className="absolute bottom-0 right-0 z-10 w-[140px] overflow-hidden translate-x-[20px]">
-          <Image
-            src="/assets/characters/TheListkeeper.png"
-            alt=""
-            width={140}
-            height={280}
-            className="w-full h-auto pixel"
-            aria-hidden="true"
-          />
-          <Image
-            src="/assets/widgets/Onthelist.png"
-            alt=""
-            width={28}
-            height={28}
-            className="pixel mx-auto mt-2"
-            style={{ width: "28px", height: "auto" }}
-            aria-hidden="true"
-          />
-        </div>
-      )}
+
     </section>
   );
 }
