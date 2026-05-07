@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,9 +10,9 @@ export default function PersistentNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const menuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Hide on cinema entry
-  const isHome = pathname === "/";
   const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
@@ -23,18 +23,42 @@ export default function PersistentNav() {
 
   useEffect(() => {
     setIsOpen(false);
+    setMenuVisible(false);
   }, [pathname]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
+  // Handle menu open/close with animation
+  const openMenu = () => {
+    setIsOpen(true);
+    // Slight delay for paint, then reveal
+    if (menuTimeout.current) clearTimeout(menuTimeout.current);
+    menuTimeout.current = setTimeout(() => setMenuVisible(true), 30);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeMenu = () => {
+    setMenuVisible(false);
+    // Wait for transition to finish, then unmount
+    if (menuTimeout.current) clearTimeout(menuTimeout.current);
+    menuTimeout.current = setTimeout(() => {
+      setIsOpen(false);
       document.body.style.overflow = "";
+    }, 350);
+  };
+
+  const toggleMenu = () => {
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
     }
+  };
+
+  useEffect(() => {
     return () => {
       document.body.style.overflow = "";
+      if (menuTimeout.current) clearTimeout(menuTimeout.current);
     };
-  }, [isOpen]);
+  }, []);
 
   if (isAdmin) return null;
 
@@ -67,9 +91,9 @@ export default function PersistentNav() {
             <Link
               key={link.href}
               href={link.href}
-              className={`font-mono text-[10px] tracking-[0.25em] uppercase transition-colors ${
+              className={`relative font-mono text-[10px] tracking-[0.25em] uppercase transition-colors ${
                 pathname === link.href
-                  ? "text-red"
+                  ? "text-red nav-active-dot"
                   : "text-ink-dim hover:text-red"
               }`}
             >
@@ -81,7 +105,7 @@ export default function PersistentNav() {
         {/* Mobile hamburger */}
         <button
           className="md:hidden flex flex-col gap-1 w-6 h-6 justify-center items-center"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggleMenu}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           <span
@@ -102,20 +126,39 @@ export default function PersistentNav() {
         </button>
       </div>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay — slide-down transition */}
       {isOpen && (
-        <div className="fixed inset-0 top-[52px] bg-bg/98 backdrop-blur-lg z-[7999] md:hidden">
+        <div
+          className="fixed inset-0 top-[52px] bg-bg/98 backdrop-blur-lg z-[7999] md:hidden"
+          style={{
+            opacity: menuVisible ? 1 : 0,
+            transform: menuVisible ? "translateY(0)" : "translateY(-12px)",
+            transition:
+              "opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
           <div className="flex flex-col items-center justify-center h-full gap-8">
-            {NAV_LINKS.map((link) => (
+            {NAV_LINKS.map((link, i) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={closeMenu}
                 className={`font-display italic text-lg transition-colors ${
                   pathname === link.href
                     ? "text-red"
                     : "text-ink hover:text-red"
                 }`}
+                style={{
+                  opacity: menuVisible ? 1 : 0,
+                  transform: menuVisible
+                    ? "translateY(0)"
+                    : "translateY(8px)",
+                  transition: `opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${
+                    i * 50
+                  }ms, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${
+                    i * 50
+                  }ms`,
+                }}
               >
                 {link.label}
               </Link>

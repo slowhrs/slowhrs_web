@@ -1,13 +1,48 @@
+"use client";
+
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <footer
-      className="relative py-24 px-6 md:px-12 border-t"
+      ref={footerRef}
+      className={`relative py-24 px-6 md:px-12 border-t closing-line ${
+        isVisible ? "is-visible" : ""
+      }`}
       style={{ borderColor: "var(--color-border)" }}
     >
-      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+      <div
+        className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? "translateY(0)" : "translateY(16px)",
+          transition:
+            "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s",
+        }}
+      >
         {/* Left */}
         <div>
           <Link

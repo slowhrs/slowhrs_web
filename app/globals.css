@@ -85,7 +85,7 @@ body {
 
 
 /* =========================================================
-   ANIMATIONS
+   ANIMATIONS — base
    ========================================================= */
 @keyframes blink {
   0%, 49%  { opacity: 1; }
@@ -104,6 +104,189 @@ body {
 }
 
 /* =========================================================
+   v2.2 — MOTION TOKENS
+   ========================================================= */
+
+/* Ambient red room glow — drifts side-to-side */
+@keyframes ambientDrift {
+  0%, 100% { transform: translateX(-8%); }
+  50%      { transform: translateX(8%); }
+}
+
+/* Section reveal — fade up */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* CTA breathing glow */
+@keyframes ctaBreathe {
+  0%, 100% { box-shadow: 0 0 0 rgba(230,0,22,0); }
+  50%      { box-shadow: 0 0 20px rgba(230,0,22,0.25); }
+}
+
+/* CTA breathing glow — rose variant */
+@keyframes ctaBreatheRose {
+  0%, 100% { box-shadow: 0 0 0 rgba(244,197,192,0); }
+  50%      { box-shadow: 0 0 16px rgba(244,197,192,0.2); }
+}
+
+/* Light sweep — thin gradient pass */
+@keyframes lightSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* Footer closing line */
+@keyframes closingLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ── Scroll reveal ── */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.motion-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Ambient glow orb ── */
+.ambient-glow {
+  position: absolute;
+  width: 60vw;
+  height: 60vh;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(230,0,22,0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: ambientDrift 20s ease-in-out infinite;
+  will-change: transform;
+}
+.ambient-glow--rose {
+  background: radial-gradient(ellipse, rgba(244,197,192,0.05), transparent 70%);
+}
+
+/* ── Hover lift — cards ── */
+.hover-lift {
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* ── CTA breathe ── */
+.cta-breathe {
+  animation: ctaBreathe 8s ease-in-out infinite;
+}
+
+/* ── Light sweep on hover ── */
+.light-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.light-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255,255,255,0.04) 45%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 55%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  pointer-events: none;
+  z-index: 5;
+}
+.light-sweep:hover::after {
+  animation: lightSweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Active nav dot ── */
+.nav-active-dot::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-red);
+  box-shadow: 0 0 8px rgba(230,0,22,0.6);
+}
+
+/* ── Closing line ── */
+.closing-line {
+  position: relative;
+}
+.closing-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-red), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0.5;
+}
+.closing-line.is-visible::before {
+  animation: closingLine 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Form focus glow ── */
+.form-glow:focus {
+  border-bottom-color: var(--color-red) !important;
+  box-shadow: 0 1px 0 0 var(--color-red);
+  outline: none;
+}
+.form-glow-rose:focus {
+  border-bottom-color: var(--color-rose) !important;
+  box-shadow: 0 1px 0 0 var(--color-rose);
+  outline: none;
+}
+
+/* ── News row hover ── */
+.news-row-hover {
+  transition: border-left-color 0.2s ease-out, background-color 0.2s ease-out;
+  border-left: 2px solid transparent;
+  padding-left: 12px;
+  margin-left: -14px;
+}
+.news-row-hover:hover {
+  border-left-color: var(--color-red);
+  background-color: rgba(230,0,22,0.02);
+}
+
+/* =========================================================
+   MOBILE — lighter motion
+   ========================================================= */
+@media (max-width: 768px) {
+  .motion-reveal {
+    transform: translateY(12px);
+  }
+  .ambient-glow {
+    width: 40vw;
+    height: 40vh;
+    opacity: 0.5;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+}
+
+/* =========================================================
    REDUCED MOTION
    ========================================================= */
 @media (prefers-reduced-motion: reduce) {
@@ -118,6 +301,28 @@ body {
     animation: none !important;
     opacity: 0.03 !important;
   }
-  
 
+  .ambient-glow {
+    animation: none !important;
+    display: none !important;
+  }
+
+  .motion-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .cta-breathe {
+    animation: none !important;
+  }
+
+  .light-sweep::after {
+    display: none !important;
+  }
+
+  .closing-line::before {
+    animation: none !important;
+    transform: scaleX(1) !important;
+  }
 }

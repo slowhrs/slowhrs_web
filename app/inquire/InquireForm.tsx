@@ -6,6 +6,7 @@ import Image from "next/image";
 import { INQUIRY_CATEGORIES } from "@/lib/constants";
 import { submitInquiry } from "@/app/actions/inquiry";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function InquireForm() {
   const searchParams = useSearchParams();
@@ -62,42 +63,62 @@ export default function InquireForm() {
 
   return (
     <main className="min-h-screen bg-bg pt-[52px]">
+      {/* Ambient glow */}
+      <div
+        className="ambient-glow"
+        style={{ top: "10%", right: "-20%", opacity: 0.5 }}
+      />
+
       <div className="max-w-[640px] mx-auto px-6 pt-20 md:pt-28 pb-24 relative">
         {/* Hero */}
-        <h1
-          className="font-display italic text-ink"
-          style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
-        >
-          inquire.
-        </h1>
-        <p className="font-serif italic text-ink-dim mt-4 max-w-[600px] leading-relaxed text-lg">
-          event footage, production work, collabs,
-          <br />
-          casting, vendor slots — start here.
-        </p>
+        <ScrollReveal>
+          <h1
+            className="font-display italic text-ink"
+            style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
+          >
+            inquire.
+          </h1>
+        </ScrollReveal>
+        <ScrollReveal delay={150}>
+          <p className="font-serif italic text-ink-dim mt-4 max-w-[600px] leading-relaxed text-lg">
+            event footage, production work, collabs,
+            <br />
+            casting, vendor slots — start here.
+          </p>
+        </ScrollReveal>
 
         {/* Category grid */}
-        <div className="grid grid-cols-2 gap-3 mt-12">
-          {INQUIRY_CATEGORIES.map((cat) => (
-            <button
-              key={cat.value}
-              type="button"
-              onClick={() => setCategory(cat.value)}
-              className={`py-3 px-4 border text-left font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-200 ${
-                category === cat.value
-                  ? "border-red bg-red/10 text-red"
-                  : "border-border-2 text-ink-dim hover:border-red hover:text-red"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+        <ScrollReveal delay={250}>
+          <div className="grid grid-cols-2 gap-3 mt-12">
+            {INQUIRY_CATEGORIES.map((cat) => (
+              <button
+                key={cat.value}
+                type="button"
+                onClick={() => setCategory(cat.value)}
+                className={`py-3 px-4 border text-left font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-200 ${
+                  category === cat.value
+                    ? "border-red bg-red/10 text-red"
+                    : "border-border-2 text-ink-dim hover:border-red hover:text-red"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </ScrollReveal>
 
-        {/* Question text */}
-        <p className="font-serif italic text-ink-dim text-lg mt-10">
-          {currentCategory?.question}
-        </p>
+        {/* Question text — crossfade on category change */}
+        <div className="relative mt-10 min-h-[2rem]">
+          <p
+            key={category}
+            className="font-serif italic text-ink-dim text-lg"
+            style={{
+              animation: "fadeIn 0.3s ease-out forwards",
+            }}
+          >
+            {currentCategory?.question}
+          </p>
+        </div>
 
         {/* Form */}
         {submitted ? (
@@ -120,54 +141,44 @@ export default function InquireForm() {
           >
             <input type="hidden" name="category" value={category} />
 
-            <div className="flex flex-col gap-1">
-              <input
-                name="name"
-                type="text"
-                placeholder="your name"
-                required
-                className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none transition-colors"
-              />
-            </div>
+            <input
+              name="name"
+              type="text"
+              placeholder="your name"
+              required
+              className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint form-glow transition-colors"
+            />
 
-            <div className="flex flex-col gap-1">
-              <input
-                name="instagram"
-                type="text"
-                placeholder="@instagram"
-                className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none transition-colors"
-              />
-            </div>
+            <input
+              name="instagram"
+              type="text"
+              placeholder="@instagram"
+              className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint form-glow transition-colors"
+            />
 
-            <div className="flex flex-col gap-1">
-              <input
-                name="email"
-                type="email"
-                placeholder="email or phone"
-                required
-                className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none transition-colors"
-              />
-            </div>
+            <input
+              name="email"
+              type="email"
+              placeholder="email or phone"
+              required
+              className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint form-glow transition-colors"
+            />
 
-            <div className="flex flex-col gap-1">
-              <input
-                name="dateOrProject"
-                type="text"
-                placeholder="date or project"
-                className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none transition-colors"
-              />
-            </div>
+            <input
+              name="dateOrProject"
+              type="text"
+              placeholder="date or project"
+              className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint form-glow transition-colors"
+            />
 
-            <div className="flex flex-col gap-1">
-              <textarea
-                ref={detailsRef}
-                name="details"
-                placeholder={currentCategory?.question || "tell us more"}
-                required
-                rows={4}
-                className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none transition-colors resize-none"
-              />
-            </div>
+            <textarea
+              ref={detailsRef}
+              name="details"
+              placeholder={currentCategory?.question || "tell us more"}
+              required
+              rows={4}
+              className="bg-transparent border-b border-border-2 py-3 font-mono text-[13px] text-ink placeholder:text-ink-faint form-glow transition-colors resize-none"
+            />
 
             {error && (
               <p className="font-mono text-[11px] text-red">{error}</p>
@@ -176,7 +187,7 @@ export default function InquireForm() {
             <button
               type="submit"
               disabled={loading}
-              className="self-start font-mono text-[11px] tracking-[0.25em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5 mt-4 disabled:opacity-40"
+              className="self-start font-mono text-[11px] tracking-[0.25em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5 mt-4 disabled:opacity-40 cta-breathe"
             >
               {loading ? "sending..." : "send →"}
             </button>

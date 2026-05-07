@@ -22,7 +22,7 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
 
   if (item.locked) {
     return (
-      <article className="relative py-10 border-b" style={{ borderColor: "var(--color-border-warm)" }}>
+      <article className="relative py-10 border-b news-row-hover" style={{ borderColor: "var(--color-border-warm)" }}>
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
           {formatDate(item.date)}
         </span>
@@ -93,14 +93,14 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
   const hasVideo = item.video != null;
 
   return (
-    <article className="py-10 border-b" style={{ borderColor: "var(--color-border-warm)" }}>
+    <article className="py-10 border-b news-row-hover" style={{ borderColor: "var(--color-border-warm)" }}>
       <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
         {formatDate(item.date)}
       </span>
 
       <div className={`mt-4 ${hasVideo ? "grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6" : ""}`}>
         {hasVideo && (
-          <div className="relative aspect-video overflow-hidden rounded-sm">
+          <div className="relative aspect-video overflow-hidden rounded-sm hover-lift">
             <video
               ref={videoRef}
               src={item.video!}
@@ -108,7 +108,7 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
               playsInline
               loop
               preload="metadata"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-[filter] duration-300 brightness-[0.85] hover:brightness-100"
               onMouseEnter={(e) => (e.target as HTMLVideoElement).play().catch(() => {})}
               onMouseLeave={(e) => {
                 const v = e.target as HTMLVideoElement;

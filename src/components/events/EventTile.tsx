@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 
 export interface EventData {
@@ -31,6 +31,7 @@ function formatDate(dateStr: string): string {
 export default function EventTile({ event }: EventTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -41,8 +42,11 @@ export default function EventTile({ event }: EventTileProps) {
       ([entry]) => {
         if (entry.isIntersecting) {
           video.play().catch(() => {});
+          // Trigger content reveal after a brief moment
+          setTimeout(() => setIsVisible(true), 200);
         } else {
           video.pause();
+          setIsVisible(false);
         }
       },
       { threshold: 0.3 }
@@ -80,8 +84,16 @@ export default function EventTile({ event }: EventTileProps) {
         </>
       )}
 
-      {/* Content — bottom-left */}
-      <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16 max-w-[600px]">
+      {/* Content — bottom-left, with reveal motion */}
+      <div
+        className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16 max-w-[600px]"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? "translateY(0)" : "translateY(20px)",
+          transition:
+            "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
           {formatDate(event.date)}
         </span>
@@ -117,14 +129,28 @@ export default function EventTile({ event }: EventTileProps) {
         </div>
       </div>
 
-      {/* Produced by SLOWHRS — bottom-right */}
+      {/* Produced by SLOWHRS — bottom-right, fade with content */}
       {event.produced_by_slowhrs && (
-        <span className="absolute bottom-8 right-6 md:right-12 z-10 font-mono text-[9px] tracking-[0.25em] text-ink-faint uppercase">
+        <span
+          className="absolute bottom-8 right-6 md:right-12 z-10 font-mono text-[9px] tracking-[0.25em] text-ink-faint uppercase"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s",
+          }}
+        >
           filmed by slowhrs
         </span>
       )}
 
-
+      {/* Ambient bottom glow — appears when tile is in view */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[2px] z-20"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(230,0,22,0.4), transparent)",
+          opacity: isVisible ? 1 : 0,
+          transition: "opacity 1.5s ease-in-out",
+        }}
+      />
     </section>
   );
 }

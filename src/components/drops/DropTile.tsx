@@ -31,11 +31,6 @@ export default function DropTile({ drop, index }: DropTileProps) {
     }
   };
 
-  const statusLabel =
-    isGone
-      ? "sold · archive only"
-      : "available · by application ↗";
-
   return (
     <div
       className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center py-16 md:py-24 ${
@@ -45,7 +40,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
     >
       {/* Image / Video */}
       <div
-        className="relative aspect-[4/5] overflow-hidden"
+        className="relative aspect-[4/5] overflow-hidden hover-lift light-sweep"
         style={isReversed ? { direction: "ltr" } : undefined}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
