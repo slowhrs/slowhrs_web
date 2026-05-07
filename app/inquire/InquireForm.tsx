@@ -66,7 +66,7 @@ export default function InquireForm() {
         {/* Hero */}
         <h1
           className="font-display italic text-ink"
-          style={{ fontSize: "clamp(3rem, 8vw, 5rem)" }}
+          style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
         >
           inquire.
         </h1>
@@ -104,7 +104,7 @@ export default function InquireForm() {
           <div className="mt-12 text-center py-16">
             <h2
               className="font-display italic text-ink"
-              style={{ fontSize: "4rem" }}
+              style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
             >
               sent.
             </h2>

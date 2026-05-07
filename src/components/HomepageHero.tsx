@@ -38,8 +38,8 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
         {/* Overlay content — bottom-left */}
         <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16">
           <h1
-            className="font-display italic text-ink leading-tight"
-            style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400 }}
+            className="font-display italic text-ink leading-tight tracking-wide"
+            style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 300 }}
           >
             a private creative society.
           </h1>
@@ -76,7 +76,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
         <div className="max-w-[1200px] mx-auto">
           <h2
             className="font-display italic text-ink mb-12"
-            style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)" }}
+            style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
           >
             next up.
           </h2>
@@ -88,7 +88,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
                 name: "VOGUE SAFARI: CONTENT PRE GAME",
                 date: "05.08.25",
                 location: "Los Angeles",
-                video: "/assets/events/block_party.mp4",
+                video: "/assets/events/destroy_lonely.mp4",
               },
               {
                 name: "Block Party",
@@ -100,7 +100,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
                 name: "Runway · Spring Show",
                 date: "04.25.25",
                 location: "Los Angeles",
-                video: "/assets/videos/hero-recap.mp4",
+                video: "/assets/events/newyears.mp4",
               },
             ].map((event) => (
               <div
@@ -133,7 +133,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
                   </span>
                   <h3
                     className="font-display italic text-ink mt-2 leading-tight"
-                    style={{ fontSize: "clamp(1.2rem, 2vw, 1.6rem)" }}
+                    style={{ fontSize: "clamp(1rem, 1.5vw, 1.4rem)", fontWeight: 300 }}
                   >
                     {event.name}
                   </h3>

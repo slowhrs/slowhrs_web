@@ -7,7 +7,6 @@ import {
 import "./globals.css";
 import GrainOverlay from "@/components/GrainOverlay";
 import PersistentNav from "@/components/PersistentNav";
-import CustomCursor from "@/components/CustomCursor";
 import LenisProvider from "@/components/LenisProvider";
 import { SITE_META } from "@/lib/constants";
 
@@ -85,7 +84,6 @@ export default function RootLayout({
           <GrainOverlay />
           <PersistentNav />
           {children}
-          <CustomCursor />
         </LenisProvider>
       </body>
     </html>

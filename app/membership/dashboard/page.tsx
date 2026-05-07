@@ -58,7 +58,7 @@ export default async function DashboardPage() {
         {/* Welcome */}
         <h1
           className="font-display italic text-ink"
-          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+          style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
         >
           welcome back, {firstName}.
         </h1>

@@ -173,17 +173,16 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
         className="absolute inset-0 w-full h-full object-cover opacity-0"
       />
 
-      {/* Logo */}
-      <img
+      {/* Text instead of Logo */}
+      <div
         ref={logoRef}
-        src="/assets/logos/logo_main.png"
-        alt=""
-        className="relative z-10 w-[200px] md:w-[280px] opacity-0"
-        style={{
-          filter: "brightness(1) drop-shadow(0 0 40px rgba(230,0,22,0.5))",
-        }}
+        className="relative z-10 opacity-0 text-center"
         aria-hidden="true"
-      />
+      >
+        <h1 className="font-display italic text-ink leading-none text-2xl md:text-4xl tracking-wide">
+          a private creative society.
+        </h1>
+      </div>
 
       {/* Bottom-left mono */}
       <span

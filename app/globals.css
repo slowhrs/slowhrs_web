@@ -83,68 +83,6 @@ body {
   100% { transform: translate(0,0); }
 }
 
-/* =========================================================
-   CUSTOM CURSOR — dot + ring
-   ========================================================= */
-@media (hover: hover) and (pointer: fine) {
-  /* Native cursor is only hidden when CustomCursor JS adds .custom-cursor-active to html */
-  html.custom-cursor-active,
-  html.custom-cursor-active body,
-  html.custom-cursor-active a,
-  html.custom-cursor-active button,
-  html.custom-cursor-active input,
-  html.custom-cursor-active select,
-  html.custom-cursor-active textarea,
-  html.custom-cursor-active [role="button"] { cursor: none; }
-
-  .cursor-dot {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-ink);
-    transform: translate(-50%, -50%);
-    transition: background-color 0.15s ease;
-  }
-
-  .cursor-ring {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid rgba(237,237,235,0.4);
-    transform: translate(-50%, -50%);
-    transition: width 0.2s ease, height 0.2s ease, border-color 0.15s ease;
-  }
-
-  .cursor-dot.is-hover { background: var(--color-red); }
-
-  .cursor-ring.is-hover {
-    width: 36px;
-    height: 36px;
-    border-color: var(--color-red);
-  }
-
-  .cursor-label {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    transform: translate(16px, -50%);
-    opacity: 0;
-    transition: opacity 0.15s ease;
-  }
-
-  .cursor-label.is-visible { opacity: 1; }
-}
 
 /* =========================================================
    ANIMATIONS

@@ -83,7 +83,7 @@ export default function MembershipPage() {
         {/* Hero */}
         <h1
           className="font-display italic text-ink"
-          style={{ fontSize: "clamp(3rem, 8vw, 5rem)" }}
+          style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
         >
           the list.
         </h1>
@@ -147,7 +147,7 @@ export default function MembershipPage() {
             <div className="text-center py-16">
               <h2
                 className="font-display italic text-ink"
-                style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+                style={{ fontSize: "clamp(1rem, 1.5vw, 1.4rem)", fontWeight: 300 }}
               >
                 you&apos;re on the line.
               </h2>

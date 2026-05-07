@@ -15,7 +15,8 @@ export default function DropsPage() {
         <h1
           className="font-display italic"
           style={{
-            fontSize: "clamp(3rem, 8vw, 5rem)",
+            fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)",
+            fontWeight: 300,
             color: "var(--color-ink-warm)",
           }}
         >
@@ -24,7 +25,7 @@ export default function DropsPage() {
         <p
           className="font-serif italic mt-4 max-w-[480px] leading-relaxed"
           style={{
-            fontSize: "clamp(1rem, 1.8vw, 1.3rem)",
+            fontSize: "clamp(0.9rem, 1.5vw, 1.1rem)",
             color: "var(--color-ink-warm-dim)",
           }}
         >

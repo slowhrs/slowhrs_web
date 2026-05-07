@@ -88,7 +88,7 @@ export default function EventTile({ event, isFirst }: EventTileProps) {
         </span>
         <h2
           className="font-display italic text-ink mt-3 leading-none"
-          style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+          style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 300 }}
         >
           {event.name}
         </h2>
