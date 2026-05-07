@@ -14,14 +14,14 @@ import { SITE_META } from "@/lib/constants";
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500"],
   style: ["normal", "italic"],
 });
 
 const playfair = Playfair_Display({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["800"],
+  weight: ["400", "500"],
   style: ["italic"],
 });
 

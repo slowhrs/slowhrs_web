@@ -37,23 +37,12 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
 
         {/* Overlay content — bottom-left */}
         <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16">
-          <h1 className="leading-none mb-2">
-            <span className="sr-only">slowhrs</span>
-            <Image 
-              src="/assets/logos/logo_main.png" 
-              alt="SLOWHRS" 
-              width={600} 
-              height={150} 
-              className="w-[60vw] max-w-[400px] min-w-[200px] h-auto object-contain drop-shadow-[0_0_30px_rgba(230,0,22,0.3)]" 
-              priority
-            />
-          </h1>
-          <p
-            className="font-serif italic text-ink mt-3"
-            style={{ fontSize: "clamp(1.1rem, 2.2vw, 1.6rem)" }}
+          <h1
+            className="font-display italic text-ink leading-tight"
+            style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400 }}
           >
             a private creative society.
-          </p>
+          </h1>
           <p
             className="font-mono uppercase text-red mt-5"
             style={{
