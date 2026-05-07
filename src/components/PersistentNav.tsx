@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { NAV_LINKS } from "@/lib/constants";
 
@@ -41,18 +42,23 @@ export default function PersistentNav() {
     <nav
       className={`fixed top-0 left-0 right-0 z-[8000] transition-all duration-300 ${
         isScrolled
-          ? "bg-bg/90 backdrop-blur-md border-b border-border"
-          : "bg-transparent"
+          ? "bg-bg/90 backdrop-blur-md border-b border-border py-4"
+          : "bg-transparent py-6"
       }`}
-      style={{ height: "52px" }}
     >
-      <div className="flex items-center justify-between h-full px-6 md:px-12 max-w-[1600px] mx-auto">
+      <div className="flex items-center justify-between px-6 md:px-12 max-w-[1600px] mx-auto">
         {/* Logo */}
         <Link
           href="/"
-          className="font-display italic text-ink text-lg hover:text-red transition-colors"
+          className="transition-opacity hover:opacity-70"
         >
-          slowhrs
+          <Image 
+            src="/assets/logos/logo_main.png" 
+            alt="SLOWHRS" 
+            width={120} 
+            height={30} 
+            className="h-5 w-auto object-contain drop-shadow-[0_0_10px_rgba(230,0,22,0.2)]" 
+          />
         </Link>
 
         {/* Desktop links */}

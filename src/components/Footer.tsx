@@ -1,21 +1,28 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
     <footer
-      className="relative py-16 px-6 md:px-12 border-t"
+      className="relative py-24 px-6 md:px-12 border-t"
       style={{ borderColor: "var(--color-border)" }}
     >
-      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
+      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         {/* Left */}
         <div>
           <Link
             href="/"
-            className="font-display italic text-ink text-xl hover:text-red transition-colors"
+            className="block transition-opacity hover:opacity-70 mb-6"
           >
-            slowhrs
+            <Image 
+              src="/assets/logos/logo_main.png" 
+              alt="SLOWHRS" 
+              width={200} 
+              height={50} 
+              className="h-8 w-auto object-contain drop-shadow-[0_0_15px_rgba(230,0,22,0.3)]" 
+            />
           </Link>
-          <p className="font-mono text-[9px] tracking-[0.2em] text-ink-faint uppercase mt-4">
+          <p className="font-mono text-[9px] tracking-[0.2em] text-ink-faint uppercase">
             women-led creative society · los angeles
           </p>
         </div>
