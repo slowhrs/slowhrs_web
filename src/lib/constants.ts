@@ -1,4 +1,4 @@
-// SLOWHRS v2.0 — shared constants
+// SLOWHRS v2.1 — shared constants
 
 export const NAV_LINKS = [
   { label: 'events', href: '/events' },
@@ -11,25 +11,27 @@ export const NAV_LINKS = [
 export const SITE_META = {
   name: 'SLOWHRS',
   tagline: 'Private Creative Society',
-  description: 'a private creative society in los angeles.',
+  description: 'a private creative society in los angeles. events, film, clothing.',
   url: 'https://slowhrs.com',
 } as const;
 
+// All available event/recap reels — random pick for cinema entry + hero
 export const ENTRY_VIDEOS = [
   '/assets/events/block_party.mp4',
   '/assets/events/destroy_lonely.mp4',
   '/assets/events/newyears.mp4',
   '/assets/drops/fast_life_reel.mp4',
+  '/assets/drops/christmas_drop.mp4',
   '/assets/videos/hero-recap.mp4',
 ] as const;
 
 export const INQUIRY_CATEGORIES = [
-  { value: 'event-recap', label: 'event recap', question: 'tell us about your event' },
-  { value: 'production', label: 'production', question: 'what\'s the project' },
-  { value: 'collab', label: 'collab', question: 'what you have in mind' },
-  { value: 'casting', label: 'casting', question: 'what you\'re auditioning for' },
-  { value: 'vendor', label: 'vendor', question: 'what you provide' },
-  { value: 'dj-performer', label: 'dj or performer', question: 'tell us about your set' },
-  { value: 'sponsor', label: 'sponsor', question: 'the brand and the budget' },
-  { value: 'other', label: 'something else', question: 'tell us what this is' },
+  { value: 'event-recap', label: 'event recap', question: 'which event. what you need from the footage.' },
+  { value: 'production', label: 'production', question: 'the project. the date. the budget range.' },
+  { value: 'collab', label: 'collab', question: 'what you make. what you want to make together.' },
+  { value: 'casting', label: 'casting', question: 'your look. your reel or book. no agencies.' },
+  { value: 'vendor', label: 'vendor / bar', question: 'what you bring to the room.' },
+  { value: 'dj-performer', label: 'dj / performer', question: 'your set. your sound. a link.' },
+  { value: 'sponsor', label: 'brand / sponsor', question: 'the brand. the activation. the number.' },
+  { value: 'other', label: 'other', question: 'say it plain.' },
 ] as const;

@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "SLOWHRS | admin — inquiries" };
 
 export default async function AdminInquiriesPage() {

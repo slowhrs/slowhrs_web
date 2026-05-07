@@ -14,9 +14,9 @@ export default function HomePage() {
       typeof window !== "undefined"
         ? localStorage.getItem("slowhrs_visited")
         : null;
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (visited || reduced) {
       setShowHome(true);
@@ -30,8 +30,8 @@ export default function HomePage() {
     setShowHome(true);
   };
 
+  // SSR / initial — black screen, no flash
   if (!showEntry && !showHome) {
-    // SSR / initial render — black screen
     return <main className="min-h-screen bg-black" />;
   }
 

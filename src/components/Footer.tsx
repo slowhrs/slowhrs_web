@@ -23,7 +23,7 @@ export default function Footer() {
             />
           </Link>
           <p className="font-mono text-[9px] tracking-[0.2em] text-ink-faint uppercase">
-            women-led creative society · los angeles
+            private creative society · los angeles
           </p>
         </div>
 

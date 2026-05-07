@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "SLOWHRS | drops",
-  description: "what we wear when we're not shooting.",
+  description: "clothing made in-house. limited runs. members get the window first.",
 };
 
 export default function DropsPage() {
@@ -29,9 +29,9 @@ export default function DropsPage() {
             color: "var(--color-ink-warm-dim)",
           }}
         >
-          what we wear when we&apos;re not shooting.
+          clothing made in-house. limited runs.
           <br />
-          limited. members get the early window.
+          members get the window first.
         </p>
       </div>
 

@@ -3,6 +3,7 @@ import { getTier } from "@/lib/membership";
 import { toggleContributor, toggleArchitect } from "@/app/actions/admin/contributor";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "SLOWHRS | admin — members" };
 
 export default async function AdminMembersPage() {

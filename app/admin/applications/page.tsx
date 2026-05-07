@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminApplicationsClient from "./client";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "SLOWHRS | admin — applications" };
 
 export default async function AdminApplicationsPage() {

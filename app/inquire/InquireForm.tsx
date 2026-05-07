@@ -71,9 +71,9 @@ export default function InquireForm() {
           inquire.
         </h1>
         <p className="font-serif italic text-ink-dim mt-4 max-w-[600px] leading-relaxed text-lg">
-          shot something for us, want us to shoot yours,
+          event footage, production work, collabs,
           <br />
-          have a project, want to throw something together — start here.
+          casting, vendor slots — start here.
         </p>
 
         {/* Category grid */}
@@ -109,7 +109,7 @@ export default function InquireForm() {
               sent.
             </h2>
             <p className="font-serif italic text-ink-dim mt-4 text-lg">
-              we&apos;ll reply within 48 hours.
+              48 hours or less.
             </p>
           </div>
         ) : (

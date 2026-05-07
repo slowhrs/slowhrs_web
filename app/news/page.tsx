@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "SLOWHRS | news",
-  description: "drops. recap reels. casting calls. the in-between of the parties.",
+  description: "drops, recaps, casting calls. what happened between the parties.",
 };
 
 export default function NewsPage() {
@@ -29,9 +29,9 @@ export default function NewsPage() {
             color: "var(--color-ink-warm-dim)",
           }}
         >
-          drops. recap reels. casting calls.
+          drops. recaps. casting calls.
           <br />
-          the in-between of the parties.
+          what happened between the parties.
         </p>
       </div>
 

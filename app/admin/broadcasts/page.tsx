@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminBroadcastClient from "./client";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "SLOWHRS | admin — broadcasts" };
 
 export default async function AdminBroadcastsPage() {

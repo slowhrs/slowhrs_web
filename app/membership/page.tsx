@@ -10,35 +10,35 @@ const TIERS = [
     num: "01",
     name: "the line",
     meter: "\u25AE\u25AF\u25AF\u25AF\u25AF",
-    desc: "you signed up. the door\u2019s not open yet.",
+    desc: "you applied. the door hasn\u2019t opened yet.",
     accent: false,
   },
   {
     num: "02",
     name: "the room",
     meter: "\u25AE\u25AE\u25AF\u25AF\u25AF",
-    desc: "you came once. you got seen.",
+    desc: "you showed up once. somebody noticed.",
     accent: false,
   },
   {
     num: "03",
     name: "the regular",
     meter: "\u25AE\u25AE\u25AE\u25AF\u25AF",
-    desc: "not your first time. not your last.",
+    desc: "you keep coming back. the room knows your face.",
     accent: false,
   },
   {
     num: "04",
     name: "the inner room",
     meter: "\u25AE\u25AE\u25AE\u25AE\u25AE",
-    desc: "you don\u2019t just show up. you contribute. shoots, hosts, vendors, performers, the +1\u2019s the team noticed.",
+    desc: "you don\u2019t just attend. you shoot, host, perform, provide. the team noticed your +1\u2019s too.",
     accent: true,
   },
   {
     num: "05",
     name: "the architects",
     meter: "\u25AE\u25AE\u25AE\u25AE\u25AE \u2605",
-    desc: "invite only. you helped build this.",
+    desc: "invitation only. you helped build this.",
     accent: false,
   },
 ];
@@ -88,11 +88,11 @@ export default function MembershipPage() {
           the list.
         </h1>
         <p className="font-serif italic text-ink-dim mt-6 max-w-[600px] leading-relaxed text-lg">
-          slowhrs is a private creative society in los angeles.
+          slowhrs runs a small room in los angeles.
           <br />
-          the room is small. the door opens manually.
+          the door opens by hand. not by algorithm.
           <br />
-          if you bring the energy, you get the access.
+          bring something real and the access follows.
         </p>
 
         {/* Tier ladder */}
@@ -128,17 +128,7 @@ export default function MembershipPage() {
             </div>
           ))}
 
-          {/* Listkeeper — bottom-right of tier ladder */}
-          <div className="absolute -bottom-4 -right-4 w-[140px] overflow-hidden opacity-80 hidden md:block">
-            <Image
-              src="/assets/characters/TheListkeeper.png"
-              alt=""
-              width={140}
-              height={280}
-              className="w-full h-auto pixel"
-              aria-hidden="true"
-            />
-          </div>
+
         </div>
 
         {/* Application form */}
@@ -253,7 +243,7 @@ export default function MembershipPage() {
                 disabled={loading}
                 className="self-start font-mono text-[11px] tracking-[0.25em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5 mt-4 disabled:opacity-40"
               >
-                {loading ? "sending..." : "apply for the line \u2197"}
+                {loading ? "sending..." : "get on the line \u2197"}
               </button>
             </form>
           )}

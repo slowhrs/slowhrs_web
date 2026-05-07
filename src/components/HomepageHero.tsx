@@ -2,8 +2,44 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ENTRY_VIDEOS } from "@/lib/constants";
+
+/* ── Event data for "next up" / "the room recently" ── */
+interface HeroEvent {
+  name: string;
+  date: string;
+  location: string;
+  video: string;
+  partifulUrl: string | null;
+  isUpcoming: boolean;
+}
+
+const EVENTS: HeroEvent[] = [
+  {
+    name: "VOGUE SAFARI: CONTENT PRE GAME",
+    date: "05.08.25",
+    location: "Los Angeles",
+    video: "/assets/events/destroy_lonely.mp4",
+    partifulUrl: "https://partiful.com/e/1G8p2pfAqQsOiV4y3aHO",
+    isUpcoming: true,
+  },
+  {
+    name: "Block Party",
+    date: "08.12.25",
+    location: "Mid-City, Los Angeles",
+    video: "/assets/events/block_party.mp4",
+    partifulUrl: null,
+    isUpcoming: true,
+  },
+  {
+    name: "Holiday Capsule Shoot",
+    date: "12.20.24",
+    location: "Hollywood, Los Angeles",
+    video: "/assets/drops/christmas_drop.mp4",
+    partifulUrl: null,
+    isUpcoming: false,
+  },
+];
 
 interface HomepageHeroProps {
   videoSrc?: string;
@@ -11,12 +47,18 @@ interface HomepageHeroProps {
 
 export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
   const video = videoSrc || ENTRY_VIDEOS[0];
+  const hasUpcoming = EVENTS.some((e) => e.isUpcoming);
+  const displayEvents = hasUpcoming
+    ? EVENTS.filter((e) => e.isUpcoming).slice(0, 3)
+    : EVENTS.slice(0, 3);
 
   return (
     <>
-      {/* Full-bleed hero */}
+      {/* ═══════════════════════════════════════════════
+          HERO — full-bleed video, 100vh
+          ═══════════════════════════════════════════════ */}
       <section className="relative h-screen w-full overflow-hidden">
-        {/* Video background */}
+        {/* Video background — full brightness */}
         <video
           src={video}
           muted
@@ -26,126 +68,169 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Bottom gradient mask */}
+        {/* Bottom 30% gradient mask */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, transparent 70%, rgba(5,5,5,0.85) 100%)",
+              "linear-gradient(to bottom, rgba(5,5,5,0) 70%, rgba(5,5,5,0.85) 100%)",
           }}
         />
 
-        {/* Overlay content — bottom-left */}
+        {/* ── Bottom-left content stack ── */}
         <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12 pb-12 md:pb-16">
+          {/* Wordmark */}
           <h1
-            className="font-display italic text-ink leading-tight tracking-wide"
-            style={{ fontSize: "clamp(1.2rem, 2vw, 1.8rem)", fontWeight: 300 }}
+            className="font-display italic text-ink leading-none"
+            style={{
+              fontSize: "clamp(4rem, 12vw, 8rem)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1,
+              fontWeight: 400,
+            }}
+          >
+            slowhrs
+          </h1>
+
+          {/* Tagline */}
+          <p
+            className="font-serif italic text-ink-dim"
+            style={{
+              fontSize: "clamp(1.1rem, 2.2vw, 1.6rem)",
+              marginTop: "0.75rem",
+            }}
           >
             a private creative society.
-          </h1>
+          </p>
+
+          {/* Location */}
           <p
-            className="font-mono uppercase text-red mt-5"
+            className="font-mono uppercase text-red"
             style={{
               fontSize: "10px",
               letterSpacing: "0.3em",
+              marginTop: "1.25rem",
             }}
           >
             los angeles.
           </p>
         </div>
 
-        {/* Bottom-right CTAs */}
+        {/* ── Bottom-right CTAs ── */}
         <div className="absolute bottom-12 right-6 md:right-12 z-10 flex flex-col items-end gap-3">
           <Link
             href="/membership"
-            className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-dim hover:text-red hover:border-b hover:border-red transition-colors pb-0.5"
+            className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-dim hover:text-red border-b border-transparent hover:border-red transition-colors pb-0.5"
           >
-            on the list ↗
+            get on the list ↗
           </Link>
           <Link
             href="/inquire?subject=event-recap"
-            className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-dim hover:text-red hover:border-b hover:border-red transition-colors pb-0.5"
+            className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-dim hover:text-red border-b border-transparent hover:border-red transition-colors pb-0.5"
           >
             we filmed your event ↗
           </Link>
         </div>
       </section>
 
-      {/* Next up section */}
-      <section className="relative bg-bg py-24 md:py-32 px-6 md:px-12">
+      {/* ═══════════════════════════════════════════════
+          NEXT UP / THE ROOM RECENTLY — ~80vh dark section
+          ═══════════════════════════════════════════════ */}
+      <section className="relative bg-bg min-h-[80vh] py-24 md:py-32 px-6 md:px-12">
         <div className="max-w-[1200px] mx-auto">
           <h2
-            className="font-display italic text-ink mb-12"
-            style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)", fontWeight: 300 }}
+            className="font-display italic text-ink mb-16"
+            style={{
+              fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
+              fontWeight: 300,
+            }}
           >
-            next up.
+            {hasUpcoming ? "next up." : "the room recently."}
           </h2>
 
-          {/* Placeholder — will be replaced with Supabase fetch */}
+          {/* Event tiles — 3-up grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "VOGUE SAFARI: CONTENT PRE GAME",
-                date: "05.08.25",
-                location: "Los Angeles",
-                video: "/assets/events/destroy_lonely.mp4",
-              },
-              {
-                name: "Block Party",
-                date: "08.12.25",
-                location: "Mid-City, Los Angeles",
-                video: "/assets/events/block_party.mp4",
-              },
-              {
-                name: "Runway · Spring Show",
-                date: "04.25.25",
-                location: "Los Angeles",
-                video: "/assets/events/newyears.mp4",
-              },
-            ].map((event) => (
-              <div
-                key={event.name}
-                className="group relative aspect-[4/5] overflow-hidden rounded-sm"
-              >
-                <video
-                  src={event.video}
-                  muted
-                  playsInline
-                  loop
-                  className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-500"
-                  onMouseEnter={(e) =>
-                    (e.target as HTMLVideoElement).play().catch(() => {})
-                  }
-                  onMouseLeave={(e) =>
-                    (e.target as HTMLVideoElement).pause()
-                  }
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to bottom, transparent 50%, rgba(5,5,5,0.9) 100%)",
-                  }}
-                />
-                <div className="absolute bottom-0 left-0 p-5 z-10">
-                  <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
-                    {event.date}
-                  </span>
-                  <h3
-                    className="font-display italic text-ink mt-2 leading-tight"
-                    style={{ fontSize: "clamp(1rem, 1.5vw, 1.4rem)", fontWeight: 300 }}
-                  >
-                    {event.name}
-                  </h3>
-                  <p className="font-mono text-[9px] tracking-[0.2em] text-ink-dim mt-2 uppercase">
-                    {event.location}
-                  </p>
-                </div>
-              </div>
+            {displayEvents.map((event) => (
+              <EventTile key={event.name} event={event} />
             ))}
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+/* ── Event tile sub-component ── */
+function EventTile({ event }: { event: HeroEvent }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  return (
+    <div className="group relative aspect-[4/5] overflow-hidden rounded-sm">
+      <video
+        ref={videoRef}
+        src={event.video}
+        muted
+        playsInline
+        loop
+        preload="metadata"
+        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-500"
+        onMouseEnter={() => videoRef.current?.play().catch(() => {})}
+        onMouseLeave={() => {
+          if (videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0;
+          }
+        }}
+      />
+
+      {/* Gradient overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent 50%, rgba(5,5,5,0.9) 100%)",
+        }}
+      />
+
+      {/* Text overlay */}
+      <div className="absolute bottom-0 left-0 p-5 z-10">
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-red">
+          {event.date}
+        </span>
+        <h3
+          className="font-display italic text-ink mt-2 leading-tight"
+          style={{
+            fontSize: "clamp(1rem, 1.5vw, 1.4rem)",
+            fontWeight: 300,
+          }}
+        >
+          {event.name}
+        </h3>
+        <p className="font-mono text-[9px] tracking-[0.2em] text-ink-dim mt-2 uppercase">
+          {event.location}
+        </p>
+
+        {/* CTA */}
+        <div className="mt-3">
+          {event.isUpcoming && event.partifulUrl ? (
+            <a
+              href={event.partifulUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-faint hover:text-red transition-colors border-b border-ink-faint/30 hover:border-red pb-0.5"
+            >
+              rsvp ↗
+            </a>
+          ) : (
+            <Link
+              href="/events"
+              className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-faint hover:text-red transition-colors border-b border-ink-faint/30 hover:border-red pb-0.5"
+            >
+              view recap →
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
