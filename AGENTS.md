@@ -1,82 +1,58 @@
-# AGENTS.md — SLOWHRS v2.0
+# SLOWHRS Project Rules — for all AI agents
 
-## Brand
+## Project
+Next.js 15 App Router. Components in `src/components/`. Routes in `app/`.
+Backend: Supabase Auth + Postgres. Email: Resend. Ticketing: Partiful (external).
+Deployed at https://slowhrs.com via Vercel.
 
-SLOWHRS is a private creative society in Los Angeles built around fashion, film, nightlife, and member access. The site is an immersive, art-first web experience — a building with five rooms.
+## Brand voice
+SLOWHRS = private creative society in Los Angeles.
+Voice: observational, slightly cool, written by someone who's been in the room.
+NEVER: AI fortune-cookie lines, "drop alert," sci-fi system labels, hacker-LARP, crypto-bro,
+direct "for women" copy on public pages, emojis, title-case headlines, apostrophe-stuffed taglines.
 
-## Architecture
+## Visual rules
+- Black + red dominant. Cream on /drops + /news only. Rose accent on /membership only.
+- Fonts: Cormorant italic, Playfair Display italic 800, Courier Prime. NO VT323 / pixel display.
+- Stickers: max 8 visible at any scroll. Budget defined in v2 build prompt.
+- Headlines lowercase. Body lowercase except proper nouns.
+- VHS REC dot, scanlines, timecode → cinema entry only, never persistent.
 
-```
-/                  → Threshold (interactive entry — "what time is it")
-/events            → Cinema room (event recaps, nightlife, documented rooms)
-/drops             → Showroom (member-first clothing drops)
-/inquiries         → Direct line (production, event, collab, casting requests)
-/news              → Feed (recaps, announcements, proof the room happened)
-/membership        → The card (heart-meter system, application, tier progression)
-```
+## Routes (5 public + admin)
+/ /events /drops /news /inquire /membership (+ /membership/dashboard) (+ /admin/*)
+NO /services. NO price tier page anywhere.
 
-## Threshold Logic
+## Tier system
+01 the line  → 0 hearts, signed up
+02 the room  → 1+ hearts (1 event)
+03 the regular → 3+ hearts
+04 the inner room → 5 hearts AND is_contributor flag
+05 the architects → invitation only (is_architect flag)
+Hearts capped at 5. Auto-recompute via Postgres trigger on attendance change.
 
-| Answer        | Routes to    |
-|---------------|-------------|
-| `late`        | `/events`   |
-| `early`       | `/drops`    |
-| `i don't know`| `/news`    |
+## Backend rules
+- service_role key NEVER in client components or page.tsx
+- All admin/write ops via Server Actions ('use server')
+- Public can: insert applications, insert inquiries, read public events
+- Authenticated members: read own member row + own attendances
+- All other reads/writes via service_role server-side only
 
-Stored in `localStorage` key: `slowhrs_entry`. Return visitors get a greeting and skip the question.
+## Asset paths (do not invent new ones)
+- /assets/events/{block_party,destroy_lonely,newyears}.mp4
+- /assets/drops/fast_life_reel.mp4
+- /assets/videos/hero-recap.mp4
+- /assets/logos/logo_main.png
+- /assets/logos/slowhrs-cursive.png
+- /assets/characters/TheListkeeper.png
+- /assets/widgets/{Onthelist,members_first,gone,locked,keycard-chip}.png
+- /assets/icons/vhscam_live.png
 
-## Pixel Asset Budget (6 max)
+## Partiful integration
+- Pull events via Open Graph metadata fetch (NOT API, NOT scraper)
+- Admin pastes URL → server fetches og: tags → inserts into events table
+- Public site reads from Supabase events table
 
-| Asset | Where |
-|---|---|
-| `logo_main.png` | Threshold, nav, footer |
-| `gone.png` | Sold-out drop cards only |
-| `members_first.png` | One priority drop card |
-| `TheListkeeper.png` | `/events`, ambient bottom-right, half-cropped |
-| `Onthelist.png` | Beneath Listkeeper, one instance |
-| CSS dot+ring cursor | Custom cursor, desktop only |
-
-## Forbidden Assets
-
-Never reference in JSX: `press_start`, `Access.png`, `locked.png`, `vhscam_live`, `cart.png`, `heart_full`, `heart_empty`, `CD.png`, `slowhrs_folder`, `archive_pixel_border`, `savedisk`, `slowhrs_ticket`, `be-camera-ready`, `no-energy-no-entry`, `waitlist`, `keycard-chip`, `files-tab`, `approved.png`, `click-burst`, `red_explode`.
-
-## Forbidden Copy
-
-Never use in any copy:
-`SYS_099`, `SYS_VERSION`, `SYSTEM BOOT_`, `END OF TAPE`, `DECRYPT FULL`, `SECURE TRANSMISSION`, `SIGNAL ACTIVE`, `TRANSMISSION_LOG`, `FILE_04: LISTKEEPER`, `HP: 66`, `PRICE TBA`, `NO ITEMS`, `NO FOOTAGE`, `[REC_FILE]`, `[DATA_RESTRICTED]`, `[CAM 01]`, `PRESS START`, `TERMINAL FEED`, `MEMBER EXCLUSIVE`, `ARCHIVE PROCESSING`, `CAMERA READY ONLY`.
-
-Never use words: `transmission`, `signal`, `terminal`, `channel`, `decrypt`.
-
-Only fake-tech words allowed: `live`, `loading`, `gone` (all literal, not metaphor).
-
-## Voice Rules
-
-- Hero lines: lowercase italic Cormorant Garamond
-- Labels and metadata: mono uppercase Courier Prime
-- Never invent system-LARP text
-- Never use emoji
-- No NYC. SLOWHRS is Los Angeles.
-
-## Animation Libraries
-
-| Library | Purpose |
-|---|---|
-| GSAP 3 + ScrollTrigger | Entry sequence, scroll-pinned moments, text reveals, card breathing |
-| Motion (Framer Motion) | Component animations: hovers, form states, page transitions, layoutId |
-| Lenis | Smooth scroll desktop only (disabled on mobile) |
-
-## Performance
-
-- Lighthouse Performance ≥ 90 mobile
-- LCP < 2.5s
-- All animations gate on `prefers-reduced-motion: no-preference`
-- Videos: `preload="metadata"`, lazy via IntersectionObserver
-- Pixel PNGs: max 64px via `next/image` with `unoptimized`, `image-rendering: pixelated`
-
-## Data Layer
-
-- `src/lib/membership.ts` — mock member data, swappable with Posh later
-- `src/lib/events.ts` — event data with real video paths
-- `src/lib/drops.ts` — product data
-- `src/lib/news.ts` — feed entries
-- `src/lib/constants.ts` — nav links, threshold answers, tier defs
+## When in doubt
+Cut. Editorial first. Never add a pixel sticker beyond budget.
+The user said "i dont like how it look so goofy" and "the copy is just ass."
+Hold those bars.
