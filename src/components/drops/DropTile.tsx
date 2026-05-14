@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import LazyVideo from "@/components/LazyVideo";
 import type { Drop } from "@/lib/data/drops";
 
 interface DropTileProps {
@@ -46,13 +47,8 @@ export default function DropTile({ drop, index }: DropTileProps) {
         onMouseLeave={handleMouseLeave}
       >
         {/* Video as poster */}
-        <video
+        <LazyVideo
           src={drop.image}
-          autoPlay
-          muted
-          playsInline
-          loop
-          preload="metadata"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
             isHovering ? "opacity-0" : "opacity-100"
           } ${isGone ? "grayscale" : ""}`}

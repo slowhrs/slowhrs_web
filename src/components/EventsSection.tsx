@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import LazyVideo from "@/components/LazyVideo";
 
 export default function EventsSection() {
   return (
@@ -69,8 +70,7 @@ export default function EventsSection() {
               <div className="w-[80px] h-[80px] md:w-[120px] md:h-[80px] shrink-0 bg-[#111] overflow-hidden relative border border-brand-border/50">
                 {event.video ? (
                   <>
-                    <video autoPlay muted loop playsInline className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block"
-                    ><source src={event.video} type="video/mp4" /></video>
+                    <LazyVideo src={event.video} className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block" />
                     <div className="md:hidden w-full h-full bg-[#1a1a1a] flex flex-col justify-center items-center"><span className="font-mono text-[7px] text-brand-ink/20">▶</span></div>
                   </>
                 ) : (

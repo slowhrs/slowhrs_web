@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import LazyVideo from "@/components/LazyVideo";
 
 const ARCHIVE_ITEMS = [
   {
@@ -113,12 +114,8 @@ export default function ArchiveSection() {
 
             {/* Media Area */}
             <div className="relative flex-grow bg-black overflow-hidden flex items-center justify-center">
-              <video 
-                src={item.src} 
-                muted 
-                playsInline 
-                loop 
-                autoPlay
+              <LazyVideo 
+                src={item.src}
                 className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700 grayscale group-hover:grayscale-0"
               />
               <div className="absolute inset-0 w-full h-full bg-[#111] opacity-40 md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">

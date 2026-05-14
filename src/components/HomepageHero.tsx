@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ENTRY_VIDEOS } from "@/lib/constants";
 import ScrollReveal from "@/components/ScrollReveal";
+import LazyVideo from "@/components/LazyVideo";
 
 /* ── Event data for "next up" / "the room recently" ── */
 interface HeroEvent {
@@ -203,25 +204,11 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
 
 /* ── Event tile sub-component ── */
 function EventTile({ event }: { event: HeroEvent }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
   return (
     <div className="group relative aspect-[4/5] overflow-hidden rounded-sm hover-lift light-sweep">
-      <video
-        ref={videoRef}
+      <LazyVideo
         src={event.video}
-        muted
-        playsInline
-        loop
-        preload="metadata"
         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-500"
-        onMouseEnter={() => videoRef.current?.play().catch(() => {})}
-        onMouseLeave={() => {
-          if (videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0;
-          }
-        }}
       />
 
       {/* Gradient overlay */}

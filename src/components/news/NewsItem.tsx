@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
+import LazyVideo from "@/components/LazyVideo";
 import type { NewsItem as NewsItemType } from "@/lib/data/news";
 
 interface NewsItemProps {
@@ -18,7 +18,6 @@ function formatDate(dateStr: string): string {
 }
 
 export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   if (item.locked) {
     return (
@@ -102,14 +101,8 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
       <div className={`mt-4 ${hasVideo ? "grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6" : ""}`}>
         {hasVideo && (
           <div className="relative aspect-video overflow-hidden rounded-sm hover-lift">
-            <video
-              ref={videoRef}
+            <LazyVideo
               src={item.video!}
-              muted
-              playsInline
-              loop
-              autoPlay
-              preload="metadata"
               className="w-full h-full object-cover transition-[filter] duration-300 brightness-[0.85] hover:brightness-100"
             />
           </div>
