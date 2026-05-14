@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useRef } from "react";
+import { submitInquiry } from "@/app/actions/inquiry";
 
 const INQUIRY_TYPES = [
   { id: "shoot", label: "Shoot my event", helper: "We document private rooms.", placeholder: "Event date, location, expected capacity..." },
@@ -16,14 +17,33 @@ const INQUIRY_TYPES = [
 
 export default function InquirySection() {
   const [selectedType, setSelectedType] = React.useState(INQUIRY_TYPES[0]);
-  const [status, setStatus] = React.useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formRef.current) return;
+
     setStatus("submitting");
-    setTimeout(() => {
-      setStatus("success");
-    }, 1500);
+    setErrorMsg(null);
+
+    const formData = new FormData(formRef.current);
+    formData.set("category", selectedType.id);
+
+    try {
+      const result = await submitInquiry(formData);
+      if (result.success) {
+        setStatus("success");
+        formRef.current.reset();
+      } else {
+        setStatus("error");
+        setErrorMsg(result.error || "something went wrong.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMsg("connection error. try again.");
+    }
   };
 
   return (
@@ -43,7 +63,7 @@ export default function InquirySection() {
           </p>
         </div>
 
-        {/* Camcorder Accent — one allowed instance */}
+        {/* Camcorder Accent */}
         <div className="hidden lg:flex flex-col items-end gap-3 opacity-80 mix-blend-screen">
           <Image 
             src="/assets/icons/vhscam_live.png" 
@@ -110,8 +130,10 @@ export default function InquirySection() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6 animate-fade-in">
+              <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-6 animate-fade-in">
                 
+                <input type="hidden" name="category" value={selectedType.id} />
+
                 <div className="flex items-start gap-4 mb-2 pb-4 border-b border-brand-border/40">
                   <div className="mt-1 w-1.5 h-1.5 bg-brand-red"></div>
                   <div>
@@ -127,33 +149,37 @@ export default function InquirySection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Name</label>
-                    <input required type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[16px] md:text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Operator name" />
+                    <input name="name" required type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[16px] md:text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Your name" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Instagram</label>
-                    <input required type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[16px] md:text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="@handle" />
+                    <input name="instagram" type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[16px] md:text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="@handle" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Email or Phone</label>
-                    <input required type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Contact vector" />
+                    <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Email</label>
+                    <input name="email" required type="email" className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="email@example.com" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Date / Project / Request</label>
-                    <input required type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="When & Where" />
+                    <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Date / Project</label>
+                    <input name="dateOrProject" type="text" className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="When & where" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Budget or Details</label>
-                  <textarea required rows={3} className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder={selectedType.placeholder}></textarea>
+                  <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Details</label>
+                  <textarea name="details" required rows={3} className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder={selectedType.placeholder}></textarea>
                 </div>
+
+                {errorMsg && (
+                  <p className="font-mono text-[11px] text-brand-red">{errorMsg}</p>
+                )}
 
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-brand-border/40">
                   <div className="font-mono text-[8px] md:text-[9px] tracking-[0.1em] text-brand-ink/30 uppercase max-w-[40ch]">
-                    Use real details. The room moves faster when the signal is clear. No spam. No mass forms. Just the right request to the right room.
+                    Use real details. The room moves faster when the signal is clear.
                   </div>
                   
                   <button 

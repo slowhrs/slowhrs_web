@@ -43,6 +43,7 @@ export async function submitInquiry(formData: FormData) {
 
     if (dbError) {
       console.error('[inquiry] db error:', dbError);
+      return { success: false, error: 'failed to save inquiry. try again.' };
     }
 
     // Send notification email
