@@ -18,7 +18,7 @@ export default function UpdatesSection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="updates">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
             UPDATES / TRANSMISSION
@@ -35,7 +35,7 @@ export default function UpdatesSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16 relative z-10">
         
         {/* Left Side - Microcopy */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 reveal reveal-d1">
           <div className="p-6 border border-brand-border bg-black/40 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-brand-border/40"></div>
             
@@ -56,7 +56,7 @@ export default function UpdatesSection() {
 
         {/* Right Side - Transmission Feed */}
         <div className="flex flex-col gap-4">
-          <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/30 uppercase mb-2 flex justify-between">
+          <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/30 uppercase mb-2 flex justify-between reveal reveal-d2">
             <span>RECENT</span>
             <span>DATE</span>
           </div>
@@ -67,7 +67,7 @@ export default function UpdatesSection() {
               if (isFirstLocked) lockedStickerUsed = true;
 
               return (
-                <div key={i} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-6 border-b border-brand-border/50 hover:bg-[#0a0a0a] transition-colors group cursor-pointer relative overflow-hidden ${item.isLocked && !isFirstLocked ? 'backdrop-blur-sm' : ''}`}>
+                <div key={i} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-6 border-b border-brand-border/50 hover:bg-[#0a0a0a] transition-colors group cursor-pointer relative overflow-hidden reveal reveal-d${Math.min(i + 1, 5)} ${item.isLocked && !isFirstLocked ? 'backdrop-blur-sm' : ''}`}>
                   
                   {/* CRT Scanline Hover Effect */}
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.02)_50%,rgba(255,255,255,0)_50%)] bg-[length:100%_4px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"></div>

@@ -25,7 +25,7 @@ export default function HeroLobby() {
       <div className="relative z-[3] px-6 pt-[9rem] pb-12 md:px-12 md:pt-[11rem] flex flex-col justify-end min-h-[calc(100vh-26px-80px)]">
         
         {/* Wordmark Logo */}
-        <div className="w-full max-w-[min(600px,80vw)] mb-6 drop-shadow-[0_0_40px_rgba(230,0,22,0.2)]">
+        <div className="w-full max-w-[min(600px,80vw)] mb-6 drop-shadow-[0_0_40px_rgba(230,0,22,0.2)] reveal">
           <Image 
             src="/assets/logos/logo_main.png" 
             alt="SLOWHRS Private Creative Society Hero Logo"
@@ -38,17 +38,17 @@ export default function HeroLobby() {
         </div>
 
         {/* Tagline */}
-        <p className="font-serif italic font-normal text-[clamp(1.4rem,3vw,2.2rem)] text-brand-ink max-w-[26ch] leading-[1.25] mb-4">
+        <p className="font-serif italic font-normal text-[clamp(1.4rem,3vw,2.2rem)] text-brand-ink max-w-[26ch] leading-[1.25] mb-4 reveal reveal-d1">
           a private creative society.
         </p>
 
         {/* Location / Status */}
-        <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-10 flex items-center gap-2.5">
+        <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-10 flex items-center gap-2.5 reveal reveal-d2">
           los angeles.
         </div>
 
         {/* Secondary CTAs — minimalist navigation */}
-        <div className="flex flex-col items-start gap-4 font-mono text-[11px] tracking-[0.25em] uppercase text-brand-ink-dim">
+        <div className="flex flex-col items-start gap-4 font-mono text-[11px] tracking-[0.25em] uppercase text-brand-ink-dim reveal reveal-d3">
           <Link href="#access" className="hover:text-brand-red transition-colors border-b border-transparent hover:border-brand-red pb-0.5 cta-breathe">
             get on the list ↗
           </Link>

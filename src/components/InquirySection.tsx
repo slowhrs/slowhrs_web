@@ -30,7 +30,7 @@ export default function InquirySection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="inquiry">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
             INQUIRY / DIRECT LINE
@@ -56,7 +56,7 @@ export default function InquirySection() {
         </div>
       </div>
 
-      <div className="relative z-10 bg-[#0a0a0a] border border-brand-border overflow-hidden">
+      <div className="relative z-10 bg-[#0a0a0a] border border-brand-border overflow-hidden reveal reveal-d1">
         
         {/* Terminal Header */}
         <div className="flex items-center justify-between p-4 border-b border-brand-border bg-black/40">

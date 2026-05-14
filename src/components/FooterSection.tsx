@@ -18,7 +18,7 @@ export default function FooterSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] gap-12 lg:gap-8 mb-20">
           
           {/* Brand Column */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 reveal">
             <div className="mb-2 w-[120px] md:w-[150px] mix-blend-screen opacity-90">
               <Image src="/assets/logos/logo_main.png" alt="SLOWHRS Private Creative Society Wordmark Logo - Los Angeles" title="SLOWHRS Private Creative Society" width={200} height={45} className="w-full h-auto" />
             </div>
@@ -40,7 +40,7 @@ export default function FooterSection() {
           </div>
 
           {/* Connect Column */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 reveal reveal-d1">
             <h4 className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/40 uppercase border-b border-brand-border/40 pb-2">Connect</h4>
             <nav className="flex flex-col gap-3">
               <Link href="https://instagram.com/slowhrstv" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">Instagram</Link>
@@ -51,7 +51,7 @@ export default function FooterSection() {
           </div>
 
           {/* Legal/Ops Column */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 reveal reveal-d2">
             <h4 className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/40 uppercase border-b border-brand-border/40 pb-2">Operations</h4>
             <nav className="flex flex-col gap-3">
               <Link href="#footer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">Shipping</Link>
@@ -63,7 +63,7 @@ export default function FooterSection() {
         </div>
 
         {/* Footer Bottom Strip */}
-        <div className="pt-8 border-t border-brand-border/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="pt-8 border-t border-brand-border/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 reveal reveal-d3">
           <div className="flex flex-col gap-2">
             <span className="font-mono text-[8px] tracking-[0.1em] text-brand-ink/30 uppercase">
               Location details move through approved channels.

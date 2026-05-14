@@ -14,7 +14,7 @@ export default function DropsSection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="drops">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[3.5rem] text-brand-ink leading-none mb-4">
             shop drops.
@@ -52,7 +52,7 @@ export default function DropsSection() {
           }}
         />
         {/* Featured Drop Video Card */}
-        <div className="border border-brand-border bg-[#0a0a0a] relative overflow-hidden group">
+        <div className="border border-brand-border bg-[#0a0a0a] relative overflow-hidden group reveal reveal-d1">
           <div className="absolute inset-0 bg-black z-0">
             <video autoPlay loop muted playsInline className="w-full h-full object-cover filter brightness-[0.6] contrast-[1.1] transition-transform duration-[2s] group-hover:scale-105">
               <source src="/assets/drops/fast_life_reel.mp4" type="video/mp4" />
@@ -77,7 +77,7 @@ export default function DropsSection() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-1 lg:gap-6 lg:overflow-y-auto lg:max-h-[600px] lg:pr-2 custom-scrollbar">
           {products.map((product, i) => (
-            <div key={i} className={`flex flex-row md:flex-col lg:flex-row items-center lg:items-stretch gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-all group ${product.badge === 'GONE' ? 'opacity-60 grayscale' : ''}`}>
+            <div key={i} className={`flex flex-row md:flex-col lg:flex-row items-center lg:items-stretch gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-all group reveal reveal-d${Math.min(i + 1, 5)} ${product.badge === 'GONE' ? 'opacity-60 grayscale' : ''}`}>
               
               <div className="w-[100px] h-[130px] md:w-full md:h-[200px] lg:w-[120px] lg:h-[150px] shrink-0 bg-[#0c0c0c] relative border border-brand-border/40 flex flex-col items-center justify-center overflow-hidden">
                 <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/10 -rotate-90 whitespace-nowrap absolute">SLOWHRS ARCHIVE</span>

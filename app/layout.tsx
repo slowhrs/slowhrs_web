@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Courier_Prime } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import ScrollRevealInit from "@/components/ScrollRevealInit";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -100,6 +101,9 @@ export default function RootLayout({
         <div className="overlay-grain"></div>
         <div className="overlay-scan"></div>
         
+        {/* Scroll reveal observer */}
+        <ScrollRevealInit />
+
         {/* Children will contain the Nav, Ticker, and Page content */}
         {children}
       </body>

@@ -18,7 +18,7 @@ export default function AccessSection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="access">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
             {/* // Application */}
@@ -46,7 +46,7 @@ export default function AccessSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-16 relative z-10">
         
         {/* Left Panel - Digital Access Card Widget */}
-        <div className="relative group perspective-1000">
+        <div className="relative group perspective-1000 reveal reveal-d1">
           
           {/* Subtle Sticker Accent */}
           <div className="absolute -top-6 -right-6 z-20 w-[90px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rotate-12 drop-shadow-[0_0_12px_rgba(230,0,22,0.3)]">
@@ -115,7 +115,7 @@ export default function AccessSection() {
         </div>
 
         {/* Right Panel - Form */}
-        <div className="relative">
+        <div className="relative reveal reveal-d2">
           {status === "success" ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in border border-brand-border bg-[#050505] p-10">
               <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">Access Request Sent.</div>

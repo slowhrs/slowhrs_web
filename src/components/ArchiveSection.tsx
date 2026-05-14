@@ -70,7 +70,7 @@ export default function ArchiveSection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="archive">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
             ARCHIVE / EVIDENCE
@@ -83,7 +83,7 @@ export default function ArchiveSection() {
           </p>
         </div>
 
-        <div className="flex flex-col md:items-end gap-2 max-w-[300px]">
+        <div className="flex flex-col md:items-end gap-2 max-w-[300px] reveal reveal-d2">
           <div className="font-serif italic text-[1.2rem] text-brand-ink/80 text-left md:text-right">
             Some rooms are filmed. Some rooms become files. The archive is the proof.
           </div>
@@ -92,8 +92,8 @@ export default function ArchiveSection() {
 
       {/* Archive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-        {ARCHIVE_ITEMS.map((item) => (
-          <div key={item.id} className="group relative border border-brand-border bg-[#050505] overflow-hidden flex flex-col h-[380px] md:h-[450px]">
+        {ARCHIVE_ITEMS.map((item, i) => (
+          <div key={item.id} className={`group relative border border-brand-border bg-[#050505] overflow-hidden flex flex-col h-[380px] md:h-[450px] reveal reveal-d${Math.min(i + 1, 5)}`}>
             
             {/* File Header: category in red mono 9px, date right-aligned in mono 9px */}
             <div className="flex items-center justify-between p-3 border-b border-brand-border bg-[#0a0a0a] z-20">
@@ -145,7 +145,7 @@ export default function ArchiveSection() {
       </div>
 
       {/* Archive CTA */}
-      <div className="mt-12 flex justify-center">
+      <div className="mt-12 flex justify-center reveal reveal-d3">
         <button className="border border-brand-ink/20 px-8 py-4 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink hover:border-brand-ink/60 transition-colors uppercase flex items-center gap-2">
           View Full Archive <span className="font-serif italic text-[1rem]">→</span>
         </button>

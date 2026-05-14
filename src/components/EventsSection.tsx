@@ -7,7 +7,7 @@ export default function EventsSection() {
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="events">
       
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[3.5rem] text-brand-ink leading-none mb-4">
             the room recently.
@@ -21,7 +21,7 @@ export default function EventsSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-10 relative z-10">
         
         {/* Featured Event Card */}
-        <div className="flex flex-col border border-brand-border-2 bg-[#0a0a0a]/80 backdrop-blur-md group transition-colors hover:border-brand-ink/30 relative overflow-hidden">
+        <div className="flex flex-col border border-brand-border-2 bg-[#0a0a0a]/80 backdrop-blur-md group transition-colors hover:border-brand-ink/30 relative overflow-hidden reveal reveal-d1">
           
           <div className="relative aspect-video w-full overflow-hidden bg-black border-b border-brand-border">
             <video autoPlay loop muted playsInline className="w-full h-full object-cover filter brightness-[0.7] contrast-125 saturate-100 transition-transform duration-1000 group-hover:scale-105">
@@ -55,7 +55,7 @@ export default function EventsSection() {
 
         {/* Smaller Archive Cards list */}
         <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-end mb-2">
+          <div className="flex justify-between items-end mb-2 reveal reveal-d2">
             <div className="font-mono text-[9px] tracking-[0.2em] text-brand-ink/40 uppercase">PREVIOUS ROOMS</div>
             <div className="font-mono text-[8px] tracking-[0.1em] text-brand-ink/30 uppercase hidden sm:block">Some rooms are documented. Some are not.</div>
           </div>
@@ -65,7 +65,7 @@ export default function EventsSection() {
             { title: "NYE // Closed Door Recap", date: "12.31.24", status: "12.31.24", video: "/assets/events/newyears.mp4" },
             { title: "Runway // Act I", date: "11.10.24", status: "11.10.24", video: null }
           ].map((event, i) => (
-            <div key={i} className="flex gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-colors cursor-pointer group">
+            <div key={i} className={`flex gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-colors cursor-pointer group reveal reveal-d${i + 2}`}>
               <div className="w-[80px] h-[80px] md:w-[120px] md:h-[80px] shrink-0 bg-[#111] overflow-hidden relative border border-brand-border/50">
                 {event.video ? (
                   <>
