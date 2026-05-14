@@ -136,6 +136,24 @@ export default async function DashboardPage() {
           </p>
         )}
 
+        {/* Community Chat CTA */}
+        <a
+          href="/community"
+          className="mt-10 flex items-center justify-between border border-brand-border p-5 hover:border-brand-red transition-colors group"
+        >
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.2em] text-ink uppercase">
+              community chat
+            </p>
+            <p className="font-mono text-[9px] text-ink-faint mt-1">
+              live · {tier.display}
+            </p>
+          </div>
+          <span className="font-mono text-[10px] text-ink-faint group-hover:text-brand-red transition-colors">
+            enter →
+          </span>
+        </a>
+
         {/* Upcoming events */}
         {events && events.length > 0 && (
           <div className="mt-16">
