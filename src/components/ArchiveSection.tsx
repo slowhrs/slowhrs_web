@@ -68,6 +68,11 @@ const ARCHIVE_ITEMS = [
 export default function ArchiveSection() {
   return (
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="archive">
+
+      {/* Ambient Sticker — Folder */}
+      <div className="absolute top-16 right-8 md:right-16 w-[100px] md:w-[140px] opacity-[0.08] pointer-events-none rotate-[8deg] z-0">
+        <Image src="/assets/icons/slowhrs_folder.png" alt="" width={140} height={140} className="w-full h-auto" aria-hidden="true" />
+      </div>
       
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
@@ -86,6 +91,10 @@ export default function ArchiveSection() {
         <div className="flex flex-col md:items-end gap-2 max-w-[300px] reveal reveal-d2">
           <div className="font-serif italic text-[1.2rem] text-brand-ink/80 text-left md:text-right">
             Some rooms are filmed. Some rooms become files. The archive is the proof.
+          </div>
+          {/* CD sticker accent */}
+          <div className="hidden md:block w-[60px] mt-4 opacity-70 rotate-[-12deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
+            <Image src="/assets/icons/CD.png" alt="SLOWHRS Archive CD" title="Archive Media" width={60} height={60} className="w-full h-auto pixel animate-[spin_12s_linear_infinite]" />
           </div>
         </div>
       </div>

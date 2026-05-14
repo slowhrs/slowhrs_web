@@ -120,9 +120,14 @@ export default function AccessSection() {
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in border border-brand-border bg-[#050505] p-10">
               <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">Access Request Sent.</div>
               <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase mb-6">We will review the file.</div>
-              {/* Ticket reward visual — only appears in success state */}
-              <div className="w-[80px] mb-6 opacity-80">
-                <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Private Access Golden Ticket Icon" title="Access Ticket" width={80} height={80} className="w-full h-auto pixel" />
+              {/* Ticket + On The List reward visuals */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-[70px] opacity-80 rotate-[-8deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)]">
+                  <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Private Access Golden Ticket Icon" title="Access Ticket" width={70} height={70} className="w-full h-auto pixel" />
+                </div>
+                <div className="w-[80px] opacity-85 rotate-[5deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
+                  <Image src="/assets/widgets/Onthelist.png" alt="On The List" title="You're On The List" width={80} height={80} className="w-full h-auto pixel" />
+                </div>
               </div>
               <button 
                 onClick={() => setStatus("idle")}

@@ -60,6 +60,11 @@ export default function DropsSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
           </div>
           
+          {/* Members First badge */}
+          <div className="absolute top-5 right-5 z-20 w-[70px] md:w-[90px] opacity-85 rotate-[10deg] drop-shadow-[0_0_12px_rgba(230,0,22,0.35)] mix-blend-screen pointer-events-none">
+            <Image src="/assets/widgets/members_first.png" alt="Members First" width={90} height={90} className="w-full h-auto pixel" />
+          </div>
+
           <div className="relative z-10 p-6 md:p-10 h-full flex flex-col justify-end min-h-[400px] lg:min-h-[600px]">
             <h3 className="font-serif italic text-[2.5rem] md:text-[3.5rem] text-brand-ink leading-none mb-4">
               fw25 capsule.
@@ -67,10 +72,15 @@ export default function DropsSection() {
             <p className="font-mono text-[9px] md:text-[10px] tracking-[0.1em] text-brand-ink/60 uppercase max-w-[35ch] mb-8">
               some pieces do not return.
             </p>
-            <button className="flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase font-bold">VIEW DROP</span>
-              <span className="font-serif italic text-[1.2rem] leading-none">→</span>
-            </button>
+            <div className="flex items-center gap-4">
+              <button className="flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase font-bold">VIEW DROP</span>
+                <span className="font-serif italic text-[1.2rem] leading-none">→</span>
+              </button>
+              <div className="w-[32px] opacity-60 drop-shadow-[0_0_8px_rgba(230,0,22,0.3)] mix-blend-screen">
+                <Image src="/assets/icons/cart.png" alt="" width={32} height={32} className="w-full h-auto pixel" aria-hidden="true" />
+              </div>
+            </div>
           </div>
         </div>
 
