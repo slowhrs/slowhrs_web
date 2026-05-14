@@ -35,8 +35,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "nye",
-    title: "NYE // 12.31.24",
-    subtitle: "New Years recap · Closed door",
+    title: "NYE // Jsta Party",
+    subtitle: "New Years recap · 12.31.24",
     category: "Events",
     date: "12.31.24",
     type: "video",

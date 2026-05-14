@@ -62,7 +62,7 @@ export default function EventsSection() {
 
           {[
             { title: "Destroy Lonely // WYA Trap Rave", date: "03.14.25", status: "03.14.25", video: "/assets/events/destroy_lonely.mp4" },
-            { title: "NYE // Closed Door Recap", date: "12.31.24", status: "12.31.24", video: "/assets/events/newyears.mp4" },
+            { title: "NYE // Jsta Party", date: "12.31.24", status: "12.31.24", video: "/assets/events/newyears.mp4" },
             { title: "Runway // Act I", date: "11.10.24", status: "11.10.24", video: null }
           ].map((event, i) => (
             <div key={i} className={`flex gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-colors cursor-pointer group reveal reveal-d${i + 2}`}>

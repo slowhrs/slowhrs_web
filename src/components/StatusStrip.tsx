@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 /**
  * Aggregate attendee count from SLOWHRS Partiful events (2024–2026).
- * Block Party 2025: 5,000+ | Destroy Lonely WYA: ~1,200 | NYE: ~800
+ * Block Party 2025: 5,000+ | Destroy Lonely WYA: ~1,200 | NYE Jsta Party: ~800
  * ACT III Finale: ~500 | The Green Room: ~400 | Vogue Safari: ~300
  * Casting / Selection / Socials: ~300+ across multiple events
  * Source: Partiful RSVPs, YouTube recap data, LA Weekly coverage.
