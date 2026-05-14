@@ -47,7 +47,7 @@ CREATE TABLE events (
   cover_video          TEXT,
   produced_by_slowhrs  BOOLEAN DEFAULT true,
   is_public            BOOLEAN DEFAULT true,
-  is_upcoming          BOOLEAN GENERATED ALWAYS AS (date > NOW()) STORED
+  is_upcoming          BOOLEAN DEFAULT true
 );
 
 -- ATTENDANCES — admin marks members attended an event
