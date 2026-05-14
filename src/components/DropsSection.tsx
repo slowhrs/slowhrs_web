@@ -77,7 +77,7 @@ export default function DropsSection() {
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase font-bold">VIEW DROP</span>
                 <span className="font-serif italic text-[1.2rem] leading-none">→</span>
               </button>
-              <div className="w-[32px] opacity-60 drop-shadow-[0_0_8px_rgba(230,0,22,0.3)] mix-blend-screen">
+              <div className="w-[32px] opacity-70 drop-shadow-[0_0_8px_rgba(230,0,22,0.3)]">
                 <Image src="/assets/icons/cart.png" alt="" width={32} height={32} className="w-full h-auto pixel" aria-hidden="true" />
               </div>
             </div>
@@ -87,9 +87,9 @@ export default function DropsSection() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-1 lg:gap-6 lg:overflow-y-auto lg:max-h-[600px] lg:pr-2 custom-scrollbar">
           {products.map((product, i) => (
-            <div key={i} className={`flex flex-row md:flex-col lg:flex-row items-center lg:items-stretch gap-4 p-4 border border-brand-border bg-black/40 hover:bg-[#0a0a0a] transition-all group reveal reveal-d${Math.min(i + 1, 5)} ${product.badge === 'GONE' ? 'opacity-60 grayscale' : ''}`}>
+            <div key={i} className={`flex flex-row md:flex-col lg:flex-row items-center lg:items-stretch gap-4 p-4 border border-brand-border bg-[#080808] hover:bg-[#0e0e0e] transition-all group reveal reveal-d${Math.min(i + 1, 5)} ${product.badge === 'GONE' ? 'opacity-60 grayscale' : ''}`}>
               
-              <div className="w-[100px] h-[130px] md:w-full md:h-[200px] lg:w-[120px] lg:h-[150px] shrink-0 bg-[#0c0c0c] relative border border-brand-border/40 flex flex-col items-center justify-center overflow-hidden">
+              <div className="w-[100px] h-[130px] md:w-full md:h-[200px] lg:w-[120px] lg:h-[150px] shrink-0 bg-[#0a0a0a] relative border border-brand-border/40 flex flex-col items-center justify-center overflow-hidden">
                 <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/10 -rotate-90 whitespace-nowrap absolute">SLOWHRS ARCHIVE</span>
                 <div className="absolute top-2 left-2 flex gap-1">
                   <div className="w-1 h-1 bg-brand-ink/20"></div>
