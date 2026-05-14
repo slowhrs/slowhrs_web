@@ -14,12 +14,19 @@ const STATUS_LINES = [
 export default function Loader() {
   const [isOut, setIsOut] = useState(false);
   const [statusIdx, setStatusIdx] = useState(0);
+  const [timecode, setTimecode] = useState('12:45:00:00');
 
   useEffect(() => {
     // Cycle through status lines
     const interval = setInterval(() => {
       setStatusIdx((prev) => (prev + 1) % STATUS_LINES.length);
     }, 450);
+
+    // Glitch timecode — rapidly cycle random numbers
+    const glitchInterval = setInterval(() => {
+      const r = () => String(Math.floor(Math.random() * 60)).padStart(2, '0');
+      setTimecode(`${r()}:${r()}:${r()}:${r()}`);
+    }, 60);
 
     // Simple timer to remove the boot loader after a short delay
     const timer = setTimeout(() => {
@@ -28,6 +35,7 @@ export default function Loader() {
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
+      clearInterval(glitchInterval);
     };
   }, []);
 
@@ -41,7 +49,7 @@ export default function Loader() {
         REC
       </div>
       <div className="absolute top-5 right-5 font-mono text-[16px] tracking-[0.1em] text-brand-ink-dim">
-        12:45:00:00
+        {timecode}
       </div>
 
       {/* Main Boot Mark */}
