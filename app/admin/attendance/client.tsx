@@ -52,7 +52,7 @@ export default function AdminAttendanceClient({
       >
         {events.map((ev) => (
           <option key={ev.id} value={ev.id}>
-            {ev.name} — {new Date(ev.date).toLocaleDateString()}
+            {ev.name} // {new Date(ev.date).toLocaleDateString()}
           </option>
         ))}
       </select>

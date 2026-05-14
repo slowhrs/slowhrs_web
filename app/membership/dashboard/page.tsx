@@ -86,9 +86,10 @@ export default async function DashboardPage() {
           />
 
           {/* Logo */}
-          <img
+           <img
             src="/assets/logos/logo_main.png"
-            alt=""
+            alt="SLOWHRS Private Creative Society Membership Dashboard Logo"
+            title="SLOWHRS Membership Dashboard"
             className="w-[80px] opacity-60"
             aria-hidden="true"
           />
@@ -106,7 +107,7 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          {/* Meta — bottom-right */}
+          {/* Meta: bottom-right */}
           <div className="absolute bottom-8 right-8 md:right-10 text-right">
             <p className="font-mono text-[9px] tracking-[0.2em] text-ink-dim uppercase">
               tier {String(tier.number).padStart(2, "0")}
@@ -125,7 +126,7 @@ export default async function DashboardPage() {
           <p className="font-serif italic text-ink-dim text-sm mt-6 text-center">
             next tier: {next.name}
             {next.heartsToGo > 0 &&
-              ` — ${next.heartsToGo} more event${next.heartsToGo > 1 ? "s" : ""} to unlock`}
+              ` // ${next.heartsToGo} more event${next.heartsToGo > 1 ? "s" : ""} to unlock`}
             {next.note && ` (${next.note})`}
           </p>
         )}

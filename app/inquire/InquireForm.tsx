@@ -28,7 +28,7 @@ export default function InquireForm() {
     }
 
     if (note && detailsRef.current) {
-      const drop = note.startsWith("DR-") ? `Re: ${note} — ` : note;
+      const drop = note.startsWith("DR-") ? `Re: ${note} // ` : note;
       detailsRef.current.value = drop;
     }
   }, [searchParams]);
@@ -83,7 +83,7 @@ export default function InquireForm() {
           <p className="font-serif italic text-ink-dim mt-4 max-w-[600px] leading-relaxed text-lg">
             event footage, production work, collabs,
             <br />
-            casting, vendor slots — start here.
+            casting, vendor slots. start here.
           </p>
         </ScrollReveal>
 
@@ -107,7 +107,7 @@ export default function InquireForm() {
           </div>
         </ScrollReveal>
 
-        {/* Question text — crossfade on category change */}
+        {/* Question text: crossfade on category change */}
         <div className="relative mt-10 min-h-[2rem]">
           <p
             key={category}
@@ -194,15 +194,15 @@ export default function InquireForm() {
           </form>
         )}
 
-        {/* VHSCam sticker — bottom-right */}
+        {/* VHSCam sticker: bottom-right */}
         <div className="absolute bottom-8 right-0">
           <Image
             src="/assets/icons/vhscam_live.png"
-            alt=""
+            alt="SLOWHRS VHS Camcorder Live Recording Status Icon"
+            title="Recording"
             width={70}
             height={24}
             className="pixel opacity-40"
-            aria-hidden="true"
           />
         </div>
       </div>

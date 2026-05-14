@@ -2,8 +2,10 @@
 
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
+import { verifyAdminAction } from '@/lib/auth';
 
 export async function markAttendance(memberId: string, eventId: string) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
   await supabase.from('attendances').insert({ member_id: memberId, event_id: eventId });
   revalidatePath('/admin/attendance');
@@ -12,6 +14,7 @@ export async function markAttendance(memberId: string, eventId: string) {
 }
 
 export async function unmarkAttendance(memberId: string, eventId: string) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
   await supabase
     .from('attendances')

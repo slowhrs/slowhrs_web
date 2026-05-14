@@ -4,7 +4,7 @@ import { toggleContributor, toggleArchitect } from "@/app/actions/admin/contribu
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: "SLOWHRS | admin — members" };
+export const metadata = { title: "SLOWHRS | admin // members" };
 
 export default async function AdminMembersPage() {
   const supabase = createAdminClient();
@@ -48,7 +48,7 @@ export default async function AdminMembersPage() {
                       {m.full_name}
                     </td>
                     <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                      {m.instagram || "—"}
+                      {m.instagram || ""}
                     </td>
                     <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
                       {m.hearts}

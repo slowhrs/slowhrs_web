@@ -3,8 +3,10 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendBroadcast } from '@/lib/resend';
 import { revalidatePath } from 'next/cache';
+import { verifyAdminAction } from '@/lib/auth';
 
 export async function composeBroadcast(formData: FormData) {
+  await verifyAdminAction();
   const subject = formData.get('subject') as string;
   const body = formData.get('body') as string;
   const recipientTier = formData.get('recipient_tier') as string;

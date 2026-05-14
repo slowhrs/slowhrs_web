@@ -96,7 +96,24 @@ body {
 /* =========================================================
    CUSTOM CURSOR
    ========================================================= */
-/* Custom cursor styles removed for professional standard cursor */
+@media (hover: hover) and (pointer: fine) {
+  html, body, a, button, input, select, textarea, [role="button"] { cursor: none; }
+
+  .cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    width: 28px; height: 36px;
+    transform: translate(-4px, -2px);
+    transition: transform 0.15s ease;
+    background-image: url('/assets/icons/curserarrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 4px rgba(230,0,22,0.7));
+  }
+  .cursor.is-hover { transform: translate(-4px, -2px) scale(1.2); }
+}
 
 /* =========================================================
    TICKER ANIMATION

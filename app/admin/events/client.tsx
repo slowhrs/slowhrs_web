@@ -107,7 +107,7 @@ export default function AdminEventsClient({ events }: { events: Event[] }) {
                   {new Date(ev.date).toLocaleDateString()}
                 </td>
                 <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                  {ev.location || "—"}
+                  {ev.location || ""}
                 </td>
                 <td className="py-3 pr-4 font-mono text-[10px] text-ink-faint">
                   {ev.partiful_url ? "yes" : "—"}

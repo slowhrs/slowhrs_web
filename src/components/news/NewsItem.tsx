@@ -57,7 +57,8 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
             {useSticker ? (
               <Image
                 src="/assets/widgets/locked.png"
-                alt="locked"
+                alt="SLOWHRS Locked Content Sticker Widget"
+                title="Members Only"
                 width={40}
                 height={40}
                 className="pixel mb-3"

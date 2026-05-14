@@ -63,39 +63,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${courier.variable}`}>
       <body className="antialiased font-sans">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "Organization",
-                  "@id": "https://slowhrs.com/#organization",
-                  "name": "SLOWHRS",
-                  "url": "https://slowhrs.com",
-                  "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://slowhrs.com/assets/logos/logo_main.png"
-                  },
-                  "description": "A private creative society in Los Angeles built around fashion, film, nightlife, and member access.",
-                  "sameAs": [
-                    "https://instagram.com/slowhrs"
-                  ]
-                },
-                {
-                  "@type": "WebSite",
-                  "@id": "https://slowhrs.com/#website",
-                  "url": "https://slowhrs.com",
-                  "name": "SLOWHRS",
-                  "publisher": {
-                    "@id": "https://slowhrs.com/#organization"
-                  }
-                }
-              ]
-            })
-          }}
-        />
         {/* Global Overlays */}
         <div className="overlay-grain"></div>
         <div className="overlay-scan"></div>

@@ -107,10 +107,10 @@ export default function AdminApplicationsClient({
                     {app.email}
                   </td>
                   <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                    {app.instagram || "—"}
+                    {app.instagram || ""}
                   </td>
                   <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim max-w-[200px] truncate">
-                    {app.what_you_do || "—"}
+                    {app.what_you_do || ""}
                   </td>
                   <td className="py-3 pr-4">
                     <span

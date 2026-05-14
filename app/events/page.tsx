@@ -138,6 +138,33 @@ export default async function EventsPage() {
       className="bg-bg pt-[52px] md:pt-[52px]"
       style={{ scrollSnapType: "y mandatory" }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            events.filter(e => e.is_upcoming).map(event => ({
+              "@context": "https://schema.org",
+              "@type": "Event",
+              "name": event.name,
+              "startDate": event.date,
+              "location": {
+                "@type": "Place",
+                "name": event.location,
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": event.location
+                }
+              },
+              "description": event.blurb || event.name,
+              "organizer": {
+                "@type": "Organization",
+                "name": event.produced_by_slowhrs ? "SLOWHRS" : "Partner",
+                "url": "https://slowhrs.com"
+              }
+            }))
+          )
+        }}
+      />
       {events.map((event, i) => (
         <EventTile key={event.id} event={event} isFirst={i === 0} />
       ))}

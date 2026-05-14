@@ -3,8 +3,10 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendDenial } from '@/lib/resend';
 import { revalidatePath } from 'next/cache';
+import { verifyAdminAction } from '@/lib/auth';
 
 export async function approveApplication(applicationId: string) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
 
   // Get application
@@ -43,6 +45,7 @@ export async function approveApplication(applicationId: string) {
 }
 
 export async function denyApplication(applicationId: string) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
 
   const { data: app } = await supabase

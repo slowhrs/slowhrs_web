@@ -78,7 +78,8 @@ export default function PersistentNav() {
         >
           <Image 
             src="/assets/logos/logo_main.png" 
-            alt="SLOWHRS" 
+            alt="SLOWHRS Private Creative Society Main Logo"
+            title="SLOWHRS Private Creative Society"
             width={120} 
             height={30} 
             className="h-5 w-auto object-contain drop-shadow-[0_0_10px_rgba(230,0,22,0.2)]" 

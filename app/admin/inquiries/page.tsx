@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: "SLOWHRS | admin — inquiries" };
+export const metadata = { title: "SLOWHRS | admin // inquiries" };
 
 export default async function AdminInquiriesPage() {
   const supabase = createAdminClient();
@@ -46,11 +46,11 @@ export default async function AdminInquiriesPage() {
                   <td className="py-3 pr-4 font-mono text-[11px] text-ink">{inq.name}</td>
                   <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">{inq.email}</td>
                   <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                    {inq.instagram || "—"}
+                    {inq.instagram || ""}
                   </td>
                   <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim">{inq.status}</td>
                   <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim max-w-[200px] truncate">
-                    {inq.details || "—"}
+                    {inq.details || ""}
                   </td>
                 </tr>
               ))}

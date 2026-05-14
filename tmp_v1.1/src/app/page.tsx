@@ -2,6 +2,7 @@ import Loader from "@/components/Loader";
 import Ticker from "@/components/Ticker";
 import Nav from "@/components/Nav";
 import HeroLobby from "@/components/HeroLobby";
+import MouseCursor from "@/components/MouseCursor";
 import EventsSection from "@/components/EventsSection";
 import DropsSection from "@/components/DropsSection";
 import UpdatesSection from "@/components/UpdatesSection";
@@ -46,6 +47,9 @@ export default function Home() {
 
       {/* Footer / Policies */}
       <FooterSection />
+
+      {/* Custom Cursor Tracker */}
+      <MouseCursor />
       
     </main>
   );

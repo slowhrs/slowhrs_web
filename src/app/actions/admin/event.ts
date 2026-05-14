@@ -3,8 +3,10 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchPartifulEvent } from '@/lib/partiful';
 import { revalidatePath } from 'next/cache';
+import { verifyAdminAction } from '@/lib/auth';
 
 export async function importPartifulEvent(url: string) {
+  await verifyAdminAction();
   const parsed = await fetchPartifulEvent(url);
   const supabase = createAdminClient();
 
@@ -30,6 +32,7 @@ export async function importPartifulEvent(url: string) {
 }
 
 export async function createEvent(formData: FormData) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
   const { error } = await supabase.from('events').insert({
     name: formData.get('name') as string,
@@ -48,6 +51,7 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function deleteEvent(eventId: string) {
+  await verifyAdminAction();
   const supabase = createAdminClient();
   await supabase.from('events').delete().eq('id', eventId);
   revalidatePath('/events');

@@ -3,7 +3,7 @@ import AdminEventsClient from "./client";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: "SLOWHRS | admin — events" };
+export const metadata = { title: "SLOWHRS | admin // events" };
 
 export default async function AdminEventsPage() {
   const supabase = createAdminClient();
