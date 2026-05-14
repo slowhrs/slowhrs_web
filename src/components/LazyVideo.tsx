@@ -11,17 +11,17 @@ interface LazyVideoProps {
 }
 
 /**
- * Video that only loads + plays when scrolled into view.
- * Pauses when scrolled out. Saves bandwidth on mobile.
+ * Video that lazy-loads its src when near the viewport,
+ * auto-plays when visible, and pauses when scrolled away.
  */
 export default function LazyVideo({
   src,
   className = "",
   loop = true,
-  rootMargin = "200px",
+  rootMargin = "400px",
 }: LazyVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -30,7 +30,12 @@ export default function LazyVideo({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+          // First time: set src and load
+          if (!loaded) {
+            el.src = src;
+            el.load();
+            setLoaded(true);
+          }
           el.play().catch(() => {});
         } else {
           el.pause();
@@ -41,12 +46,11 @@ export default function LazyVideo({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [rootMargin]);
+  }, [src, rootMargin, loaded]);
 
   return (
     <video
       ref={ref}
-      src={isVisible ? src : undefined}
       muted
       playsInline
       loop={loop}
