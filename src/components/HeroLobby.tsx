@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import StatusStrip from "./StatusStrip";
@@ -130,19 +130,6 @@ export default function HeroLobby() {
       {/* ── Main Content ── */}
       <div className="relative z-[3] px-6 pt-[9rem] pb-12 md:px-12 md:pt-[11rem] flex flex-col justify-end min-h-[calc(100vh-26px-80px)]">
         
-        {/* Wordmark Logo */}
-        <div className="w-full max-w-[min(600px,80vw)] mb-6 drop-shadow-[0_0_40px_rgba(230,0,22,0.2)] reveal">
-          <Image 
-            src="/assets/logos/logo_main.png" 
-            alt="SLOWHRS Private Creative Society Hero Logo"
-            title="SLOWHRS Private Creative Society"
-            width={880} 
-            height={200} 
-            className="w-full h-auto"
-            priority
-          />
-        </div>
-
         {/* Tagline */}
         <p className="font-serif italic font-normal text-[clamp(1.4rem,3vw,2.2rem)] text-brand-ink max-w-[26ch] leading-[1.25] mb-4 reveal reveal-d1">
           a private creative society.
