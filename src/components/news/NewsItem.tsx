@@ -108,14 +108,9 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
               muted
               playsInline
               loop
+              autoPlay
               preload="metadata"
               className="w-full h-full object-cover transition-[filter] duration-300 brightness-[0.85] hover:brightness-100"
-              onMouseEnter={(e) => (e.target as HTMLVideoElement).play().catch(() => {})}
-              onMouseLeave={(e) => {
-                const v = e.target as HTMLVideoElement;
-                v.pause();
-                v.currentTime = 0;
-              }}
             />
           </div>
         )}

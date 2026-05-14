@@ -118,14 +118,10 @@ export default function ArchiveSection() {
                 muted 
                 playsInline 
                 loop 
-                className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-60 transition-opacity duration-700 blur-[2px] group-hover:blur-0 grayscale group-hover:grayscale-0"
-                onMouseOver={e => e.currentTarget.play()}
-                onMouseOut={e => {
-                  e.currentTarget.pause();
-                  e.currentTarget.currentTime = 0;
-                }}
+                autoPlay
+                className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700 grayscale group-hover:grayscale-0"
               />
-              <div className="absolute inset-0 w-full h-full bg-[#111] md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full bg-[#111] opacity-40 md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">
                  <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase">▶</span>
               </div>
               

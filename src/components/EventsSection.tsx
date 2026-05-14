@@ -69,9 +69,7 @@ export default function EventsSection() {
               <div className="w-[80px] h-[80px] md:w-[120px] md:h-[80px] shrink-0 bg-[#111] overflow-hidden relative border border-brand-border/50">
                 {event.video ? (
                   <>
-                    <video muted loop playsInline className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block"
-                      onMouseOver={e => (e.target as HTMLVideoElement).play()}
-                      onMouseOut={e => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
+                    <video autoPlay muted loop playsInline className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block"
                     ><source src={event.video} type="video/mp4" /></video>
                     <div className="md:hidden w-full h-full bg-[#1a1a1a] flex flex-col justify-center items-center"><span className="font-mono text-[7px] text-brand-ink/20">▶</span></div>
                   </>

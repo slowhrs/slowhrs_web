@@ -48,6 +48,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
         {/* Video as poster */}
         <video
           src={drop.image}
+          autoPlay
           muted
           playsInline
           loop
