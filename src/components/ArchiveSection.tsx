@@ -6,9 +6,19 @@ import LazyVideo from "@/components/LazyVideo";
 
 const ARCHIVE_ITEMS = [
   {
+    id: "fashion_show",
+    title: "SS26 Runway // 04.25.25",
+    subtitle: "Sunset Blvd. One night only. Members front row.",
+    category: "Runway",
+    date: "04.25.25",
+    type: "video",
+    src: "/assets/events/recaps/fashion_show_recap.mp4",
+    duration: "03:12"
+  },
+  {
     id: "block_party",
     title: "Block Party // 2025",
-    subtitle: "LA's biggest crew run · Hosted by hardlyeverhome, waseelwav, lovechildww",
+    subtitle: "10 crews. 2 stages. 1 city.",
     category: "Events",
     date: "2025",
     type: "video",
@@ -16,19 +26,9 @@ const ARCHIVE_ITEMS = [
     duration: "02:14"
   },
   {
-    id: "fast_life",
-    title: "Fast Life Campaign // 2024",
-    subtitle: "Clothing reel · Fall drop",
-    category: "Drops",
-    date: "2024",
-    type: "video",
-    src: "/assets/drops/fast_life_reel.mp4",
-    duration: "00:45"
-  },
-  {
     id: "destroy_lonely",
     title: "Destroy Lonely // 03.14.25",
-    subtitle: "WYA Trap Rave · Where You At LA",
+    subtitle: "WYA Trap Rave. We shot the room.",
     category: "Nightlife",
     date: "03.14.25",
     type: "video",
@@ -36,34 +36,94 @@ const ARCHIVE_ITEMS = [
     duration: "01:30"
   },
   {
-    id: "nye",
-    title: "NYE // Jsta Party",
-    subtitle: "New Years recap · 12.31.24",
-    category: "Events",
-    date: "12.31.24",
-    type: "video",
-    src: "/assets/events/newyears.mp4",
-    duration: "01:15"
-  },
-  {
-    id: "dsrpt",
-    title: "Eric Bellinger × DSRPT Noise Lab",
-    subtitle: "Performance recap · Spring 24",
-    category: "Performance",
+    id: "fast_life",
+    title: "Fast Life Campaign // 2024",
+    subtitle: "Clothing reel. Fall drop. VHS.",
+    category: "Drops",
     date: "2024",
     type: "video",
-    src: "/assets/drops/christmas_drop.mp4",
-    duration: "00:42"
+    src: "/assets/drops/fast_life_reel.mp4",
+    duration: "00:45"
   },
   {
     id: "kehlani",
     title: "Kehlani // 2024",
-    subtitle: "Headline recap · Members + 1 only",
+    subtitle: "Headline recap. Members + 1 only.",
     category: "Headline",
     date: "2024",
     type: "video",
-    src: "/assets/events/block_party.mp4",
-    duration: "02:14"
+    src: "/assets/events/recaps/kehlani_recap.mp4",
+    duration: "01:20"
+  },
+  {
+    id: "j7kan_runway",
+    title: "j7kan Debut // Sunset Blvd",
+    subtitle: "Pre-debut runway. Westside.",
+    category: "Runway",
+    date: "2024",
+    type: "video",
+    src: "/assets/events/recaps/j7kan_runway.mp4",
+    duration: "02:45"
+  },
+  {
+    id: "warehouse",
+    title: "Warehouse Sessions // 2025",
+    subtitle: "90 warehouse. Private set.",
+    category: "Events",
+    date: "2025",
+    type: "video",
+    src: "/assets/events/recaps/warehouse_sessions.mp4",
+    duration: "01:05"
+  },
+  {
+    id: "pj_party",
+    title: "PJ Party // 2024",
+    subtitle: "Private gathering. Invited only.",
+    category: "Events",
+    date: "2024",
+    type: "video",
+    src: "/assets/events/recaps/pj_party.mp4",
+    duration: "02:30"
+  },
+  {
+    id: "nye",
+    title: "NYE // Jsta Party",
+    subtitle: "New Years recap. 12.31.24.",
+    category: "Events",
+    date: "12.31.24",
+    type: "video",
+    src: "/assets/events/recaps/nye_2025_recap.mp4",
+    duration: "03:45"
+  },
+  {
+    id: "dsrpt",
+    title: "Eric Bellinger × DSRPT",
+    subtitle: "Noise Lab performance.",
+    category: "Performance",
+    date: "2024",
+    type: "video",
+    src: "/assets/events/recaps/dsrpt_noiselab.mp4",
+    duration: "00:42"
+  },
+  {
+    id: "code_devastation",
+    title: "Code: Devastation",
+    subtitle: "Private ops. Restricted access.",
+    category: "Events",
+    date: "2024",
+    type: "video",
+    src: "/assets/events/recaps/code_devastation.mp4",
+    duration: "00:55"
+  },
+  {
+    id: "fashion_promo",
+    title: "SS26 Runway Promo",
+    subtitle: "Campaign reel. Pre-show.",
+    category: "Runway",
+    date: "04.25.25",
+    type: "video",
+    src: "/assets/events/recaps/fashion_show_promo.mp4",
+    duration: "01:48"
   }
 ];
 
