@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata = {
-  title: "SLOWHRS | events",
-  description: "the room. the recap. the rsvp.",
+  title: "SLOWHRS | Events",
+  description: "The room. The recap. The RSVP. Private events in Los Angeles.",
 };
 
 // Fallback events when DB is empty or unavailable

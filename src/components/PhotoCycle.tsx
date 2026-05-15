@@ -36,7 +36,7 @@ export default function PhotoCycle({
         <Image
           key={src}
           src={src}
-          alt={`${alt} ${i + 1}`}
+          alt={`${alt} — Slide ${i + 1} of ${images.length}`}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className={`object-cover transition-opacity duration-700 ${

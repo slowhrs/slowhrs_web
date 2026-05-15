@@ -78,7 +78,7 @@ export default function PersistentNav() {
         >
           <Image 
             src="/assets/logos/logo_main.png" 
-            alt="SLOWHRS Private Creative Society Main Logo"
+            alt="SLOWHRS"
             title="SLOWHRS Private Creative Society"
             width={120} 
             height={30} 

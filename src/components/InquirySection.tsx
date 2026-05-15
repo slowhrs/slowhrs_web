@@ -67,7 +67,7 @@ export default function InquirySection() {
         <div className="hidden lg:flex flex-col items-end gap-3 opacity-80 mix-blend-screen">
           <Image 
             src="/assets/icons/vhscam_live.png" 
-            alt="SLOWHRS VHS Camcorder Live Recording Indicator"
+            alt="SLOWHRS Live Recording"
             title="Recording Live"
             width={40} 
             height={40} 

@@ -146,17 +146,17 @@ export default function ArchiveSection() {
             Proof The Room Happened
           </h2>
           <p className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] text-brand-ink/60 max-w-[50ch] leading-[1.6] uppercase">
-            Runway, nightlife, castings, drops, behind the scenes, and clothing reels filed from the city after dark.
+            Runway, nightlife, castings, drops, and clothing reels. Filed from the city after dark.
           </p>
         </div>
 
         <div className="flex flex-col md:items-end gap-2 max-w-[300px] reveal reveal-d2">
           <div className="font-serif italic text-[1.2rem] text-brand-ink/80 text-left md:text-right">
-            Some rooms are filmed. Some rooms become files. The archive is the proof.
+            Some rooms are filmed. Some become files. The archive is the proof.
           </div>
           {/* CD sticker accent */}
           <div className="hidden md:block w-[60px] mt-4 opacity-70 rotate-[-12deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
-            <Image src="/assets/icons/CD.png" alt="SLOWHRS Archive CD" title="Archive Media" width={60} height={60} className="w-full h-auto pixel animate-[spin_12s_linear_infinite]" />
+            <Image src="/assets/icons/CD.png" alt="SLOWHRS Archive Media Disc" title="Archive Media" width={60} height={60} className="w-full h-auto pixel animate-[spin_12s_linear_infinite]" />
           </div>
         </div>
       </div>

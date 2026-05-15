@@ -20,7 +20,7 @@ export default function FooterSection() {
           {/* Brand Column */}
           <div className="flex flex-col gap-6 reveal">
             <div className="mb-2 w-[120px] md:w-[150px] mix-blend-screen opacity-90">
-              <Image src="/assets/logos/logo_main.png" alt="SLOWHRS Private Creative Society Wordmark Logo - Los Angeles" title="SLOWHRS Private Creative Society" width={200} height={45} className="w-full h-auto" />
+              <Image src="/assets/logos/logo_main.png" alt="SLOWHRS" title="SLOWHRS" width={200} height={45} className="w-full h-auto" />
             </div>
             
             <div className="flex flex-col gap-2">

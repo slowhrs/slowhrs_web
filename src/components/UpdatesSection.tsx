@@ -54,7 +54,7 @@ export default function UpdatesSection() {
 
             {/* Locked Sticker Accent */}
             <div className="absolute -bottom-6 -right-4 z-20 w-[120px] opacity-80 pointer-events-none rotate-[-15deg] drop-shadow-[0_0_12px_rgba(230,0,22,0.4)] mix-blend-screen">
-              <Image src="/assets/widgets/locked.png" alt="SLOWHRS Locked Access Widget Sticker" title="Restricted Access" width={120} height={120} className="w-full h-auto pixel" />
+              <Image src="/assets/widgets/locked.png" alt="SLOWHRS Restricted Access" title="Restricted Access" width={120} height={120} className="w-full h-auto pixel" />
             </div>
           </div>
         </div>

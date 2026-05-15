@@ -74,7 +74,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
               src="/assets/widgets/gone.png"
-              alt="SLOWHRS Sold Out Gone Sticker Widget"
+              alt="SLOWHRS Sold Out"
               title="Sold Out"
               width={120}
               height={40}
@@ -88,7 +88,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
           <div className="absolute top-4 right-4">
             <Image
               src="/assets/widgets/members_first.png"
-              alt="SLOWHRS Members First Access Sticker Widget"
+              alt="SLOWHRS Members First Access"
               title="Members First"
               width={80}
               height={30}

@@ -50,7 +50,7 @@ export default function AccessSection() {
           
           {/* Subtle Sticker Accent */}
           <div className="absolute -top-6 -right-6 z-20 w-[90px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rotate-12 drop-shadow-[0_0_12px_rgba(230,0,22,0.3)]">
-            <Image src="/assets/widgets/Access.png" alt="SLOWHRS Digital Access Card Hologram Sticker" title="Access Granted" width={100} height={100} className="w-full h-auto pixel" />
+            <Image src="/assets/widgets/Access.png" alt="SLOWHRS Access Granted" title="Access Granted" width={100} height={100} className="w-full h-auto pixel" />
           </div>
 
           <div className="border border-brand-border bg-[#050505] relative overflow-hidden transition-transform duration-700 transform-gpu group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:-rotate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
@@ -70,7 +70,7 @@ export default function AccessSection() {
             {/* Card Body */}
             <div className="p-8">
               <div className="mb-8 opacity-80 mix-blend-screen w-[100px]">
-                <Image src="/assets/logos/logo_main.png" alt="SLOWHRS Private Creative Society Membership Logo" title="SLOWHRS Private Creative Society" width={150} height={34} className="w-full h-auto" />
+                <Image src="/assets/logos/logo_main.png" alt="SLOWHRS" title="SLOWHRS" width={150} height={34} className="w-full h-auto" />
               </div>
               
               <div className="flex flex-col gap-5">
@@ -123,10 +123,10 @@ export default function AccessSection() {
               {/* Ticket + On The List reward visuals */}
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-[70px] opacity-80 rotate-[-8deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)]">
-                  <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Private Access Golden Ticket Icon" title="Access Ticket" width={70} height={70} className="w-full h-auto pixel" />
+                  <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Access Ticket" title="Access Ticket" width={70} height={70} className="w-full h-auto pixel" />
                 </div>
                 <div className="w-[80px] opacity-85 rotate-[5deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
-                  <Image src="/assets/widgets/Onthelist.png" alt="On The List" title="You're On The List" width={80} height={80} className="w-full h-auto pixel" />
+                  <Image src="/assets/widgets/Onthelist.png" alt="SLOWHRS On The List" title="On The List" width={80} height={80} className="w-full h-auto pixel" />
                 </div>
               </div>
               <button 

@@ -4,8 +4,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "SLOWHRS | news",
-  description: "drops, recaps, casting calls. what happened between the parties.",
+  title: "SLOWHRS | News",
+  description: "Drops, recaps, casting calls. What happened between the parties.",
 };
 
 export default function NewsPage() {

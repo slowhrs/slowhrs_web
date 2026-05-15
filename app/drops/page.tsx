@@ -4,8 +4,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "SLOWHRS | drops",
-  description: "clothing made in-house. limited runs. members get the window first.",
+  title: "SLOWHRS | Drops",
+  description: "Limited clothing made in-house. Members get the window first.",
 };
 
 export default function DropsPage() {

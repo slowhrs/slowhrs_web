@@ -8,7 +8,7 @@ const CLOTHING = [
     type: "Outerwear", 
     price: "$100", 
     badge: "GONE", 
-    desc: "Web-stitched heavyweight. One run only.",
+    desc: "Heavyweight cut. Web-stitched. One production run.",
     gif: "/assets/drops/clothing/spider_hoodie.gif"
   },
   { 
@@ -16,7 +16,7 @@ const CLOTHING = [
     type: "Outerwear", 
     price: "$50", 
     badge: "GONE", 
-    desc: "Logo front. Archive cut.",
+    desc: "Logo placement front. Archive fit.",
     gif: "/assets/drops/clothing/front_hoodie.gif"
   },
   { 
@@ -24,7 +24,7 @@ const CLOTHING = [
     type: "Top", 
     price: "$40", 
     badge: "GONE", 
-    desc: "Cropped. For the night shift.",
+    desc: "Cropped body. Made for the after hours.",
     gif: "/assets/drops/clothing/crop_hoodie.gif"
   },
   { 
@@ -32,7 +32,7 @@ const CLOTHING = [
     type: "Bottom", 
     price: "$50", 
     badge: "2 LEFT", 
-    desc: "Low-rise. Shot on VHS. Final units.",
+    desc: "Low-rise silhouette. VHS campaign. Final 2 units.",
     gif: "/assets/drops/clothing/skirt.gif"
   },
   { 
@@ -40,7 +40,7 @@ const CLOTHING = [
     type: "Bottom", 
     price: "$50", 
     badge: "GONE", 
-    desc: "Wide leg. Runway silhouette.",
+    desc: "Wide leg construction. Runway silhouette.",
     gif: "/assets/drops/clothing/flare_pants.gif"
   },
   { 
@@ -48,7 +48,7 @@ const CLOTHING = [
     type: "Bottom", 
     price: "$50", 
     badge: "GONE", 
-    desc: "Straight cut. Built for the after hours.",
+    desc: "Straight cut. Night shift standard.",
     gif: "/assets/drops/clothing/pants.gif"
   },
   { 
@@ -56,7 +56,7 @@ const CLOTHING = [
     type: "Bottom", 
     price: "$50", 
     badge: "GONE", 
-    desc: "One-off collaboration. Never restocked.",
+    desc: "Limited collaboration. Single production run.",
     gif: "/assets/drops/clothing/adidas_pants.gif"
   },
   { 
@@ -64,7 +64,7 @@ const CLOTHING = [
     type: "Top", 
     price: "$20", 
     badge: "GONE", 
-    desc: "Entry piece. Logo on front.",
+    desc: "Entry-level piece. Front logo print.",
     gif: "/assets/drops/clothing/fast_life_tee.gif"
   },
   { 
@@ -72,7 +72,7 @@ const CLOTHING = [
     type: "Bottom", 
     price: "$30", 
     badge: "GONE", 
-    desc: "Cut above the knee. Summer run.",
+    desc: "Above the knee. Summer capsule.",
     gif: "/assets/drops/clothing/shorts.gif"
   },
 ];
@@ -148,14 +148,14 @@ export default function DropsSection() {
               images={CAMPAIGN_PHOTOS}
               interval={2200}
               className="w-full h-full"
-              alt="SLOWHRS Fast Life Campaign"
+              alt="SLOWHRS Fast Life Campaign Lookbook"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10"></div>
           </div>
           
           {/* Members First badge */}
           <div className="absolute top-5 right-5 z-20 w-[70px] md:w-[90px] opacity-85 rotate-[10deg] drop-shadow-[0_0_12px_rgba(230,0,22,0.35)] pointer-events-none">
-            <Image src="/assets/widgets/members_first.png" alt="Members First" width={90} height={90} className="w-full h-auto pixel" />
+            <Image src="/assets/widgets/members_first.png" alt="SLOWHRS Members First Access" title="Members First" width={90} height={90} className="w-full h-auto pixel" />
           </div>
 
           <div className="relative z-10 p-6 md:p-10 h-full flex flex-col justify-end min-h-[400px] lg:min-h-[600px]">
@@ -198,7 +198,7 @@ export default function DropsSection() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={item.gif} 
-                    alt={`SLOWHRS ${item.title} Product Image`}
+                    alt={`SLOWHRS ${item.title} — Fast Life Collection`}
                     className={`w-full h-full object-contain ${!isAvailable ? 'grayscale' : ''}`}
                     loading="lazy"
                   />
@@ -206,7 +206,7 @@ export default function DropsSection() {
                   {/* GONE overlay */}
                   {!isAvailable && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-                      <Image src="/assets/widgets/gone.png" alt="Sold Out" title="Sold Out" width={60} height={30} className="pixel rotate-[-15deg] opacity-90 drop-shadow-[0_0_8px_rgba(230,0,22,0.6)]" />
+                      <Image src="/assets/widgets/gone.png" alt="SLOWHRS Sold Out" title="Sold Out" width={60} height={30} className="pixel rotate-[-15deg] opacity-90 drop-shadow-[0_0_8px_rgba(230,0,22,0.6)]" />
                     </div>
                   )}
                 </div>

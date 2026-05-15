@@ -51,7 +51,7 @@ export default function Footer() {
           >
             <Image 
               src="/assets/logos/logo_main.png" 
-              alt="SLOWHRS Private Creative Society Logo - Footer"
+              alt="SLOWHRS"
               title="SLOWHRS Private Creative Society"
               width={200} 
               height={50} 

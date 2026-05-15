@@ -34,7 +34,7 @@ export default function Nav() {
         <Link href="#home" className="h-7 md:h-8 flex items-center z-[90]">
           <Image 
             src="/assets/logos/logo_main.png" 
-            alt="SLOWHRS Private Creative Society Navigation Logo" 
+            alt="SLOWHRS" 
             title="SLOWHRS Private Creative Society"
             width={120} 
             height={32} 

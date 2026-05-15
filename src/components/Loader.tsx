@@ -56,7 +56,7 @@ export default function Loader() {
       <div className="w-[min(380px,75vw)] mb-6 drop-shadow-[0_0_30px_rgba(230,0,22,0.5)] animate-flicker">
         <Image 
           src="/assets/logos/logo_main.png" 
-          alt="SLOWHRS System Booting Sequence Logo"
+          alt="SLOWHRS"
           title="SLOWHRS System Boot"
           width={380} 
           height={86} 

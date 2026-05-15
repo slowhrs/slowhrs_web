@@ -178,7 +178,7 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
       <Image
         ref={logoRef}
         src="/assets/logos/logo_main.png"
-        alt="SLOWHRS Main Cinematic Logo - Private Creative Society"
+        alt="SLOWHRS"
         title="SLOWHRS Cinematic Entry"
         width={280}
         height={80}
