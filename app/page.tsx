@@ -3,9 +3,11 @@ import Ticker from "@/components/Ticker";
 import Nav from "@/components/Nav";
 import HeroLobby from "@/components/HeroLobby";
 import EventsSection from "@/components/EventsSection";
+import UpcomingEvents from "@/components/UpcomingEvents";
 import DropsSection from "@/components/DropsSection";
 import UpdatesSection from "@/components/UpdatesSection";
 import ArchiveSection from "@/components/ArchiveSection";
+import CastingCalls from "@/components/CastingCalls";
 import InquirySection from "@/components/InquirySection";
 import AccessSection from "@/components/AccessSection";
 import FooterSection from "@/components/FooterSection";
@@ -29,6 +31,9 @@ export default function Home() {
       {/* Events / Calendar Section */}
       <EventsSection />
 
+      {/* Upcoming Events / Flyers */}
+      <UpcomingEvents />
+
       {/* Drops / Shop Section */}
       <DropsSection />
 
@@ -37,6 +42,9 @@ export default function Home() {
 
       {/* Archive / Evidence Section */}
       <ArchiveSection />
+
+      {/* Casting Calls */}
+      <CastingCalls />
 
       {/* Inquiry / Terminal Section */}
       <InquirySection />

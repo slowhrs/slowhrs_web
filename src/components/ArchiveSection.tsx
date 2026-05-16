@@ -3,6 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import LazyVideo from "@/components/LazyVideo";
+import EventPhotoCarousel from "@/components/EventPhotoCarousel";
+import { EVENT_PHOTO_SETS, getPhotoUrls } from "@/lib/data/eventPhotos";
 
 const ARCHIVE_ITEMS = [
   {
@@ -206,6 +208,45 @@ export default function ArchiveSection() {
           </div>
         ))}
       </div>
+
+      {/* ── Event Photo Galleries ── */}
+      {EVENT_PHOTO_SETS.length > 0 && (
+        <div className="mt-16 relative z-10">
+          <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-8 flex items-center gap-2 reveal">
+            PHOTO EVIDENCE
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {EVENT_PHOTO_SETS.map((set, i) => (
+              <div key={set.archiveId} className={`group border border-brand-border bg-[#050505] overflow-hidden reveal reveal-d${Math.min(i + 1, 4)}`}>
+                {/* Photo Carousel */}
+                <div className="relative aspect-[4/5]">
+                  <EventPhotoCarousel
+                    photos={getPhotoUrls(set)}
+                    interval={3500 + i * 500}
+                    alt={set.alt}
+                    className="absolute inset-0 w-full h-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+                </div>
+                {/* Info Footer */}
+                <div className="p-4 border-t border-brand-border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-[7px] tracking-[0.2em] text-brand-red uppercase border border-brand-red/30 bg-brand-red/5 px-1.5 py-0.5">
+                      Photos
+                    </span>
+                    <span className="font-mono text-[7px] tracking-[0.2em] text-brand-ink/30 uppercase">
+                      {set.count} frames
+                    </span>
+                  </div>
+                  <h4 className="font-serif italic text-[1rem] text-brand-ink leading-tight truncate">
+                    {set.title}
+                  </h4>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Archive CTA */}
       <div className="mt-12 flex justify-center reveal reveal-d3">
