@@ -1,81 +1,13 @@
-import Image from "next/image";
-import PhotoCycle from "@/components/PhotoCycle";
+"use client";
 
-/* ── Real Fast Life clothing items ── */
-const CLOTHING = [
-  { 
-    title: "SPIDER HOODIE", 
-    type: "Outerwear", 
-    price: "$100", 
-    badge: "GONE", 
-    desc: "Heavyweight cut. Web-stitched. One production run.",
-    gif: "/assets/drops/clothing/spider_hoodie.gif"
-  },
-  { 
-    title: "FRONT HOODIE", 
-    type: "Outerwear", 
-    price: "$50", 
-    badge: "GONE", 
-    desc: "Logo placement front. Archive fit.",
-    gif: "/assets/drops/clothing/front_hoodie.gif"
-  },
-  { 
-    title: "CROP HOODIE", 
-    type: "Top", 
-    price: "$40", 
-    badge: "GONE", 
-    desc: "Cropped body. Made for the after hours.",
-    gif: "/assets/drops/clothing/crop_hoodie.gif"
-  },
-  { 
-    title: "FAST LIFE SKIRT", 
-    type: "Bottom", 
-    price: "$50", 
-    badge: "2 LEFT", 
-    desc: "Low-rise silhouette. VHS campaign. Final 2 units.",
-    gif: "/assets/drops/clothing/skirt.gif"
-  },
-  { 
-    title: "FLARE PANTS", 
-    type: "Bottom", 
-    price: "$50", 
-    badge: "GONE", 
-    desc: "Wide leg construction. Runway silhouette.",
-    gif: "/assets/drops/clothing/flare_pants.gif"
-  },
-  { 
-    title: "FAST LIFE PANTS", 
-    type: "Bottom", 
-    price: "$50", 
-    badge: "GONE", 
-    desc: "Straight cut. Night shift standard.",
-    gif: "/assets/drops/clothing/pants.gif"
-  },
-  { 
-    title: "ADIDAS COLLAB PANTS", 
-    type: "Bottom", 
-    price: "$50", 
-    badge: "GONE", 
-    desc: "Limited collaboration. Single production run.",
-    gif: "/assets/drops/clothing/adidas_pants.gif"
-  },
-  { 
-    title: "FAST LIFE TEE", 
-    type: "Top", 
-    price: "$20", 
-    badge: "GONE", 
-    desc: "Entry-level piece. Front logo print.",
-    gif: "/assets/drops/clothing/fast_life_tee.gif"
-  },
-  { 
-    title: "FAST LIFE SHORTS", 
-    type: "Bottom", 
-    price: "$30", 
-    badge: "GONE", 
-    desc: "Above the knee. Summer capsule.",
-    gif: "/assets/drops/clothing/shorts.gif"
-  },
-];
+import Image from "next/image";
+import Link from "next/link";
+import { useRef, useEffect } from "react";
+import PhotoCycle from "@/components/PhotoCycle";
+import SizePicker, { useSizeSelection } from "@/components/SizePicker";
+import { DROPS, isAvailable, getStockStatus } from "@/lib/data/drops";
+import type { Drop } from "@/lib/data/drops";
+import LazyVideo from "@/components/LazyVideo";
 
 /* Campaign model photos for the featured slideshow */
 const CAMPAIGN_PHOTOS = [
@@ -94,7 +26,12 @@ const CAMPAIGN_PHOTOS = [
   "/assets/drops/campaign/15.jpeg",
 ];
 
+const availableCount = DROPS.filter(isAvailable).length;
+const goneCount = DROPS.length - availableCount;
+
 export default function DropsSection() {
+  const { selectSize, getSelectedSize } = useSizeSelection();
+
   return (
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="drops">
       
@@ -109,7 +46,7 @@ export default function DropsSection() {
             shop drops.
           </h2>
           <p className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] text-brand-ink/60 max-w-[45ch] leading-[1.6] uppercase">
-            most pieces are gone. what remains is what remains.
+            {goneCount} of {DROPS.length} pieces gone. {availableCount > 0 ? `${availableCount} remaining.` : 'what remains is what remains.'}
           </p>
         </div>
       </div>
@@ -121,19 +58,19 @@ export default function DropsSection() {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "ItemList",
-              "itemListElement": CLOTHING.map((item, index) => ({
+              "itemListElement": DROPS.map((item, index) => ({
                 "@type": "ListItem",
                 "position": index + 1,
                 "item": {
                   "@type": "Product",
                   "name": item.title,
-                  "description": item.desc,
-                  "category": item.type,
+                  "description": item.description,
+                  "category": item.category,
                   "offers": {
                     "@type": "Offer",
                     "priceCurrency": "USD",
-                    "price": item.price.replace("$", ""),
-                    "availability": item.badge === "GONE" ? "https://schema.org/OutOfStock" : "https://schema.org/LimitedAvailability"
+                    "price": item.price,
+                    "availability": isAvailable(item) ? "https://schema.org/LimitedAvailability" : "https://schema.org/OutOfStock"
                   }
                 }
               }))
@@ -172,13 +109,13 @@ export default function DropsSection() {
               shot on vhs. worn in the room.
             </p>
             <p className="font-mono text-[8px] tracking-[0.15em] text-brand-ink/40 uppercase mb-8">
-              8 of 9 pieces sold out. 1 remaining.
+              {goneCount} of {DROPS.length} pieces sold out. {availableCount > 0 ? `${availableCount} remaining.` : 'archive collection.'}
             </p>
             <div className="flex items-center gap-4">
-              <button className="flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
+              <Link href="#drops-grid" className="flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase font-bold">VIEW DROP</span>
                 <span className="font-serif italic text-[1.2rem] leading-none">→</span>
-              </button>
+              </Link>
               <div className="w-[32px] opacity-70 drop-shadow-[0_0_8px_rgba(230,0,22,0.3)]">
                 <Image src="/assets/icons/cart.png" alt="" width={32} height={32} className="w-full h-auto pixel" aria-hidden="true" />
               </div>
@@ -186,59 +123,136 @@ export default function DropsSection() {
           </div>
         </div>
 
-        {/* Product Grid — Real Clothing with GIFs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-1 lg:gap-4 lg:overflow-y-auto lg:max-h-[600px] lg:pr-2 custom-scrollbar">
-          {CLOTHING.map((item, i) => {
-            const isAvailable = item.badge !== "GONE";
-            return (
-              <div key={i} className={`flex flex-row md:flex-col lg:flex-row items-center lg:items-stretch gap-4 p-3 border border-brand-border bg-[#080808] hover:bg-[#0e0e0e] transition-all group reveal reveal-d${Math.min(i + 1, 5)} ${!isAvailable ? 'opacity-60' : ''}`}>
-                
-                {/* GIF Product Image */}
-                <div className="w-[100px] h-[130px] md:w-full md:h-[180px] lg:w-[110px] lg:h-[140px] shrink-0 bg-[#0a0a0a] relative border border-brand-border/40 overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={item.gif} 
-                    alt={`SLOWHRS ${item.title} — Fast Life Collection`}
-                    className={`w-full h-full object-contain ${!isAvailable ? 'grayscale' : ''}`}
-                    loading="lazy"
-                  />
-                  
-                  {/* GONE overlay */}
-                  {!isAvailable && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-                      <Image src="/assets/widgets/gone.png" alt="SLOWHRS Sold Out" title="Sold Out" width={60} height={30} className="pixel rotate-[-15deg] opacity-90 drop-shadow-[0_0_8px_rgba(230,0,22,0.6)]" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Product Info */}
-                <div className="flex flex-col justify-center flex-1 py-1 min-w-0">
-                  <div className="flex justify-between items-start mb-1.5">
-                    <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase">{item.type}</div>
-                    <div className={`font-mono text-[7px] tracking-[0.2em] px-1.5 py-0.5 border uppercase shrink-0 ${
-                      isAvailable 
-                        ? 'border-brand-red text-brand-red animate-pulse' 
-                        : 'border-brand-ink/20 text-brand-ink/20'
-                    }`}>{item.badge}</div>
-                  </div>
-                  <h4 className="font-serif italic text-[1rem] md:text-[1.1rem] text-brand-ink leading-tight mb-1 truncate">{item.title}</h4>
-                  <p className="font-mono text-[8px] tracking-[0.1em] text-brand-ink/50 leading-snug mb-2 max-w-[30ch]">{item.desc}</p>
-                  <div className="mt-auto flex items-center justify-between">
-                    <div className={`font-mono text-[11px] tracking-[0.1em] ${isAvailable ? 'text-brand-red font-bold' : 'text-brand-ink/40 line-through'}`}>{item.price}</div>
-                    <button className={`font-mono text-[8px] tracking-[0.2em] uppercase border-b pb-0.5 transition-colors ${
-                      isAvailable
-                        ? 'text-brand-red border-brand-red/50 hover:border-brand-red cursor-pointer' 
-                        : 'text-brand-ink/30 border-brand-ink/10 cursor-not-allowed'
-                    }`}>
-                      {isAvailable ? 'SECURE PIECE' : 'SOLD OUT'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* Product Grid — 2-column with video tiles */}
+        <div id="drops-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-1 lg:gap-4 lg:overflow-y-auto lg:max-h-[600px] lg:pr-2 custom-scrollbar">
+          {DROPS.map((drop, i) => (
+            <DropCard
+              key={drop.id}
+              drop={drop}
+              index={i}
+              selectedSize={getSelectedSize(drop.id)}
+              onSelectSize={(size) => selectSize(drop.id, size)}
+            />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+
+/* ── Individual Drop Card ── */
+
+function DropCard({
+  drop,
+  index,
+  selectedSize,
+  onSelectSize,
+}: {
+  drop: Drop;
+  index: number;
+  selectedSize: import("@/lib/data/drops").Size | null;
+  onSelectSize: (size: import("@/lib/data/drops").Size) => void;
+}) {
+  const available = isAvailable(drop);
+  const status = getStockStatus(drop);
+
+  const handleCheckout = () => {
+    if (!selectedSize) return;
+
+    // If Stripe isn't configured, route to inquiry form with product context
+    if (!drop.stripe_price_id) {
+      window.location.href = `#inquiry?subject=order&product=${drop.id}&size=${selectedSize}`;
+      return;
+    }
+
+    // Stripe checkout — POST to server action
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/api/checkout';
+    
+    const addField = (name: string, value: string) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    };
+
+    addField('product_id', drop.id);
+    addField('size', selectedSize);
+    addField('stripe_price_id', drop.stripe_price_id);
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+
+  return (
+    <div className={`flex flex-row md:flex-col lg:flex-row items-start lg:items-stretch gap-4 p-3 border border-brand-border bg-[#080808] hover:bg-[#0e0e0e] transition-all group reveal reveal-d${Math.min(index + 1, 5)} ${!available ? 'opacity-60' : ''}`}>
+      
+      {/* Video Product Preview */}
+      <div className="w-[120px] h-[160px] md:w-full md:h-[220px] lg:w-[130px] lg:h-[170px] shrink-0 bg-[#0a0a0a] relative border border-brand-border/40 overflow-hidden">
+        <LazyVideo
+          src={drop.video}
+          className="w-full h-full object-contain"
+        />
+        
+        {/* GONE overlay */}
+        {!available && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+            <Image src="/assets/widgets/gone.png" alt="Sold Out" title="Sold Out" width={60} height={30} className="pixel rotate-[-15deg] opacity-90 drop-shadow-[0_0_8px_rgba(230,0,22,0.6)]" />
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="flex flex-col justify-between flex-1 py-1 min-w-0 gap-2">
+        <div>
+          <div className="flex justify-between items-start mb-1.5">
+            <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase">{drop.category}</div>
+            <div className={`font-mono text-[7px] tracking-[0.2em] px-1.5 py-0.5 border uppercase shrink-0 ${
+              available 
+                ? 'border-brand-red text-brand-red animate-pulse' 
+                : 'border-brand-ink/20 text-brand-ink/20'
+            }`}>{drop.badge}</div>
+          </div>
+          <h4 className="font-serif italic text-[1rem] md:text-[1.1rem] text-brand-ink leading-tight mb-1 truncate">{drop.title}</h4>
+          <p className="font-mono text-[8px] tracking-[0.1em] text-brand-ink/50 leading-snug mb-2 max-w-[30ch]">{drop.description}</p>
+        </div>
+
+        {/* Size Picker — only for available items */}
+        {available && (
+          <div className="mb-2">
+            <SizePicker
+              drop={drop}
+              selectedSize={selectedSize}
+              onSelect={onSelectSize}
+            />
+          </div>
+        )}
+
+        <div className="mt-auto flex items-center justify-between">
+          <div className={`font-mono text-[11px] tracking-[0.1em] ${available ? 'text-brand-red font-bold' : 'text-brand-ink/40 line-through'}`}>${drop.price}</div>
+          
+          {available ? (
+            <button
+              onClick={handleCheckout}
+              disabled={!selectedSize}
+              className={`font-mono text-[8px] tracking-[0.2em] uppercase border-b pb-0.5 transition-colors ${
+                selectedSize
+                  ? 'text-brand-red border-brand-red/50 hover:border-brand-red cursor-pointer'
+                  : 'text-brand-ink/30 border-brand-ink/10 cursor-not-allowed'
+              }`}
+            >
+              {selectedSize ? (drop.stripe_price_id ? 'SECURE PIECE' : 'MESSAGE TO ORDER') : 'SELECT SIZE'}
+            </button>
+          ) : (
+            <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-brand-ink/30 border-b border-brand-ink/10 pb-0.5">
+              SOLD OUT
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
