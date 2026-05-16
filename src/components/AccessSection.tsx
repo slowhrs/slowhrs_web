@@ -7,6 +7,7 @@ import { submitApplication } from "@/app/actions/apply";
 export default function AccessSection() {
   const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [memberId, setMemberId] = React.useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,6 +16,7 @@ export default function AccessSection() {
 
     setStatus("submitting");
     setErrorMsg(null);
+    setMemberId(null);
 
     const formData = new FormData(formRef.current);
 
@@ -22,6 +24,7 @@ export default function AccessSection() {
       const result = await submitApplication(formData);
       if (result.success) {
         setStatus("success");
+        if (result.member_id) setMemberId(result.member_id);
         formRef.current.reset();
       } else {
         setStatus("error");
@@ -117,9 +120,11 @@ export default function AccessSection() {
           {status === "success" ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in">
               <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">On The List.</div>
-              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase">Application received. We review weekly.</div>
+              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase mb-6">
+                {memberId ? `Application ${memberId} received. We review weekly.` : "Application received. We review weekly."}
+              </div>
               <button 
-                onClick={() => setStatus("idle")}
+                onClick={() => { setStatus("idle"); setMemberId(null); }}
                 className="border-b border-brand-ink/30 pb-1 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase"
               >
                 RETURN

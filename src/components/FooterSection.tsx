@@ -28,7 +28,7 @@ export default function FooterSection() {
                 Private Creative Society · Los Angeles
               </h3>
               <p className="font-mono text-[10px] tracking-[0.2em] text-brand-red uppercase">
-                Only For Those Who Desire A Fast Life
+                Est. Los Angeles
               </p>
             </div>
 

@@ -44,34 +44,27 @@ export async function submitApplication(formData: FormData) {
       return { success: false, error: 'you\'ve already applied. we\'ll be in touch.' };
     }
 
-    const { error: dbError } = await supabase.from('applications').insert({
+    const { data: newApp, error: dbError } = await supabase.from('applications').insert({
       full_name,
       email,
       instagram: instagram || null,
       city: city || 'Los Angeles',
       what_you_do: what_you_do || null,
       why_apply,
-    });
+    }).select('member_id').single();
 
-    if (dbError) {
+    if (dbError || !newApp) {
       console.error('[apply] supabase insert failed:', JSON.stringify(dbError));
       return { success: false, error: 'something went wrong. try again.' };
     }
 
     // Send receipt to applicant + notification to owner (non-blocking)
-    try {
-      await sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase());
-    } catch (emailErr) {
-      console.error('[apply] receipt email failed:', emailErr);
-    }
+    Promise.all([
+      sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase()).catch(err => console.error('[apply] receipt email failed:', err)),
+      sendApplicationNotification({ full_name, email, instagram, city, what_you_do, why_apply }).catch(err => console.error('[apply] owner notification failed:', err))
+    ]);
 
-    try {
-      await sendApplicationNotification({ full_name, email, instagram, city, what_you_do, why_apply });
-    } catch (notifErr) {
-      console.error('[apply] owner notification failed:', notifErr);
-    }
-
-    return { success: true };
+    return { success: true, member_id: newApp.member_id };
   } catch (err) {
     console.error('[apply] unexpected error:', err);
     return { success: false, error: 'something went wrong. try again.' };

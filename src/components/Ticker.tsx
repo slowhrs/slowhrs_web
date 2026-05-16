@@ -12,7 +12,7 @@ export default function Ticker() {
               <span className="text-brand-red">●</span> REC
             </span>
             <span className="font-mono text-[10px] tracking-[0.28em] text-brand-ink-dim px-6 uppercase">
-              Only For Those Who Desire A Fast Life
+              Los Angeles Creative Society
             </span>
             <span className="font-mono text-[10px] tracking-[0.28em] text-brand-ink-dim px-6 uppercase">
               <span className="text-brand-red">●</span> PRIVATE ACCESS

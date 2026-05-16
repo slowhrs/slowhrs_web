@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { submitInquiry } from "@/app/actions/inquiry";
 
 const INQUIRY_TYPES = [
@@ -19,7 +19,36 @@ export default function InquirySection() {
   const [selectedType, setSelectedType] = React.useState(INQUIRY_TYPES[0]);
   const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [prefillDetails, setPrefillDetails] = React.useState<string>("");
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Parse hash params for pre-fill from drops/casting links
+  useEffect(() => {
+    const parseHashParams = () => {
+      const hash = window.location.hash;
+      if (!hash.includes('?')) return;
+      const queryString = hash.split('?')[1];
+      const params = new URLSearchParams(queryString);
+      const subject = params.get('subject');
+      const product = params.get('product');
+      const size = params.get('size');
+      const ref = params.get('ref');
+
+      if (subject === 'order' && product) {
+        const generalType = INQUIRY_TYPES.find(t => t.id === 'general') || INQUIRY_TYPES[0];
+        setSelectedType(generalType);
+        setPrefillDetails(`ORDER REQUEST — Product: ${product}${size ? `, Size: ${size}` : ''}\n\nPlease hold this piece for me.`);
+      } else if (subject === 'casting' && ref) {
+        const modelType = INQUIRY_TYPES.find(t => t.id === 'model') || INQUIRY_TYPES[0];
+        setSelectedType(modelType);
+        setPrefillDetails(`CASTING APPLICATION — Ref: ${ref}\n\n`);
+      }
+    };
+
+    parseHashParams();
+    window.addEventListener('hashchange', parseHashParams);
+    return () => window.removeEventListener('hashchange', parseHashParams);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,7 +199,7 @@ export default function InquirySection() {
 
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Details</label>
-                  <textarea name="details" required rows={3} className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder={selectedType.placeholder}></textarea>
+                  <textarea name="details" required rows={3} className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder={selectedType.placeholder} defaultValue={prefillDetails}></textarea>
                 </div>
 
                 {errorMsg && (

@@ -1,10 +1,31 @@
 import { Resend } from 'resend';
 
-if (!process.env.RESEND_API_KEY) {
-  console.warn('[resend] RESEND_API_KEY not set — emails will fail silently');
-}
+let resendInstance: any = null;
 
-const resend = new Resend(process.env.RESEND_API_KEY || '');
+function getResend() {
+  if (!resendInstance) {
+    if (!process.env.RESEND_API_KEY) {
+      console.warn('[resend] RESEND_API_KEY not set — emails will fail silently');
+      resendInstance = {
+        emails: {
+          send: async (payload: any) => {
+            console.log('[resend mock] Email intercepted (no API key):', payload);
+            return { data: { id: 'mock_id' }, error: null };
+          }
+        },
+        batch: {
+          send: async (payload: any) => {
+            console.log('[resend mock] Batch emails intercepted (no API key):', payload);
+            return { data: { id: 'mock_batch_id' }, error: null };
+          }
+        }
+      };
+    } else {
+      resendInstance = new Resend(process.env.RESEND_API_KEY);
+    }
+  }
+  return resendInstance;
+}
 
 function getFrom(): string {
   return process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
@@ -15,7 +36,7 @@ function getOwnerEmail(): string {
 }
 
 export async function sendApplicationReceipt(to: string, name: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: `SLOWHRS <${getFrom()}>`,
     to,
     subject: 'got your application — slowhrs',
@@ -31,7 +52,7 @@ export async function sendApplicationNotification(application: {
   what_you_do?: string | null;
   why_apply: string;
 }) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: `SLOWHRS <${getFrom()}>`,
     to: getOwnerEmail(),
     replyTo: application.email,
@@ -40,13 +61,26 @@ export async function sendApplicationNotification(application: {
   });
 }
 
-export async function sendDenial(to: string, name: string) {
-  return resend.emails.send({
+export async function sendApprovalEmail(to: string, name: string) {
+  return getResend().emails.send({
+    from: `SLOWHRS <${getFrom()}>`,
+    to,
+    subject: 'welcome to slowhrs',
+    text: `hi ${name},\n\nyour application has been approved. welcome.\n\n— slowhrs`,
+  });
+}
+
+export async function sendRejectionEmail(to: string, name: string) {
+  return getResend().emails.send({
     from: `SLOWHRS <${getFrom()}>`,
     to,
     subject: 'slowhrs — application update',
     text: `hi ${name},\n\nthanks for applying. we're not extending an invitation right now. it's not personal — we're keeping the room small.\n\n— slowhrs`,
   });
+}
+
+export async function sendDenial(to: string, name: string) {
+  return sendRejectionEmail(to, name);
 }
 
 export async function sendInquiryNotification(inquiry: {
@@ -56,7 +90,7 @@ export async function sendInquiryNotification(inquiry: {
   instagram?: string;
   details: string;
 }) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: `SLOWHRS <${getFrom()}>`,
     to: getOwnerEmail(),
     replyTo: inquiry.email,
@@ -71,7 +105,7 @@ export async function sendOrderNotification(order: {
   customerEmail: string;
   amount: string;
 }) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: `SLOWHRS <${getFrom()}>`,
     to: getOwnerEmail(),
     subject: `order placed — ${order.productTitle} (${order.size})`,
@@ -80,6 +114,7 @@ export async function sendOrderNotification(order: {
 }
 
 export async function sendBroadcast(to: string[], subject: string, body: string) {
+  const resend = getResend();
   const chunks = chunk(to, 100);
   let total = 0;
   for (const c of chunks) {
@@ -101,4 +136,3 @@ function chunk<T>(arr: T[], size: number): T[][] {
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
   return out;
 }
-

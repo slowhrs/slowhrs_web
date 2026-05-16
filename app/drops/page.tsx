@@ -1,4 +1,4 @@
-import { drops } from "@/lib/data/drops";
+import { DROPS } from "@/lib/data/drops";
 import DropTile from "@/components/drops/DropTile";
 import ScrollReveal from "@/components/ScrollReveal";
 import Footer from "@/components/Footer";
@@ -42,7 +42,7 @@ export default function DropsPage() {
 
       {/* Drops */}
       <div className="max-w-[1200px] mx-auto px-6 md:px-12 pb-24">
-        {drops.map((drop, i) => (
+        {DROPS.map((drop, i) => (
           <ScrollReveal key={drop.id} delay={i * 100}>
             <DropTile drop={drop} index={i} />
           </ScrollReveal>
