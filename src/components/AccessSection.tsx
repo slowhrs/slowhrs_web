@@ -1,17 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
+import { submitApplication } from "@/app/actions/apply";
 
 export default function AccessSection() {
-  const [status, setStatus] = React.useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formRef.current) return;
+
     setStatus("submitting");
-    setTimeout(() => {
-      setStatus("success");
-    }, 1500);
+    setErrorMsg(null);
+
+    const formData = new FormData(formRef.current);
+
+    try {
+      const result = await submitApplication(formData);
+      if (result.success) {
+        setStatus("success");
+        formRef.current.reset();
+      } else {
+        setStatus("error");
+        setErrorMsg(result.error || "something went wrong.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMsg("connection error. try again.");
+    }
   };
 
   return (
@@ -48,87 +67,57 @@ export default function AccessSection() {
         {/* Left Panel - Digital Access Card Widget */}
         <div className="relative group perspective-1000 reveal reveal-d1">
           
-          {/* Subtle Sticker Accent */}
-          <div className="absolute -top-6 -right-6 z-20 w-[90px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rotate-12 drop-shadow-[0_0_12px_rgba(230,0,22,0.3)]">
-            <Image src="/assets/widgets/Access.png" alt="SLOWHRS Access Granted" title="Access Granted" width={100} height={100} className="w-full h-auto pixel" />
-          </div>
-
-          <div className="border border-brand-border bg-[#050505] relative overflow-hidden transition-transform duration-700 transform-gpu group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:-rotate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
-            
-            {/* Card Header */}
-            <div className="bg-[#111] p-4 border-b border-brand-border flex justify-between items-center">
-              <div className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase">
-                DIGITAL IDENTITY CARD
-              </div>
-              <div className="flex gap-1.5">
-                <div className="w-1.5 h-1.5 bg-brand-ink/20"></div>
-                <div className="w-1.5 h-1.5 bg-brand-ink/20"></div>
-                <div className="w-1.5 h-1.5 bg-brand-ink/20"></div>
-              </div>
-            </div>
-
-            {/* Card Body */}
-            <div className="p-8">
-              <div className="mb-8 opacity-80 mix-blend-screen w-[100px]">
-                <Image src="/assets/logos/logo_main.png" alt="SLOWHRS" title="SLOWHRS" width={150} height={34} className="w-full h-auto" />
-              </div>
-              
-              <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/30 uppercase">MEMBER ID</span>
-                  <span className="font-mono text-[14px] tracking-[0.1em] text-brand-ink uppercase">SH-00024</span>
+          {/* Access Card */}
+          <div className="border border-brand-border bg-black relative">
+            <div className="aspect-[1.586/1] relative">
+              <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-8">
+                
+                {/* Card Header */}
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-mono text-[8px] tracking-[0.3em] text-brand-ink/40 uppercase">SH Access Key</div>
+                    <div className="font-mono text-[18px] tracking-[0.15em] text-brand-ink mt-1">0001</div>
+                  </div>
+                  <div className="w-[80px] opacity-70">
+                    <Image src="/assets/widgets/Access.png" alt="SLOWHRS Access Granted" title="Access Granted" width={100} height={100} className="w-full h-auto pixel" />
+                  </div>
                 </div>
                 
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/30 uppercase">STATUS</span>
-                  <span className="font-mono text-[10px] tracking-[0.2em] text-brand-red uppercase border border-brand-red/30 bg-brand-red/5 px-2 py-1 self-start">
-                    PENDING
-                  </span>
+                {/* Card Body — shimmer line */}
+                <div className="flex-1 flex items-center">
+                  <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-brand-ink/20 to-transparent"></div>
                 </div>
-
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/30 uppercase">CITY</span>
-                  <span className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/80 uppercase">LOS ANGELES</span>
+                
+                {/* Card Footer */}
+                <div className="flex justify-between items-end">
+                  <div>
+                    <div className="font-mono text-[7px] tracking-[0.2em] text-brand-ink/30 uppercase mb-1">Status</div>
+                    <div className="font-mono text-[11px] tracking-[0.2em] text-brand-red uppercase">Pending</div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="font-mono text-[7px] tracking-[0.2em] text-brand-ink/30 uppercase mb-1">Location</div>
+                    <div className="font-mono text-[11px] tracking-[0.15em] text-brand-ink/60">Los Angeles</div>
+                  </div>
                 </div>
-
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[7px] tracking-[0.3em] text-brand-ink/30 uppercase">ACCESS</span>
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 uppercase">EVENTS / DROPS / CASTINGS</span>
-                </div>
-              </div>
-
-              {/* Hologram / Barcode Detail */}
-              <div className="mt-10 pt-6 border-t border-brand-border/40 flex items-center justify-between opacity-50">
-                <div className="h-[20px] flex gap-[2px] items-end">
-                  {[...Array(20)].map((_, i) => {
-                    const h = ((i * 17) % 100) + 10;
-                    const o = ((i * 11) % 10) / 10 + 0.2;
-                    return (
-                      <div key={i} className="bg-brand-ink w-[2px]" style={{ height: `${h}%`, opacity: o }}></div>
-                    );
-                  })}
-                </div>
-
               </div>
             </div>
+          </div>
+
+          {/* Widget: ticket stub, bottom-left */}
+          <div className="absolute -bottom-6 -left-4 z-20 w-[70px] opacity-60 pointer-events-none rotate-[-8deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.4)] mix-blend-screen">
+            <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Access Ticket" title="Access Ticket" width={70} height={70} className="w-full h-auto pixel" />
+          </div>
+          <div className="absolute -top-5 -right-3 z-20 w-[80px] opacity-70 pointer-events-none rotate-[10deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.4)] mix-blend-screen">
+            <Image src="/assets/widgets/Onthelist.png" alt="SLOWHRS On The List" title="On The List" width={80} height={80} className="w-full h-auto pixel" />
           </div>
         </div>
 
         {/* Right Panel - Form */}
-        <div className="relative reveal reveal-d2">
+        <div className="reveal reveal-d2">
           {status === "success" ? (
-            <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in border border-brand-border bg-[#050505] p-10">
-              <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">Access Request Sent.</div>
-              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase mb-6">We will review the file.</div>
-              {/* Ticket + On The List reward visuals */}
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-[70px] opacity-80 rotate-[-8deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)]">
-                  <Image src="/assets/icons/slowhrs_ticket.png" alt="SLOWHRS Access Ticket" title="Access Ticket" width={70} height={70} className="w-full h-auto pixel" />
-                </div>
-                <div className="w-[80px] opacity-85 rotate-[5deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
-                  <Image src="/assets/widgets/Onthelist.png" alt="SLOWHRS On The List" title="On The List" width={80} height={80} className="w-full h-auto pixel" />
-                </div>
-              </div>
+            <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center animate-fade-in">
+              <div className="font-serif italic text-[2.5rem] text-brand-red mb-4">On The List.</div>
+              <div className="font-mono text-[10px] tracking-[0.2em] text-brand-ink/50 uppercase">Application received. We review weekly.</div>
               <button 
                 onClick={() => setStatus("idle")}
                 className="border-b border-brand-ink/30 pb-1 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase"
@@ -137,32 +126,36 @@ export default function AccessSection() {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6 animate-fade-in">
+            <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-6 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Name</label>
-                  <input required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[16px] md:text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Full name" />
+                  <input name="full_name" required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[16px] md:text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Full name" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Instagram</label>
-                  <input required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[16px] md:text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="@handle" />
+                  <input name="instagram" required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[16px] md:text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="@handle" />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Phone or Email</label>
-                <input required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Contact vector" />
+                <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Email</label>
+                <input name="email" required type="email" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="email@example.com" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">What do you do?</label>
-                <input required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Profession / Craft" />
+                <input name="what_you_do" required type="text" className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors" placeholder="Profession / Craft" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">What do you bring to the room?</label>
-                <textarea required rows={3} className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder="Energy, network, vision..."></textarea>
+                <textarea name="why_apply" required rows={3} className="bg-transparent border-b border-brand-border p-3 px-1 font-mono text-[12px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder="Energy, network, vision..."></textarea>
               </div>
+
+              {errorMsg && (
+                <p className="font-mono text-[11px] text-brand-red">{errorMsg}</p>
+              )}
 
               <div className="mt-6 flex flex-col items-start gap-6">
                 <button 

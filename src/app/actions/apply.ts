@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { sendApplicationReceipt } from '@/lib/resend';
+import { sendApplicationReceipt, sendApplicationNotification } from '@/lib/resend';
 
 const ApplySchema = z.object({
   full_name: z.string().min(1),
@@ -54,16 +54,26 @@ export async function submitApplication(formData: FormData) {
     });
 
     if (dbError) {
-      console.error('[apply] db error:', dbError);
+      console.error('[apply] supabase insert failed:', JSON.stringify(dbError));
       return { success: false, error: 'something went wrong. try again.' };
     }
 
-    // Send receipt email
-    await sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase());
+    // Send receipt to applicant + notification to owner (non-blocking)
+    try {
+      await sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase());
+    } catch (emailErr) {
+      console.error('[apply] receipt email failed:', emailErr);
+    }
+
+    try {
+      await sendApplicationNotification({ full_name, email, instagram, city, what_you_do, why_apply });
+    } catch (notifErr) {
+      console.error('[apply] owner notification failed:', notifErr);
+    }
 
     return { success: true };
   } catch (err) {
-    console.error('[apply] error:', err);
+    console.error('[apply] unexpected error:', err);
     return { success: false, error: 'something went wrong. try again.' };
   }
 }
