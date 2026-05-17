@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateAdminHash } from "@/lib/admin-auth";
 
 // Simple in-memory rate limit
 const failedAttempts = new Map<string, { count: number; lockedUntil: number }>();
@@ -39,11 +40,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "wrong password." }, { status: 401 });
   }
 
-  // Success — clear attempts, set cookie
+  // Success — clear attempts, set HMAC cookie (must match middleware.ts)
   failedAttempts.delete(ip);
 
+  const hash = await generateAdminHash();
   const response = NextResponse.json({ success: true });
-  response.cookies.set("slowhrs_admin", "authenticated", {
+  response.cookies.set("sh_admin", hash, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
