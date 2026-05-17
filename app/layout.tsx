@@ -64,6 +64,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${courier.variable}`}>
+      <head>
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-recap.mp4"
+          fetchPriority="high"
+        />
+      </head>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"
