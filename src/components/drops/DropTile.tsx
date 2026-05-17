@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import LazyVideo from "@/components/LazyVideo";
@@ -11,14 +11,12 @@ import { getStockStatus } from "@/lib/data/drops";
 export default function DropTile({ drop }: { drop: Drop; index?: number }) {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(hover: none)").matches : false
+  );
   const cardRef = useRef<HTMLElement>(null);
   const status = getStockStatus(drop);
   const allSoldOut = status === "gone";
-
-  useEffect(() => {
-    setIsTouchDevice(window.matchMedia("(hover: none)").matches);
-  }, []);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     if (isTouchDevice || allSoldOut) return;

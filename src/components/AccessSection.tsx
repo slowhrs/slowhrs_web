@@ -43,8 +43,7 @@ export default function AccessSection() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
-            {/* // Application */}
-            <span className="text-brand-red">// Application</span>
+            <span className="text-brand-red">{"// Application"}</span>
           </div>
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[4rem] text-brand-ink leading-none mb-6">
             Access Is Not A Newsletter. It Is The List.

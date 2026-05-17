@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getTier, nextTier } from "@/lib/membership";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 
 export const metadata = {
   title: "SLOWHRS | dashboard",
@@ -86,11 +87,14 @@ export default async function DashboardPage() {
           />
 
           {/* Logo */}
-           <img
+          <Image
             src="/assets/logos/logo_main.png"
             alt="SLOWHRS Private Creative Society Membership Dashboard Logo"
             title="SLOWHRS Membership Dashboard"
+            width={80}
+            height={22}
             className="w-[80px] opacity-60"
+            style={{ height: "auto" }}
             aria-hidden="true"
           />
 

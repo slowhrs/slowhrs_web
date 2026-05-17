@@ -21,16 +21,19 @@ export default function InquireForm() {
   useEffect(() => {
     const subject = searchParams.get("subject");
     const note = searchParams.get("note");
+    const timeoutId = window.setTimeout(() => {
+      if (subject) {
+        const match = INQUIRY_CATEGORIES.find((c) => c.value === subject);
+        if (match) setCategory(match.value);
+      }
 
-    if (subject) {
-      const match = INQUIRY_CATEGORIES.find((c) => c.value === subject);
-      if (match) setCategory(match.value);
-    }
+      if (note && detailsRef.current) {
+        const drop = note.startsWith("DR-") ? `Re: ${note} // ` : note;
+        detailsRef.current.value = drop;
+      }
+    }, 0);
 
-    if (note && detailsRef.current) {
-      const drop = note.startsWith("DR-") ? `Re: ${note} // ` : note;
-      detailsRef.current.value = drop;
-    }
+    return () => window.clearTimeout(timeoutId);
   }, [searchParams]);
 
   const currentCategory = INQUIRY_CATEGORIES.find((c) => c.value === category);

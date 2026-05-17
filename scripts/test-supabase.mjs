@@ -127,6 +127,7 @@ async function main() {
     if (readErr) {
       console.log(`  ${FAIL} READ-BACK FAILED: ${readErr.message}`);
     } else {
+      console.log(`  ${PASS} READ-BACK OK — status: ${readBack.status}`);
       console.log(`  ${PASS} READ-BACK OK — data verified`);
     }
 

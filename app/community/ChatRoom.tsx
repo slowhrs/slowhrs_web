@@ -122,9 +122,6 @@ export default function ChatRoom({ userId, memberName, instagram, channel, isAdm
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  // Group messages by date
-  let lastDate = '';
-
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
       {/* Pinned Messages Banner */}
@@ -153,10 +150,10 @@ export default function ChatRoom({ userId, memberName, instagram, channel, isAdm
             <p className="font-mono text-[11px] text-ink-faint">no messages yet. say something.</p>
           </div>
         )}
-        {regularMessages.map((m) => {
+        {regularMessages.map((m, index) => {
           const msgDate = formatDate(m.created_at);
-          const showDateHeader = msgDate !== lastDate;
-          lastDate = msgDate;
+          const previousDate = index > 0 ? formatDate(regularMessages[index - 1].created_at) : '';
+          const showDateHeader = msgDate !== previousDate;
           const isOwn = m.user_id === userId;
 
           return (

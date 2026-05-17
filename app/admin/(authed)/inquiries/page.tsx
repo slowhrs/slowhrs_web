@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendInquiryPaymentLinkForm } from "@/app/actions/admin";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +28,7 @@ export default async function AdminInquiriesPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-border">
-                {["date", "category", "name", "email", "ig", "status", "details"].map((h) => (
+                {["date", "category", "name", "email", "ig", "status", "details", "actions"].map((h) => (
                   <th key={h} className="font-mono text-[9px] tracking-[0.2em] text-ink-faint uppercase py-3 pr-4">
                     {h}
                   </th>
@@ -49,8 +50,24 @@ export default async function AdminInquiriesPage() {
                     {inq.instagram || ""}
                   </td>
                   <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim">{inq.status}</td>
-                  <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim max-w-[200px] truncate">
+                  <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim max-w-[260px] truncate">
                     {inq.details || ""}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {inq.details?.toLowerCase().includes("order request") ? (
+                      <form action={sendInquiryPaymentLinkForm}>
+                        <input type="hidden" name="inquiryId" value={inq.id} />
+                        <button
+                          type="submit"
+                          disabled={inq.status === "replied"}
+                          className="brand-action whitespace-nowrap border border-red/40 px-3 py-2 font-mono text-[8px] uppercase tracking-[0.2em] text-red transition-colors hover:bg-red hover:text-bg disabled:cursor-not-allowed disabled:border-border disabled:text-ink-faint disabled:hover:bg-transparent"
+                        >
+                          {inq.status === "replied" ? "link sent" : "send stripe link"}
+                        </button>
+                      </form>
+                    ) : (
+                      <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-ink-faint">—</span>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -23,8 +23,8 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
   const [timeStr, setTimeStr] = useState("");
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Pick random video on mount
-  const videoSrc = useRef(
+  // Pick random video once per mounted entry.
+  const [videoSrc] = useState(() =>
     ENTRY_VIDEOS[Math.floor(Math.random() * ENTRY_VIDEOS.length)]
   );
 
@@ -166,7 +166,7 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
       {/* Video background */}
       <video
         ref={videoRef}
-        src={videoSrc.current}
+        src={videoSrc}
         muted
         playsInline
         loop

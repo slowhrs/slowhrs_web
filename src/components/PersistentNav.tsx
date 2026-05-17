@@ -22,8 +22,12 @@ export default function PersistentNav() {
   }, []);
 
   useEffect(() => {
-    setIsOpen(false);
-    setMenuVisible(false);
+    const timeoutId = window.setTimeout(() => {
+      setIsOpen(false);
+      setMenuVisible(false);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [pathname]);
 
   // Handle menu open/close with animation

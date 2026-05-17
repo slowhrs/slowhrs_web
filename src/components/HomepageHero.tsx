@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ENTRY_VIDEOS } from "@/lib/constants";
 import ScrollReveal from "@/components/ScrollReveal";

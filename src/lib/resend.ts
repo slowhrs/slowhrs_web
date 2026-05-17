@@ -1,6 +1,15 @@
 import { Resend } from 'resend';
 
-let resendInstance: any = null;
+type MockResend = {
+  emails: {
+    send: (payload: unknown) => Promise<{ data: { id: string }; error: null }>;
+  };
+  batch: {
+    send: (payload: unknown) => Promise<{ data: { id: string }; error: null }>;
+  };
+};
+
+let resendInstance: Resend | MockResend | null = null;
 
 function getResend() {
   if (!resendInstance) {
@@ -8,13 +17,13 @@ function getResend() {
       console.warn('[resend] RESEND_API_KEY not set — emails will fail silently');
       resendInstance = {
         emails: {
-          send: async (payload: any) => {
+          send: async (payload: unknown) => {
             console.log('[resend mock] Email intercepted (no API key):', payload);
             return { data: { id: 'mock_id' }, error: null };
           }
         },
         batch: {
-          send: async (payload: any) => {
+          send: async (payload: unknown) => {
             console.log('[resend mock] Batch emails intercepted (no API key):', payload);
             return { data: { id: 'mock_batch_id' }, error: null };
           }
@@ -110,6 +119,21 @@ export async function sendOrderNotification(order: {
     to: getOwnerEmail(),
     subject: `order placed — ${order.productTitle} (${order.size})`,
     text: `product: ${order.productTitle}\nsize: ${order.size}\ncustomer: ${order.customerEmail}\namount: ${order.amount}\n\nship it.`,
+  });
+}
+
+export async function sendOrderPaymentLinkEmail(order: {
+  to: string;
+  name: string;
+  productTitle: string;
+  size: string;
+  checkoutUrl: string;
+}) {
+  return getResend().emails.send({
+    from: `SLOWHRS <${getFrom()}>`,
+    to: order.to,
+    subject: `payment link — ${order.productTitle}`,
+    text: `hi ${order.name},\n\napproved. secure your ${order.productTitle} (${order.size}) here:\n${order.checkoutUrl}\n\nlink expires when checkout expires.\n\n— slowhrs`,
   });
 }
 

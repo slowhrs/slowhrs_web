@@ -28,7 +28,7 @@ export async function submitInquiry(formData: FormData) {
     return { success: false, error: 'missing required fields.' };
   }
 
-  const { category, name, email, instagram, dateOrProject, details } = parsed.data;
+  const { category, name, email, instagram, details } = parsed.data;
 
   try {
     const supabase = createAdminClient();
