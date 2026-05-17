@@ -75,7 +75,7 @@ export async function sendApprovalEmail(to: string, name: string) {
     from: `SLOWHRS <${getFrom()}>`,
     to,
     subject: 'welcome to slowhrs',
-    text: `hi ${name},\n\nyour application has been approved. welcome.\n\n— slowhrs`,
+    text: `hi ${name},\n\nyour application has been approved. welcome.\n\nsign in any time at slowhrs.com/sign-in — magic link arrives at this email.\n\n— slowhrs`,
   });
 }
 

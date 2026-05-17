@@ -73,13 +73,20 @@ INQUIRY_EMAIL_TO=                # default: hello@slowhrs.com
 
 **RULE**: `createAdminClient()` may ONLY be imported in files with `'use server'` directive or files inside `app/api/`. Never in `page.tsx` or client components.
 
-### Database Schema (7 tables + `orders` pending)
+### Member auth + dashboard
+
+- Approved members sign in through Supabase magic-link auth at `/sign-in`.
+- `/auth/callback` exchanges Supabase OTP codes and redirects approved members to `/dashboard`.
+- Member gating is centralized in `src/lib/auth/member.ts`; approved statuses are `tier_02`, `tier_03`, `tier_04`, `tier_05`.
+- `/dashboard` shows the member tier card and upcoming events. Public visitors are redirected to `/sign-in`.
+
+### Database Schema
 
 #### `applications`
 ```sql
 id UUID PK, created_at, email UNIQUE, full_name, instagram,
 city DEFAULT 'Los Angeles', what_you_do, why_apply,
-status CHECK ('pending','approved','denied'), reviewed_at, user_id FK→auth.users
+status CHECK ('tier_01','tier_02','tier_03','tier_04','tier_05','rejected'), reviewed_at, user_id FK→auth.users
 ```
 
 #### `members`
