@@ -27,7 +27,7 @@ export default function CastingCalls() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
         {CASTING_CALLS.map((casting, i) => {
           const isContentCreatorOpen = casting.id === "content_creators" && casting.isOpen;
-          const formHref = `/inquire?subject=casting&note=${encodeURIComponent(`${casting.ref} // Content Creators Wanted application. Portfolio links, your niche, posting cadence, and why you fit SLOWHRS.`)}`;
+          const formHref = "/casting/content-creators";
 
           return (
           <div key={casting.id} className={`group border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 5)} ${

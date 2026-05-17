@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   if (
     req.nextUrl.pathname.startsWith('/admin') &&
     req.nextUrl.pathname !== '/admin/login'
