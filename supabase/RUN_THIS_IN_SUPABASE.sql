@@ -1,12 +1,21 @@
 -- ============================================================
 -- SLOWHRS FULL DATABASE SETUP
 -- Paste this ENTIRE block into Supabase SQL Editor and hit RUN
--- Safe to re-run (uses IF NOT EXISTS everywhere)
+-- Consolidated from migrations 0001, 0003, 0004, 0005, and 0006
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- 1. APPLICATIONS
+-- ============================================================
+-- APPLICATION MEMBER ID SEQUENCE
+-- ============================================================
+
+CREATE SEQUENCE IF NOT EXISTS member_id_seq START 1;
+
+-- ============================================================
+-- TABLES
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -16,15 +25,16 @@ CREATE TABLE IF NOT EXISTS applications (
   city TEXT DEFAULT 'Los Angeles',
   what_you_do TEXT,
   why_apply TEXT,
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','denied')),
+  member_id TEXT NOT NULL UNIQUE,
+  status TEXT NOT NULL DEFAULT 'tier_01'
+    CHECK (status IN ('tier_01','tier_02','tier_03','tier_04','tier_05','rejected')),
   reviewed_at TIMESTAMPTZ,
   user_id UUID REFERENCES auth.users(id)
 );
 
--- 2. MEMBERS
 CREATE TABLE IF NOT EXISTS members (
   user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  application_id UUID,
+  application_id UUID REFERENCES applications(id),
   full_name TEXT NOT NULL,
   instagram TEXT,
   city TEXT,
@@ -35,7 +45,6 @@ CREATE TABLE IF NOT EXISTS members (
   joined_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. EVENTS
 CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -51,7 +60,6 @@ CREATE TABLE IF NOT EXISTS events (
   is_upcoming BOOLEAN DEFAULT true
 );
 
--- 4. ATTENDANCES
 CREATE TABLE IF NOT EXISTS attendances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   member_id UUID NOT NULL REFERENCES members(user_id) ON DELETE CASCADE,
@@ -60,18 +68,17 @@ CREATE TABLE IF NOT EXISTS attendances (
   UNIQUE(member_id, event_id)
 );
 
--- 5. BROADCASTS
 CREATE TABLE IF NOT EXISTS broadcasts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   subject TEXT NOT NULL,
   body TEXT NOT NULL,
-  recipient_tier TEXT NOT NULL CHECK (recipient_tier IN ('all','room+','regular+','inner+','architects')),
+  recipient_tier TEXT NOT NULL
+    CHECK (recipient_tier IN ('all','room+','regular+','inner+','architects')),
   sent_at TIMESTAMPTZ,
   sent_count INTEGER
 );
 
--- 6. INQUIRIES (you already created this one)
 CREATE TABLE IF NOT EXISTS inquiries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -83,7 +90,6 @@ CREATE TABLE IF NOT EXISTS inquiries (
   status TEXT DEFAULT 'new' CHECK (status IN ('new','replied','closed'))
 );
 
--- 7. CHAT MESSAGES
 CREATE TABLE IF NOT EXISTS chat_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -91,14 +97,79 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   member_name TEXT NOT NULL,
   instagram TEXT,
   content TEXT NOT NULL CHECK (char_length(content) <= 500),
-  channel TEXT NOT NULL DEFAULT 'general' CHECK (channel IN ('general','the-room','inner-room','architects')),
+  channel TEXT NOT NULL DEFAULT 'general'
+    CHECK (channel IN ('general','the-room','inner-room','architects')),
   is_pinned BOOLEAN DEFAULT false,
   pinned_at TIMESTAMPTZ,
   is_deleted BOOLEAN DEFAULT false
 );
 
-CREATE INDEX IF NOT EXISTS idx_chat_channel_created ON chat_messages (channel, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_chat_pinned ON chat_messages (channel, is_pinned) WHERE is_pinned = true;
+CREATE TABLE IF NOT EXISTS orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  stripe_session_id TEXT NOT NULL UNIQUE,
+  product_id TEXT NOT NULL,
+  product_title TEXT,
+  size TEXT NOT NULL,
+  customer_email TEXT,
+  amount_cents INTEGER NOT NULL DEFAULT 0,
+  currency TEXT NOT NULL DEFAULT 'usd',
+  status TEXT NOT NULL DEFAULT 'paid'
+    CHECK (status IN ('paid', 'shipped', 'refunded', 'cancelled')),
+  shipped_at TIMESTAMPTZ,
+  tracking_number TEXT,
+  notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS inventory (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id TEXT NOT NULL,
+  size TEXT NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(product_id, size)
+);
+
+-- ============================================================
+-- APPLICATION MEMBER ID TRIGGER
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION generate_member_id()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.member_id IS NULL THEN
+    NEW.member_id := 'SH-' || LPAD(nextval('member_id_seq')::text, 5, '0');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS assign_member_id_trigger ON applications;
+CREATE TRIGGER assign_member_id_trigger
+BEFORE INSERT ON applications
+FOR EACH ROW
+EXECUTE FUNCTION generate_member_id();
+
+-- Keep existing installs aligned with the tier status convention.
+ALTER TABLE applications DROP CONSTRAINT IF EXISTS applications_status_check;
+UPDATE applications SET status = 'tier_01' WHERE status = 'pending';
+UPDATE applications SET status = 'tier_02' WHERE status = 'approved';
+UPDATE applications SET status = 'rejected' WHERE status = 'denied';
+ALTER TABLE applications ADD CONSTRAINT applications_status_check
+  CHECK (status IN ('tier_01','tier_02','tier_03','tier_04','tier_05','rejected'));
+
+CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
+CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications(created_at DESC);
+
+-- ============================================================
+-- CHAT INDEXES
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS idx_chat_messages_channel_created
+  ON chat_messages (channel, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_chat_messages_pinned
+  ON chat_messages (channel, is_pinned) WHERE is_pinned = true;
 
 -- ============================================================
 -- HEARTS TRIGGER
@@ -141,34 +212,60 @@ ALTER TABLE attendances ENABLE ROW LEVEL SECURITY;
 ALTER TABLE broadcasts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inventory ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
--- POLICIES (drop first to avoid conflicts)
+-- POLICIES
 -- ============================================================
 
 DROP POLICY IF EXISTS "anon_insert_applications" ON applications;
-CREATE POLICY "anon_insert_applications" ON applications FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "anon_insert_applications"
+  ON applications FOR INSERT TO anon, authenticated
+  WITH CHECK (true);
 
 DROP POLICY IF EXISTS "anon_insert_inquiries" ON inquiries;
-CREATE POLICY "anon_insert_inquiries" ON inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "anon_insert_inquiries"
+  ON inquiries FOR INSERT TO anon, authenticated
+  WITH CHECK (true);
 
 DROP POLICY IF EXISTS "public_read_public_events" ON events;
-CREATE POLICY "public_read_public_events" ON events FOR SELECT TO anon, authenticated USING (is_public = true);
+CREATE POLICY "public_read_public_events"
+  ON events FOR SELECT TO anon, authenticated
+  USING (is_public = true);
 
 DROP POLICY IF EXISTS "member_read_own" ON members;
-CREATE POLICY "member_read_own" ON members FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "member_read_own"
+  ON members FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
 
 DROP POLICY IF EXISTS "member_read_own_attendances" ON attendances;
-CREATE POLICY "member_read_own_attendances" ON attendances FOR SELECT TO authenticated USING (auth.uid() = member_id);
+CREATE POLICY "member_read_own_attendances"
+  ON attendances FOR SELECT TO authenticated
+  USING (auth.uid() = member_id);
 
 DROP POLICY IF EXISTS "members_read_chat" ON chat_messages;
-CREATE POLICY "members_read_chat" ON chat_messages FOR SELECT TO authenticated USING (is_deleted = false);
+CREATE POLICY "members_read_chat"
+  ON chat_messages FOR SELECT TO authenticated
+  USING (is_deleted = false);
 
 DROP POLICY IF EXISTS "members_insert_chat" ON chat_messages;
-CREATE POLICY "members_insert_chat" ON chat_messages FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "members_insert_chat"
+  ON chat_messages FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
 
 DROP POLICY IF EXISTS "members_delete_own_chat" ON chat_messages;
-CREATE POLICY "members_delete_own_chat" ON chat_messages FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id AND is_deleted = true);
+CREATE POLICY "members_delete_own_chat"
+  ON chat_messages FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id AND is_deleted = true);
+
+DROP POLICY IF EXISTS "public_read_inventory" ON inventory;
+CREATE POLICY "public_read_inventory"
+  ON inventory FOR SELECT TO anon, authenticated
+  USING (true);
+
+-- orders intentionally has no public policies. Webhooks and admin flows use service_role.
 
 -- ============================================================
 -- REALTIME
@@ -185,5 +282,5 @@ BEGIN
 END $$;
 
 -- ============================================================
--- DONE. All 7 tables created with RLS and policies.
+-- DONE. Fresh setup includes tier statuses, member ids, chat, orders, inventory, RLS, and realtime.
 -- ============================================================
