@@ -49,6 +49,7 @@ export default async function DashboardPage() {
               <li key={event.id} className="border-b border-border pb-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-red">
                   {new Date(event.date).toLocaleDateString('en-US', {
+                    timeZone: 'America/Los_Angeles',
                     weekday: 'short',
                     month: 'short',
                     day: 'numeric',

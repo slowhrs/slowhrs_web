@@ -12,8 +12,8 @@ const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 const ARCHIVE_ITEMS = [
   {
     id: "fashion_show",
-    title: "SS26 Runway // 2026",
-    subtitle: "Sunset Blvd. One night only. Members front row.",
+    title: "SS26 Runway // Evidence",
+    subtitle: "Sunset Blvd. front row smoke. one tape survived.",
     category: "Runway",
     date: "2026",
     type: "video",
@@ -22,8 +22,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "block_party",
-    title: "Block Party // 2025",
-    subtitle: "10 crews. 2 stages. 1 city.",
+    title: "Block Party // Street File",
+    subtitle: "10 crews, 2 stages, one city moving after dark.",
     category: "Events",
     date: "2025",
     type: "video",
@@ -32,8 +32,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "destroy_lonely",
-    title: "Destroy Lonely // 03.14.26",
-    subtitle: "WYA Trap Rave. We shot the room.",
+    title: "Destroy Lonely // Trap Rave",
+    subtitle: "WYA. stage heat, floor footage, no clean cuts.",
     category: "Nightlife",
     date: "03.14.26",
     type: "video",
@@ -42,8 +42,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "fast_life",
-    title: "Fast Life Campaign // 2026",
-    subtitle: "Clothing reel. Fall drop. VHS.",
+    title: "Fast Life Campaign // VHS",
+    subtitle: "fall drop reel. clothes moving like getaway footage.",
     category: "Drops",
     date: "2026",
     type: "video",
@@ -52,8 +52,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "kehlani",
-    title: "Kehlani // 2024",
-    subtitle: "Headline recap. Members + 1 only.",
+    title: "Kehlani // Headline File",
+    subtitle: "members plus one. low light, loud room.",
     category: "Headline",
     date: "2024",
     type: "video",
@@ -62,8 +62,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "j7kan_runway",
-    title: "j7kan Debut // Sunset Blvd",
-    subtitle: "Pre-debut runway. Westside.",
+    title: "j7kan Debut // Sunset",
+    subtitle: "pre-debut runway file. westside proof.",
     category: "Runway",
     date: "2024",
     type: "video",
@@ -72,8 +72,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "warehouse",
-    title: "Warehouse Sessions // 2025",
-    subtitle: "90 warehouse. Private set.",
+    title: "Warehouse Sessions // 90",
+    subtitle: "private set in the warehouse. concrete and bass.",
     category: "Events",
     date: "2025",
     type: "video",
@@ -82,8 +82,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "pj_party",
-    title: "PJ Party // 2026",
-    subtitle: "Private gathering. Invited only.",
+    title: "PJ Party // After File",
+    subtitle: "invited only. soft clothes, hard flash.",
     category: "Events",
     date: "2026",
     type: "video",
@@ -93,7 +93,7 @@ const ARCHIVE_ITEMS = [
   {
     id: "nye",
     title: "NYE // Jsta Party",
-    subtitle: "New Years recap. 12.31.24.",
+    subtitle: "last night of the year. filed before sunrise.",
     category: "Events",
     date: "12.31.24",
     type: "video",
@@ -103,7 +103,7 @@ const ARCHIVE_ITEMS = [
   {
     id: "dsrpt",
     title: "Eric Bellinger × DSRPT",
-    subtitle: "Noise Lab performance.",
+    subtitle: "noise lab performance. restricted room.",
     category: "Performance",
     date: "2024",
     type: "video",
@@ -113,7 +113,7 @@ const ARCHIVE_ITEMS = [
   {
     id: "code_devastation",
     title: "Code: Devastation",
-    subtitle: "Private ops. Restricted access.",
+    subtitle: "private ops. restricted access. do not forward.",
     category: "Events",
     date: "2024",
     type: "video",
@@ -122,8 +122,8 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "fashion_promo",
-    title: "SS26 Runway Promo // 2026",
-    subtitle: "Campaign reel. Pre-show.",
+    title: "SS26 Runway Promo // Signal",
+    subtitle: "pre-show signal. campaign reel before the doors.",
     category: "Runway",
     date: "2026",
     type: "video",
@@ -134,25 +134,26 @@ const ARCHIVE_ITEMS = [
 
 export default function ArchiveSection() {
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="archive">
+    <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border overflow-hidden" id="archive">
+      <div className="pointer-events-none absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_14%_10%,rgba(230,0,22,0.18),transparent_26%),radial-gradient(circle_at_86%_24%,rgba(237,237,235,0.06),transparent_22%)]" />
 
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-4 flex items-center gap-2">
-            ARCHIVE / EVIDENCE
+            archive / black box
           </div>
           <h2 className="font-serif italic font-normal text-[2.5rem] md:text-[4rem] text-brand-ink leading-none mb-6">
-            Proof The Room Happened
+            proof the room happened.
           </h2>
           <p className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] text-brand-ink/60 max-w-[50ch] leading-[1.6] uppercase">
-            Runway, nightlife, castings, drops, and clothing reels. Filed from the city after dark.
+            Not content. Evidence. Runway, nightlife, castings, drops, and reels filed after the city turns red.
           </p>
         </div>
 
         <div className="flex flex-col md:items-end gap-2 max-w-[300px] reveal reveal-d2">
           <div className="font-serif italic text-[1.2rem] text-brand-ink/80 text-left md:text-right">
-            Some rooms are filmed. Some become files. The archive is the proof.
+            Some rooms disappear by morning. The archive is what stays on the table.
           </div>
           {/* CD sticker accent */}
           <div className="archive-disc hidden md:block w-[60px] mt-4 opacity-80 rotate-[-12deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
@@ -164,11 +165,11 @@ export default function ArchiveSection() {
       {/* Archive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
         {ARCHIVE_ITEMS.map((item, i) => (
-          <div key={item.id} className={`group relative border border-brand-border bg-[#050505] overflow-hidden flex flex-col h-[380px] md:h-[450px] reveal reveal-d${Math.min(i + 1, 5)}`}>
+          <div key={item.id} className={`group relative border border-brand-border bg-[#050505] overflow-hidden flex flex-col h-[380px] md:h-[450px] reveal reveal-d${Math.min(i + 1, 5)} transition-all duration-300 hover:-translate-y-1 hover:border-brand-red/40 hover:shadow-[0_24px_70px_rgba(230,0,22,0.12)]`}>
             
             {/* File Header: category in red mono 9px, date right-aligned in mono 9px */}
             <div className="flex items-center justify-between p-3 border-b border-brand-border bg-[#0a0a0a] z-20">
-              <span className="font-mono text-[9px] tracking-[0.2em] text-brand-red uppercase">{item.category}</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] text-brand-red uppercase">case / {item.category}</span>
               <span className="font-mono text-[9px] tracking-[0.2em] text-brand-ink/30 uppercase">{item.date}</span>
             </div>
 
@@ -179,8 +180,11 @@ export default function ArchiveSection() {
                 poster={posterFor(item.src)}
                 className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700 brightness-90 contrast-110 saturate-125"
               />
-              <div className="absolute inset-0 w-full h-full bg-[#111] opacity-0 transition-opacity duration-500 flex items-center justify-center pointer-events-none">
-                 <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase">▶</span>
+              <div className="absolute inset-0 w-full h-full bg-[#111] opacity-0 transition-opacity duration-500 flex items-center justify-center pointer-events-none group-hover:opacity-10">
+                 <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/40 uppercase">open file</span>
+              </div>
+              <div className="absolute bottom-3 right-3 z-30 border border-brand-ink/15 bg-black/70 px-2 py-1 font-mono text-[7px] uppercase tracking-[0.2em] text-brand-ink/45">
+                sealed
               </div>
               
               {/* CRT Scanline Overlay */}
@@ -212,7 +216,7 @@ export default function ArchiveSection() {
       {EVENT_PHOTO_SETS.length > 0 && (
         <div className="mt-16 relative z-10">
           <div className="font-mono text-[10px] tracking-[0.3em] text-brand-red uppercase mb-8 flex items-center gap-2 reveal">
-            PHOTO EVIDENCE
+            photo evidence / contact sheets
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {EVENT_PHOTO_SETS.map((set, i) => (
@@ -231,7 +235,7 @@ export default function ArchiveSection() {
                 <div className="p-4 border-t border-brand-border">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-mono text-[7px] tracking-[0.2em] text-brand-red uppercase border border-brand-red/30 bg-brand-red/5 px-1.5 py-0.5">
-                      Photos
+                      frames
                     </span>
                     <span className="font-mono text-[7px] tracking-[0.2em] text-brand-ink/30 uppercase">
                       {set.count} frames
@@ -250,7 +254,7 @@ export default function ArchiveSection() {
       {/* Archive CTA */}
       <div className="mt-12 flex justify-center reveal reveal-d3">
         <Link href="/events" className="brand-action border border-brand-ink/20 px-8 py-4 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink hover:border-brand-ink/60 transition-colors uppercase flex items-center gap-2">
-          View Full Archive <span className="font-serif italic text-[1rem]">→</span>
+          Enter Evidence Room <span className="font-serif italic text-[1rem]">→</span>
         </Link>
       </div>
 

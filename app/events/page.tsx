@@ -148,8 +148,14 @@ const FALLBACK_EVENTS: EventData[] = [
 const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 
 function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return `${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}.${String(d.getFullYear()).slice(-2)}`;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  }).formatToParts(new Date(dateStr));
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.month}.${byType.day}.${byType.year}`;
 }
 
 async function getEvents(): Promise<EventData[]> {
@@ -235,18 +241,19 @@ export default async function EventsPage() {
         }}
       />
       <section className="relative overflow-hidden border-b border-border px-5 py-16 md:px-12 md:py-24">
-        <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_20%_20%,rgba(230,0,22,0.18),transparent_30%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.06),transparent_25%)]" />
+        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_18%_18%,rgba(230,0,22,0.24),transparent_28%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.08),transparent_24%),linear-gradient(135deg,rgba(230,0,22,0.08),transparent_35%,rgba(237,237,235,0.03))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.025)_50%,rgba(255,255,255,0)_50%)] bg-[length:100%_5px] opacity-20" />
         <div className="relative z-10 mx-auto grid max-w-[1400px] gap-8 lg:grid-cols-[0.9fr_1.4fr]">
-          <div className="flex flex-col justify-between border border-border bg-black/45 p-6 md:p-8">
+          <div className="flex flex-col justify-between border border-border bg-black/55 p-6 shadow-[0_0_60px_rgba(230,0,22,0.08)] md:p-8">
             <div>
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-red">
-                Archive / Evidence Room
+                slowhrs files / evidence room
               </p>
               <h1 className="font-serif text-[3rem] italic leading-none text-ink md:text-[5rem]">
-                view archive.
+                archive room.
               </h1>
               <p className="mt-6 max-w-[42ch] font-mono text-[10px] uppercase leading-[1.8] tracking-[0.12em] text-ink-dim">
-                boxes of proof, RSVP passes, runway reels, nightlife files, and rooms that already happened.
+                not a gallery. a black-box log of rooms, runway smoke, flyers, passes, and the clips that prove the night existed.
               </p>
             </div>
             <div className="mt-10 grid grid-cols-3 gap-3 font-mono uppercase tracking-[0.2em]">
@@ -266,7 +273,7 @@ export default async function EventsPage() {
           </div>
 
           {nextEvent && (
-            <div className="group relative min-h-[520px] overflow-hidden border border-red/35 bg-black">
+            <div className="group relative min-h-[560px] overflow-hidden border border-red/40 bg-black shadow-[0_0_80px_rgba(230,0,22,0.13)]">
               {nextEvent.cover_video && (
                 <video
                   src={nextEvent.cover_video}
@@ -281,7 +288,10 @@ export default async function EventsPage() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
               <div className="absolute left-5 top-5 border border-red bg-red px-3 py-1 font-mono text-[9px] uppercase tracking-[0.25em] text-bg">
-                next room
+                next room / may 29
+              </div>
+              <div className="absolute right-5 top-5 border border-ink/20 bg-black/70 px-3 py-1 font-mono text-[8px] uppercase tracking-[0.25em] text-ink-dim">
+                crowd decides
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-red">{formatDate(nextEvent.date)}</p>
@@ -301,19 +311,19 @@ export default async function EventsPage() {
       <section className="mx-auto max-w-[1400px] px-5 py-12 md:px-12 md:py-16">
         <div className="mb-6 flex items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-red">file boxes</p>
-            <h2 className="mt-2 font-serif text-[2.4rem] italic leading-none text-ink">rooms on record.</h2>
+            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-red">case boxes</p>
+            <h2 className="mt-2 font-serif text-[2.4rem] italic leading-none text-ink">the footage has receipts.</h2>
           </div>
           <p className="hidden max-w-[34ch] text-right font-mono text-[9px] uppercase leading-[1.7] tracking-[0.12em] text-ink-faint md:block">
-            some are recaps. some are passes. all are evidence.
+            tapes, flyers, rooms, rejects, wins. everything filed after dark.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {archiveEvents.map((event, index) => (
-            <article key={`${event.id}-${event.name}`} className="group relative overflow-hidden border border-border bg-[#050505]">
+            <article key={`${event.id}-${event.name}`} className="group relative overflow-hidden border border-border bg-[#050505] transition-all duration-300 hover:-translate-y-1 hover:border-red/35 hover:shadow-[0_24px_70px_rgba(230,0,22,0.11)]">
               <div className="flex items-center justify-between border-b border-border bg-black/60 px-4 py-3">
-                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-red">file {String(index + 1).padStart(2, "0")}</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-red">case {String(index + 1).padStart(2, "0")}</span>
                 <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-ink-faint">{formatDate(event.date)}</span>
               </div>
               <div className="relative aspect-video overflow-hidden bg-black">
@@ -331,6 +341,9 @@ export default async function EventsPage() {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/20" />
                 <div className="absolute left-3 top-3 h-2 w-2 animate-blink rounded-full bg-red shadow-[0_0_10px_var(--red)]" />
+                <div className="absolute bottom-3 right-3 border border-ink/15 bg-black/70 px-2 py-1 font-mono text-[7px] uppercase tracking-[0.2em] text-ink-faint">
+                  filed
+                </div>
               </div>
               <div className="min-h-[190px] p-5">
                 <div className="mb-4 flex flex-wrap gap-2">
@@ -340,12 +353,12 @@ export default async function EventsPage() {
                 <h3 className="font-serif text-[1.6rem] italic leading-none text-ink">{event.name}</h3>
                 <p className="mt-3 line-clamp-3 font-mono text-[8px] uppercase leading-[1.7] tracking-[0.1em] text-ink-dim">{event.blurb}</p>
                 {event.partiful_url ? (
-                  <a href={event.partiful_url} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex font-mono text-[9px] uppercase tracking-[0.22em] text-red hover:text-ink">
-                    RSVP PASS ↗
+                  <a href={event.partiful_url} target="_blank" rel="noopener noreferrer" className="brand-action mt-5 inline-flex border border-red/30 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.22em] text-red hover:bg-red hover:text-bg">
+                    claim pass ↗
                   </a>
                 ) : (
                   <span className="mt-5 inline-flex font-mono text-[9px] uppercase tracking-[0.22em] text-ink-faint">
-                    archived
+                    sealed in archive
                   </span>
                 )}
               </div>
@@ -359,10 +372,10 @@ export default async function EventsPage() {
           <div className="mb-6 flex items-end justify-between gap-6">
             <div>
               <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-red">photo evidence</p>
-              <h2 className="mt-2 font-serif text-[2.4rem] italic leading-none text-ink">frames in motion.</h2>
+              <h2 className="mt-2 font-serif text-[2.4rem] italic leading-none text-ink">still frames, moving proof.</h2>
             </div>
             <p className="hidden max-w-[34ch] text-right font-mono text-[9px] uppercase leading-[1.7] tracking-[0.12em] text-ink-faint md:block">
-              auto cycling photo boxes from private rooms, shoots, and runway files.
+              contact sheets from private rooms, shoots, and runway files. no clean version.
             </p>
           </div>
 

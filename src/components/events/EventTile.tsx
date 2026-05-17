@@ -23,11 +23,14 @@ interface EventTileProps {
 const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const yy = String(d.getFullYear()).slice(-2);
-  return `${mm}.${dd}.${yy}`;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  }).formatToParts(new Date(dateStr));
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.month}.${byType.day}.${byType.year}`;
 }
 
 export default function EventTile({ event }: EventTileProps) {
