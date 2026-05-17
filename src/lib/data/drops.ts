@@ -47,7 +47,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcBFCjRTgZW0TAGAKHEp9',
   },
   {
     id: 'front_hoodie',
@@ -61,7 +61,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcCFCjRTgZW0TZhTt9igK',
   },
   {
     id: 'crop_hoodie',
@@ -75,7 +75,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['XS', 'S', 'M', 'L'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcDFCjRTgZW0ToLxPTFzR',
   },
   {
     id: 'fast_life_skirt',
@@ -89,7 +89,7 @@ export const DROPS: Drop[] = [
     available_sizes: ['S', 'M'],
     sold_out_sizes: ['XS', 'L', 'XL'],
     badge: '2 LEFT',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcEFCjRTgZW0TDZr7Tefg',
   },
   {
     id: 'flare_pants',
@@ -103,7 +103,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcFFCjRTgZW0T3bMsbGam',
   },
   {
     id: 'fast_life_pants',
@@ -117,7 +117,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcGFCjRTgZW0TAny5np73',
   },
   {
     id: 'fast_life_pant_002',
@@ -131,7 +131,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcGFCjRTgZW0T5mIhNXNJ',
   },
   {
     id: 'fast_life_tee',
@@ -145,7 +145,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcHFCjRTgZW0T6RQWU1Hp',
   },
   {
     id: 'fast_life_shorts',
@@ -159,7 +159,7 @@ export const DROPS: Drop[] = [
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
     badge: 'GONE',
-    stripe_price_id: null,
+    stripe_price_id: 'price_1TYCcIFCjRTgZW0THM1EYBXu',
   },
 ];
 

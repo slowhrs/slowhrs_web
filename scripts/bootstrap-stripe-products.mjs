@@ -6,6 +6,25 @@ import Stripe from 'stripe';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const dropsPath = path.join(repoRoot, 'src/lib/data/drops.ts');
+
+function loadLocalEnv() {
+  for (const name of ['.env.local', '.env.production', '.env']) {
+    const filePath = path.join(repoRoot, name);
+    if (!fs.existsSync(filePath)) continue;
+
+    const lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/);
+    for (const line of lines) {
+      const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)\s*$/);
+      if (!match) continue;
+      const [, key, rawValue] = match;
+      if (process.env[key]) continue;
+      process.env[key] = rawValue.replace(/^['"]|['"]$/g, '');
+    }
+  }
+}
+
+loadLocalEnv();
+
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
