@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import LazyVideo from "@/components/LazyVideo";
 import SizePicker from "@/components/SizePicker";
 import type { Drop, Size } from "@/lib/data/drops";
 import { getStockStatus } from "@/lib/data/drops";
@@ -49,11 +48,14 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
       onClick={isTouchDevice && !allSoldOut ? () => setIsExpanded((value) => !value) : undefined}
     >
       <div className="drop-media relative aspect-[4/5] overflow-hidden">
-        <LazyVideo
-          src={drop.video}
-          poster={drop.poster}
-          className="h-full w-full object-cover scale-[1.04] transition-transform duration-700 group-hover:scale-[1.12]"
-        />
+        <div className="drop-gif-stage absolute inset-0 flex items-center justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={drop.gif}
+            alt={`${drop.title} animated product view`}
+            className="h-full w-full object-contain scale-[1.2] transition-transform duration-700 group-hover:scale-[1.32]"
+          />
+        </div>
 
         {allSoldOut && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/15">

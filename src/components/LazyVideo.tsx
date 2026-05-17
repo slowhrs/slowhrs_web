@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 
 type LazyVideoProps = {
   src: string;
@@ -20,8 +20,28 @@ export function LazyVideo({
   priority = false,
 }: LazyVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(priority);
+  const [shouldLoad, setShouldLoad] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => setIsReducedMotion(media.matches);
+    syncMotion();
+    media.addEventListener("change", syncMotion);
+    return () => media.removeEventListener("change", syncMotion);
+  }, []);
+
+  const playIfAllowed = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || isReducedMotion) return;
+
+    video.muted = true;
+    video.playsInline = true;
+    video.play().catch(() => {
+      // Autoplay can still be blocked; the poster remains visible.
+    });
+  }, [isReducedMotion]);
 
   useEffect(() => {
     if (priority || shouldLoad) return;
@@ -46,25 +66,22 @@ export function LazyVideo({
     const video = videoRef.current;
     if (!video || !shouldLoad) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
+    if (isReducedMotion) return;
 
     const playObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          video.play().catch(() => {
-            // Autoplay can still be blocked; the poster remains visible.
-          });
+          playIfAllowed();
         } else {
           video.pause();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.15, rootMargin: "120px" }
     );
 
     playObserver.observe(video);
     return () => playObserver.disconnect();
-  }, [shouldLoad]);
+  }, [isReducedMotion, playIfAllowed, shouldLoad]);
 
   return (
     <video
@@ -72,11 +89,16 @@ export function LazyVideo({
       src={shouldLoad ? src : undefined}
       poster={poster}
       muted
+      disablePictureInPicture
       loop
       playsInline
-      preload={priority ? "auto" : "metadata"}
-      autoPlay={priority}
-      onLoadedData={() => setHasLoaded(true)}
+      preload="auto"
+      autoPlay={shouldLoad && !isReducedMotion}
+      onCanPlay={playIfAllowed}
+      onLoadedData={() => {
+        setHasLoaded(true);
+        playIfAllowed();
+      }}
       className={`${className} ${hasLoaded ? "opacity-100" : "opacity-90"} transition-opacity duration-500`}
       style={{
         backgroundColor: "var(--asphalt)",

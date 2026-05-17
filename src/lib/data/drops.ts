@@ -18,6 +18,8 @@ export interface Drop {
   description: string;
   /** Path to MP4 product video in /public */
   video: string;
+  /** Path to animated GIF product media in /public */
+  gif: string;
   /** Path to JPG poster frame in /public */
   poster: string;
   /** Sizes still available for purchase */
@@ -40,6 +42,7 @@ export const DROPS: Drop[] = [
     price: 100,
     description: 'Heavyweight cut. Web-stitched. One production run.',
     video: '/assets/drops/clothing/spider_hoodie.mp4',
+    gif: '/assets/drops/clothing/spider_hoodie.gif',
     poster: '/assets/drops/clothing/spider_hoodie.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -53,6 +56,7 @@ export const DROPS: Drop[] = [
     price: 50,
     description: 'Logo placement front. Archive fit.',
     video: '/assets/drops/clothing/front_hoodie.mp4',
+    gif: '/assets/drops/clothing/front_hoodie.gif',
     poster: '/assets/drops/clothing/front_hoodie.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -66,6 +70,7 @@ export const DROPS: Drop[] = [
     price: 40,
     description: 'Cropped body. Made for the after hours.',
     video: '/assets/drops/clothing/crop_hoodie.mp4',
+    gif: '/assets/drops/clothing/crop_hoodie.gif',
     poster: '/assets/drops/clothing/crop_hoodie.jpg',
     available_sizes: [],
     sold_out_sizes: ['XS', 'S', 'M', 'L'],
@@ -79,6 +84,7 @@ export const DROPS: Drop[] = [
     price: 50,
     description: 'Low-rise silhouette. VHS campaign. Final 2 units.',
     video: '/assets/drops/clothing/skirt.mp4',
+    gif: '/assets/drops/clothing/skirt.gif',
     poster: '/assets/drops/clothing/skirt.jpg',
     available_sizes: ['S', 'M'],
     sold_out_sizes: ['XS', 'L', 'XL'],
@@ -92,6 +98,7 @@ export const DROPS: Drop[] = [
     price: 50,
     description: 'Wide leg construction. Runway silhouette.',
     video: '/assets/drops/clothing/flare_pants.mp4',
+    gif: '/assets/drops/clothing/flare_pants.gif',
     poster: '/assets/drops/clothing/flare_pants.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -105,6 +112,7 @@ export const DROPS: Drop[] = [
     price: 50,
     description: 'Straight cut. Night shift standard.',
     video: '/assets/drops/clothing/pants.mp4',
+    gif: '/assets/drops/clothing/pants.gif',
     poster: '/assets/drops/clothing/pants.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -118,6 +126,7 @@ export const DROPS: Drop[] = [
     price: 50,
     description: 'Second edition. Single production run.',
     video: '/assets/drops/clothing/fast_life_pant_002.mp4',
+    gif: '/assets/drops/clothing/fast_life_pant_002.gif',
     poster: '/assets/drops/clothing/fast_life_pant_002.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -131,6 +140,7 @@ export const DROPS: Drop[] = [
     price: 20,
     description: 'Entry-level piece. Front logo print.',
     video: '/assets/drops/clothing/fast_life_tee.mp4',
+    gif: '/assets/drops/clothing/fast_life_tee.gif',
     poster: '/assets/drops/clothing/fast_life_tee.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],
@@ -144,6 +154,7 @@ export const DROPS: Drop[] = [
     price: 30,
     description: 'Above the knee. Summer capsule.',
     video: '/assets/drops/clothing/shorts.mp4',
+    gif: '/assets/drops/clothing/shorts.gif',
     poster: '/assets/drops/clothing/shorts.jpg',
     available_sizes: [],
     sold_out_sizes: ['S', 'M', 'L', 'XL'],

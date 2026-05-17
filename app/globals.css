@@ -277,9 +277,14 @@ body {
 
 .drop-media {
   background:
-    radial-gradient(circle at 50% 42%, rgba(230, 0, 22, 0.1), transparent 34%),
-    linear-gradient(180deg, rgba(237, 237, 235, 0.035), transparent 42%),
-    transparent;
+    radial-gradient(circle at 50% 45%, rgba(230, 0, 22, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(230, 0, 22, 0.08), transparent 36%),
+    #000;
+}
+
+.drop-gif-stage {
+  background: #000;
+  filter: contrast(1.08) saturate(1.2);
 }
 
 .drop-tile:hover {
