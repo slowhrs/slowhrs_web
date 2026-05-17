@@ -194,6 +194,7 @@ function DropCard({
       <div className="w-[120px] h-[160px] md:w-full md:h-[220px] lg:w-[130px] lg:h-[170px] shrink-0 bg-[#0a0a0a] relative border border-brand-border/40 overflow-hidden">
         <LazyVideo
           src={drop.video}
+          poster={drop.poster}
           className="w-full h-full object-contain"
         />
         

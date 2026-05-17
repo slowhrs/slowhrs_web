@@ -30,6 +30,7 @@ export default function DropTile({ drop, index }: DropTileProps) {
       >
         <LazyVideo
           src={drop.video}
+          poster={drop.poster}
           className={`absolute inset-0 w-full h-full object-cover ${!available ? "grayscale" : ""}`}
         />
 

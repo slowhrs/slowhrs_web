@@ -6,6 +6,8 @@ import LazyVideo from "@/components/LazyVideo";
 import EventPhotoCarousel from "@/components/EventPhotoCarousel";
 import { EVENT_PHOTO_SETS, getPhotoUrls } from "@/lib/data/eventPhotos";
 
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+
 const ARCHIVE_ITEMS = [
   {
     id: "fashion_show",
@@ -178,6 +180,7 @@ export default function ArchiveSection() {
             <div className="relative flex-grow bg-black overflow-hidden flex items-center justify-center">
               <LazyVideo 
                 src={item.src}
+                poster={posterFor(item.src)}
                 className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700 grayscale group-hover:grayscale-0"
               />
               <div className="absolute inset-0 w-full h-full bg-[#111] opacity-40 md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">

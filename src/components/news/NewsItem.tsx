@@ -4,6 +4,8 @@ import Image from "next/image";
 import LazyVideo from "@/components/LazyVideo";
 import type { NewsItem as NewsItemType } from "@/lib/data/news";
 
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+
 interface NewsItemProps {
   item: NewsItemType;
   useSticker?: boolean;
@@ -103,6 +105,7 @@ export default function NewsItemComponent({ item, useSticker }: NewsItemProps) {
           <div className="relative aspect-video overflow-hidden rounded-sm hover-lift">
             <LazyVideo
               src={item.video!}
+              poster={posterFor(item.video!)}
               className="w-full h-full object-cover transition-[filter] duration-300 brightness-[0.85] hover:brightness-100"
             />
           </div>

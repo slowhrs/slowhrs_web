@@ -20,6 +20,8 @@ interface EventTileProps {
   isFirst?: boolean;
 }
 
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -67,9 +69,11 @@ export default function EventTile({ event }: EventTileProps) {
           <video
             ref={videoRef}
             src={event.cover_video}
+            poster={posterFor(event.cover_video)}
             muted
             playsInline
             loop
+            autoPlay
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
           />

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import LazyVideo from "@/components/LazyVideo";
 
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+
 export default function EventsSection() {
   return (
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="events">
@@ -25,7 +27,15 @@ export default function EventsSection() {
         <div className="flex flex-col border border-brand-border-2 bg-[#0a0a0a]/80 backdrop-blur-md group transition-colors hover:border-brand-ink/30 relative overflow-hidden reveal reveal-d1">
           
           <div className="relative aspect-video w-full overflow-hidden bg-black border-b border-brand-border">
-            <video autoPlay loop muted playsInline className="w-full h-full object-cover filter brightness-[0.7] contrast-125 saturate-100 transition-transform duration-1000 group-hover:scale-105">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/assets/events/block_party.jpg"
+              preload="metadata"
+              className="w-full h-full object-cover filter brightness-[0.7] contrast-125 saturate-100 transition-transform duration-1000 group-hover:scale-105"
+            >
               <source src="/assets/events/block_party.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
@@ -70,7 +80,11 @@ export default function EventsSection() {
               <div className="w-[80px] h-[80px] md:w-[120px] md:h-[80px] shrink-0 bg-[#111] overflow-hidden relative border border-brand-border/50">
                 {event.video ? (
                   <>
-                    <LazyVideo src={event.video} className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block" />
+                    <LazyVideo
+                      src={event.video}
+                      poster={posterFor(event.video)}
+                      className="w-full h-full object-cover filter brightness-75 contrast-110 saturate-0 group-hover:saturate-100 transition-all duration-500 hidden md:block"
+                    />
                     <div className="md:hidden w-full h-full bg-[#1a1a1a] flex flex-col justify-center items-center"><span className="font-mono text-[7px] text-brand-ink/20">▶</span></div>
                   </>
                 ) : (

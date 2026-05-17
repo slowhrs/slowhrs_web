@@ -21,6 +21,7 @@ const HERO_VIDEOS = [
 ];
 
 const CLIP_DURATION = 8000; // 8s per clip before crossfade
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 
 export default function HeroLobby() {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -54,10 +55,12 @@ export default function HeroLobby() {
 
   // Ensure videos play when src changes
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     activeVideoRef.current?.play().catch(() => {});
   }, [activeIdx]);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     nextVideoRef.current?.play().catch(() => {});
   }, [nextIdx]);
 
@@ -73,6 +76,8 @@ export default function HeroLobby() {
           loop
           muted
           playsInline
+          poster={posterFor(HERO_VIDEOS[activeIdx])}
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
           style={{ opacity: isFading ? 0 : 1 }}
         >
@@ -87,6 +92,8 @@ export default function HeroLobby() {
           loop
           muted
           playsInline
+          poster={posterFor(HERO_VIDEOS[nextIdx])}
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
           style={{ opacity: isFading ? 1 : 0 }}
         >

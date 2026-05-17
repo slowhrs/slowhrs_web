@@ -2,60 +2,90 @@
 
 import { useRef, useEffect, useState } from "react";
 
-interface LazyVideoProps {
+type LazyVideoProps = {
   src: string;
+  poster: string;
   className?: string;
-  loop?: boolean;
-  /** Distance from viewport to start loading (px) */
+  threshold?: number;
   rootMargin?: string;
-}
+  priority?: boolean;
+};
 
-/**
- * Video that lazy-loads its src when near the viewport,
- * auto-plays when visible, and pauses when scrolled away.
- */
-export default function LazyVideo({
+export function LazyVideo({
   src,
+  poster,
   className = "",
-  loop = true,
-  rootMargin = "400px",
+  threshold = 0.25,
+  rootMargin = "100px",
+  priority = false,
 }: LazyVideoProps) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(priority);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    if (priority || shouldLoad) return;
+    const video = videoRef.current;
+    if (!video) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // First time: set src and load
-          if (!loaded) {
-            el.src = src;
-            el.load();
-            setLoaded(true);
-          }
-          el.play().catch(() => {});
-        } else {
-          el.pause();
+          setShouldLoad(true);
+          observer.disconnect();
         }
       },
-      { rootMargin }
+      { threshold, rootMargin }
     );
 
-    observer.observe(el);
+    observer.observe(video);
     return () => observer.disconnect();
-  }, [src, rootMargin, loaded]);
+  }, [priority, shouldLoad, threshold, rootMargin]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoad) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const playObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {
+            // Autoplay can still be blocked; the poster remains visible.
+          });
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    playObserver.observe(video);
+    return () => playObserver.disconnect();
+  }, [shouldLoad]);
 
   return (
     <video
-      ref={ref}
+      ref={videoRef}
+      src={shouldLoad ? src : undefined}
+      poster={poster}
       muted
+      loop
       playsInline
-      loop={loop}
-      preload="none"
-      className={className}
+      preload={priority ? "auto" : "metadata"}
+      autoPlay={priority}
+      onLoadedData={() => setHasLoaded(true)}
+      className={`${className} ${hasLoaded ? "opacity-100" : "opacity-90"} transition-opacity duration-500`}
+      style={{
+        backgroundColor: "var(--asphalt)",
+        backgroundImage: `url(${poster})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     />
   );
 }
+
+export default LazyVideo;

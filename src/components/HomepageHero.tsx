@@ -16,6 +16,8 @@ interface HeroEvent {
   isUpcoming: boolean;
 }
 
+const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+
 const EVENTS: HeroEvent[] = [
   {
     name: "VOGUE SAFARI: CONTENT PRE GAME",
@@ -75,6 +77,7 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
         {/* Video background — full brightness */}
         <video
           src={video}
+          poster={posterFor(video)}
           muted
           playsInline
           loop
@@ -208,6 +211,7 @@ function EventTile({ event }: { event: HeroEvent }) {
     <div className="group relative aspect-[4/5] overflow-hidden rounded-sm hover-lift light-sweep">
       <LazyVideo
         src={event.video}
+        poster={event.video.replace(/\.mp4$/, ".jpg")}
         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-500"
       />
 
