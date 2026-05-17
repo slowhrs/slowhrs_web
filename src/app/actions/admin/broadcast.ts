@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendBroadcast } from '@/lib/resend';
 import { revalidatePath } from 'next/cache';
-import { verifyAdminAction } from '@/lib/auth';
+import { verifyAdminAction } from '@/lib/admin-auth';
 
 export async function composeBroadcast(formData: FormData) {
   await verifyAdminAction();

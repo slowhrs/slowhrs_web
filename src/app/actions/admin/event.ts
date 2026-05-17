@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchPartifulEvent } from '@/lib/partiful';
 import { revalidatePath } from 'next/cache';
-import { verifyAdminAction } from '@/lib/auth';
+import { verifyAdminAction } from '@/lib/admin-auth';
 
 export async function importPartifulEvent(url: string) {
   await verifyAdminAction();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { approveApplication, denyApplication } from "@/app/actions/admin/approve";
+import { reviewApplication } from "@/app/actions/admin";
 import Link from "next/link";
 
 type Application = {
@@ -31,7 +31,7 @@ export default function AdminApplicationsClient({
   const handleApprove = async (id: string) => {
     setLoading(id);
     try {
-      await approveApplication(id);
+      await reviewApplication(id, "tier_02");
       window.location.reload();
     } catch (err) {
       alert("Error approving: " + (err as Error).message);
@@ -42,7 +42,7 @@ export default function AdminApplicationsClient({
   const handleDeny = async (id: string) => {
     setLoading(id);
     try {
-      await denyApplication(id);
+      await reviewApplication(id, "rejected");
       window.location.reload();
     } catch (err) {
       alert("Error denying: " + (err as Error).message);
@@ -67,7 +67,7 @@ export default function AdminApplicationsClient({
 
         {/* Filters */}
         <div className="flex gap-4 mb-8">
-          {["all", "pending", "approved", "denied"].map((f) => (
+          {["all", "tier_01", "tier_02", "rejected"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -115,9 +115,9 @@ export default function AdminApplicationsClient({
                   <td className="py-3 pr-4">
                     <span
                       className={`font-mono text-[10px] tracking-[0.15em] uppercase ${
-                        app.status === "approved"
+                        app.status === "tier_02"
                           ? "text-green-500"
-                          : app.status === "denied"
+                          : app.status === "rejected"
                           ? "text-red"
                           : "text-ink-dim"
                       }`}
@@ -126,7 +126,7 @@ export default function AdminApplicationsClient({
                     </span>
                   </td>
                   <td className="py-3">
-                    {app.status === "pending" && (
+                    {app.status === "tier_01" && (
                       <div className="flex gap-3">
                         <button
                           onClick={() => handleApprove(app.id)}

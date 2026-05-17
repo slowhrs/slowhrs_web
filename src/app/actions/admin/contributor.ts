@@ -2,7 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
-import { verifyAdminAction } from '@/lib/auth';
+import { verifyAdminAction } from '@/lib/admin-auth';
 
 export async function toggleContributor(memberId: string, value: boolean) {
   await verifyAdminAction();

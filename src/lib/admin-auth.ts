@@ -47,6 +47,14 @@ export async function verifyAdminAuth(token?: string): Promise<boolean> {
   return tokenToCheck === expectedHash;
 }
 
+export async function verifyAdminAction() {
+  if (!await verifyAdminAuth()) {
+    throw new Error('Unauthorized');
+  }
+
+  return true;
+}
+
 export async function setAdminCookie() {
   const cookieStore = await cookies();
   const hash = await generateAdminHash();

@@ -1,7 +1,7 @@
 'use server';
 
 import { createAdminClient } from '@/lib/supabase/admin';
-import { verifyAdminAction } from '@/lib/auth';
+import { verifyAdminAction } from '@/lib/admin-auth';
 import { revalidatePath } from 'next/cache';
 
 export async function sendChatMessage(
