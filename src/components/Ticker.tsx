@@ -1,6 +1,6 @@
 export default function Ticker() {
   return (
-    <div className="fixed top-0 left-0 right-0 h-[26px] bg-black border-b border-brand-border overflow-hidden flex items-center z-[90]">
+    <div className="ticker-sticky h-[var(--header-height)] overflow-hidden flex items-center">
       <div className="flex whitespace-nowrap animate-ticker">
         {/* We duplicate the content to ensure a perfect loop */}
         {[...Array(4)].map((_, i) => (

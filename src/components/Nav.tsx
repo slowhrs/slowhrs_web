@@ -30,7 +30,7 @@ export default function Nav() {
 
   return (
     <>
-      <nav className="fixed top-[26px] left-0 right-0 z-[80] flex justify-between items-center px-5 md:px-8 py-5 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-[2px]">
+      <nav className="nav-below-ticker left-0 right-0 flex justify-between items-center px-5 md:px-8 py-5 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-[2px]">
         <Link href="#home" className="h-7 md:h-8 flex items-center z-[90]">
           <Image 
             src="/assets/logos/logo_main.png" 

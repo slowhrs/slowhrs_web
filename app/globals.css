@@ -17,6 +17,7 @@
   --mono:      'Courier Prime', 'Courier New', ui-monospace, monospace;
   --serif:     'Cormorant Garamond', 'Times New Roman', Georgia, serif;
   --sans:      -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --header-height: 48px;
 }
 
 @theme {
@@ -108,6 +109,22 @@ body {
 .animate-ticker {
   animation: ticker 50s linear infinite;
   will-change: transform;
+}
+
+.ticker-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-below-ticker {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 49;
 }
 
 /* =========================================================
