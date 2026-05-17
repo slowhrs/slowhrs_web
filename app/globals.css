@@ -275,6 +275,13 @@ body {
   border: 1px solid var(--border);
 }
 
+.drop-media {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(230, 0, 22, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(237, 237, 235, 0.035), transparent 42%),
+    transparent;
+}
+
 .drop-tile:hover {
   border-color: var(--border-2);
   box-shadow: 0 24px 48px -12px rgba(230, 0, 22, 0.15);
@@ -309,6 +316,38 @@ body {
   animation: pulse-scarcity 1.8s ease-in-out infinite;
 }
 
+.brand-action {
+  box-shadow:
+    0 10px 0 rgba(0, 0, 0, 0.42),
+    0 18px 28px rgba(0, 0, 0, 0.28);
+  transform: translateY(0);
+}
+
+.brand-action:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 13px 0 rgba(0, 0, 0, 0.45),
+    0 22px 34px rgba(230, 0, 22, 0.12);
+}
+
+.brand-action:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.45),
+    0 10px 18px rgba(0, 0, 0, 0.22);
+}
+
+.archive-disc {
+  animation: slowhrs-disc-spin 8s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes slowhrs-disc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .drop-tile {
     transform: none !important;
@@ -320,6 +359,10 @@ body {
   }
 
   .animate-pulse-scarcity {
+    animation: none !important;
+  }
+
+  .archive-disc {
     animation: none !important;
   }
 }

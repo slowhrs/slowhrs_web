@@ -120,14 +120,14 @@ export default function EventTile({ event }: EventTileProps) {
               rel="noopener noreferrer"
               className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5"
             >
-              rsvp on partiful ↗
+              reserve access ↗
             </a>
           ) : (
             <Link
               href={`/events#${event.id}`}
               className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-dim hover:text-red transition-colors border-b border-ink-faint hover:border-red pb-0.5"
             >
-              view recap ↗
+              {event.is_upcoming ? "request access ↗" : "event passed"}
             </Link>
           )}
         </div>

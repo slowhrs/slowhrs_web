@@ -20,18 +20,18 @@ export default function Nav() {
   }, [isMenuOpen]);
 
   const navLinks = [
-    { label: "Home", href: "#home" },
-    { label: "Events", href: "#events" },
-    { label: "Drops", href: "#drops" },
-    { label: "Updates", href: "#updates" },
-    { label: "Inquiry", href: "#inquiry" },
-    { label: "Archive", href: "#archive" }
+    { label: "Home", href: "/#home" },
+    { label: "Events", href: "/#events" },
+    { label: "Drops", href: "/#drops" },
+    { label: "Updates", href: "/#updates" },
+    { label: "Inquiry", href: "/#inquiry" },
+    { label: "Archive", href: "/#archive" }
   ];
 
   return (
     <>
       <nav className="nav-below-ticker left-0 right-0 flex justify-between items-center px-5 md:px-8 py-5 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-[2px]">
-        <Link href="#home" className="h-7 md:h-8 flex items-center z-[90]">
+        <Link href="/#home" className="h-7 md:h-8 flex items-center z-[90]">
           <Image 
             src="/assets/logos/logo_main.png" 
             alt="SLOWHRS" 
@@ -39,6 +39,7 @@ export default function Nav() {
             width={120} 
             height={32} 
             className="h-full w-auto drop-shadow-[0_0_8px_rgba(230,0,22,0.4)]"
+            style={{ width: "auto" }}
           />
         </Link>
 
@@ -53,7 +54,7 @@ export default function Nav() {
             </li>
           ))}
           <li>
-            <Link href="#access" className="font-mono text-[10px] tracking-[0.22em] text-brand-red uppercase border border-brand-red px-4 py-2 transition-all hover:bg-brand-red hover:text-black">
+            <Link href="/#access" className="font-mono text-[10px] tracking-[0.22em] text-brand-red uppercase border border-brand-red px-4 py-2 transition-all hover:bg-brand-red hover:text-black">
               Access
             </Link>
           </li>
@@ -94,7 +95,7 @@ export default function Nav() {
           ))}
           <li className="pt-4">
             <Link 
-              href="#access" 
+              href="/#access" 
               onClick={() => setIsMenuOpen(false)}
               className="font-mono text-[12px] tracking-[0.22em] text-brand-red uppercase border border-brand-red px-8 py-4 inline-block hover:bg-brand-red hover:text-black transition-colors"
             >

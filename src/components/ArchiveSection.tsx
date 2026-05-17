@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import LazyVideo from "@/components/LazyVideo";
 import EventPhotoCarousel from "@/components/EventPhotoCarousel";
 import { EVENT_PHOTO_SETS, getPhotoUrls } from "@/lib/data/eventPhotos";
@@ -11,10 +12,10 @@ const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 const ARCHIVE_ITEMS = [
   {
     id: "fashion_show",
-    title: "SS26 Runway // 04.25.25",
+    title: "SS26 Runway // 2026",
     subtitle: "Sunset Blvd. One night only. Members front row.",
     category: "Runway",
-    date: "04.25.25",
+    date: "2026",
     type: "video",
     src: "/assets/events/recaps/fashion_show_recap.mp4",
     duration: "03:12"
@@ -31,20 +32,20 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "destroy_lonely",
-    title: "Destroy Lonely // 03.14.25",
+    title: "Destroy Lonely // 03.14.26",
     subtitle: "WYA Trap Rave. We shot the room.",
     category: "Nightlife",
-    date: "03.14.25",
+    date: "03.14.26",
     type: "video",
     src: "/assets/events/destroy_lonely.mp4",
     duration: "01:30"
   },
   {
     id: "fast_life",
-    title: "Fast Life Campaign // 2024",
+    title: "Fast Life Campaign // 2026",
     subtitle: "Clothing reel. Fall drop. VHS.",
     category: "Drops",
-    date: "2024",
+    date: "2026",
     type: "video",
     src: "/assets/drops/fast_life_reel.mp4",
     duration: "00:45"
@@ -81,10 +82,10 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "pj_party",
-    title: "PJ Party // 2024",
+    title: "PJ Party // 2026",
     subtitle: "Private gathering. Invited only.",
     category: "Events",
-    date: "2024",
+    date: "2026",
     type: "video",
     src: "/assets/events/recaps/pj_party.mp4",
     duration: "02:30"
@@ -121,10 +122,10 @@ const ARCHIVE_ITEMS = [
   },
   {
     id: "fashion_promo",
-    title: "SS26 Runway Promo",
+    title: "SS26 Runway Promo // 2026",
     subtitle: "Campaign reel. Pre-show.",
     category: "Runway",
-    date: "04.25.25",
+    date: "2026",
     type: "video",
     src: "/assets/events/recaps/fashion_show_promo.mp4",
     duration: "01:48"
@@ -135,11 +136,6 @@ export default function ArchiveSection() {
   return (
     <section className="relative w-full max-w-[1400px] mx-auto px-5 md:px-12 py-20 md:py-32 border-t border-brand-border" id="archive">
 
-      {/* Ambient Sticker — Folder */}
-      <div className="absolute top-16 right-8 md:right-16 w-[100px] md:w-[140px] opacity-[0.08] pointer-events-none rotate-[8deg] z-0">
-        <Image src="/assets/icons/slowhrs_folder.png" alt="" width={140} height={140} className="w-full h-auto" aria-hidden="true" />
-      </div>
-      
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 relative z-10 reveal">
         <div className="max-w-[600px]">
@@ -159,8 +155,8 @@ export default function ArchiveSection() {
             Some rooms are filmed. Some become files. The archive is the proof.
           </div>
           {/* CD sticker accent */}
-          <div className="hidden md:block w-[60px] mt-4 opacity-70 rotate-[-12deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
-            <Image src="/assets/icons/CD.png" alt="SLOWHRS Archive Media Disc" title="Archive Media" width={60} height={60} className="w-full h-auto pixel animate-[spin_12s_linear_infinite]" />
+          <div className="archive-disc hidden md:block w-[60px] mt-4 opacity-80 rotate-[-12deg] drop-shadow-[0_0_10px_rgba(230,0,22,0.3)] mix-blend-screen">
+            <Image src="/assets/icons/CD.png" alt="SLOWHRS Archive Media Disc" title="Archive Media" width={60} height={60} className="w-full h-auto pixel" />
           </div>
         </div>
       </div>
@@ -181,9 +177,9 @@ export default function ArchiveSection() {
               <LazyVideo 
                 src={item.src}
                 poster={posterFor(item.src)}
-                className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700 grayscale group-hover:grayscale-0"
+                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700 brightness-90 contrast-110 saturate-125"
               />
-              <div className="absolute inset-0 w-full h-full bg-[#111] opacity-40 md:group-hover:opacity-0 transition-opacity duration-500 flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full bg-[#111] opacity-0 transition-opacity duration-500 flex items-center justify-center pointer-events-none">
                  <span className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/20 uppercase">▶</span>
               </div>
               
@@ -253,9 +249,9 @@ export default function ArchiveSection() {
 
       {/* Archive CTA */}
       <div className="mt-12 flex justify-center reveal reveal-d3">
-        <button className="border border-brand-ink/20 px-8 py-4 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink hover:border-brand-ink/60 transition-colors uppercase flex items-center gap-2">
+        <Link href="/events" className="brand-action border border-brand-ink/20 px-8 py-4 font-mono text-[9px] tracking-[0.2em] text-brand-ink/60 hover:text-brand-ink hover:border-brand-ink/60 transition-colors uppercase flex items-center gap-2">
           View Full Archive <span className="font-serif italic text-[1rem]">→</span>
-        </button>
+        </Link>
       </div>
 
     </section>

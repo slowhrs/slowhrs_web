@@ -28,10 +28,8 @@ export async function POST(req: NextRequest) {
     if (!stripeKey || !stripe_price_id) {
       console.error('[checkout] Stripe not configured. STRIPE_SECRET_KEY:', !!stripeKey, 'price_id:', stripe_price_id);
       // Graceful fallback: redirect to inquiry with product context
-      const inquiryUrl = new URL('/#inquiry', req.url);
-      inquiryUrl.searchParams.set('subject', 'order');
-      inquiryUrl.searchParams.set('product', product_id);
-      inquiryUrl.searchParams.set('size', size);
+      const inquiryUrl = new URL('/', req.url);
+      inquiryUrl.hash = `inquiry?subject=order&product=${encodeURIComponent(product_id)}&size=${encodeURIComponent(size)}`;
       return NextResponse.redirect(inquiryUrl);
     }
 

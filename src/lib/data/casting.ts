@@ -10,6 +10,7 @@ export interface CastingCall {
   description: string;
   /** Reference code for inquiry pre-fill */
   ref: string;
+  isOpen: boolean;
 }
 
 export const CASTING_CALLS: CastingCall[] = [
@@ -20,6 +21,7 @@ export const CASTING_CALLS: CastingCall[] = [
     image: '/assets/casting/content_creators_call.jpeg',
     description: 'Looking for content creators to join the collective.',
     ref: 'CC-001',
+    isOpen: true,
   },
   {
     id: 'model_torrance',
@@ -28,6 +30,7 @@ export const CASTING_CALLS: CastingCall[] = [
     image: '/assets/casting/model_casting_torrance_oct29.jpeg',
     description: 'Shooting Issue 2 of the merch line in Torrance, CA.',
     ref: 'CC-002',
+    isOpen: false,
   },
   {
     id: 'model_april',
@@ -36,6 +39,7 @@ export const CASTING_CALLS: CastingCall[] = [
     image: '/assets/casting/model_casting_april12_2026.jpeg',
     description: 'Tag 2 models. Share to story. RSVP in bio. 100 capacity.',
     ref: 'CC-003',
+    isOpen: false,
   },
   {
     id: 'merch_casting',
@@ -44,6 +48,7 @@ export const CASTING_CALLS: CastingCall[] = [
     image: '/assets/casting/slowhrs_merch_casting_810.jpeg',
     description: 'Casting 4-6 models for the upcoming merch drop. Shot on VHS.',
     ref: 'CC-004',
+    isOpen: false,
   },
   {
     id: 'szn6_movie',
@@ -52,5 +57,6 @@ export const CASTING_CALLS: CastingCall[] = [
     image: '/assets/casting/szn6_movie_casting_april2026.jpeg',
     description: 'Cast 100. Units 14. Fast cars. Private takeover. Restricted.',
     ref: 'CC-005',
+    isOpen: false,
   },
 ];

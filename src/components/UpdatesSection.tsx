@@ -49,12 +49,12 @@ export default function UpdatesSection() {
 
             {/* Save disk sticker — top corner */}
             <div className="absolute top-3 right-3 z-20 w-[48px] opacity-60 pointer-events-none rotate-[6deg] drop-shadow-[0_0_8px_rgba(230,0,22,0.25)] mix-blend-screen">
-              <Image src="/assets/icons/savedisk.png" alt="" width={48} height={48} className="w-full h-auto pixel" aria-hidden="true" />
+              <Image src="/assets/icons/savedisk.png" alt="" width={48} height={48} className="w-full h-auto pixel" style={{ height: "auto" }} aria-hidden="true" />
             </div>
 
             {/* Locked Sticker Accent */}
             <div className="absolute -bottom-6 -right-4 z-20 w-[120px] opacity-80 pointer-events-none rotate-[-15deg] drop-shadow-[0_0_12px_rgba(230,0,22,0.4)] mix-blend-screen">
-              <Image src="/assets/widgets/locked.png" alt="SLOWHRS Restricted Access" title="Restricted Access" width={120} height={120} className="w-full h-auto pixel" />
+              <Image src="/assets/widgets/locked.png" alt="SLOWHRS Restricted Access" title="Restricted Access" width={120} height={120} className="w-full h-auto pixel" style={{ height: "auto" }} />
             </div>
           </div>
         </div>

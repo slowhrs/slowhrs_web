@@ -26,7 +26,9 @@ export default function CastingCalls() {
       {/* Casting Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
         {CASTING_CALLS.map((casting, i) => (
-          <div key={casting.id} className={`group border border-brand-border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 5)}`}>
+          <div key={casting.id} className={`group border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 5)} ${
+            casting.isOpen ? 'border-brand-red/40 shadow-[0_0_24px_rgba(230,0,22,0.08)]' : 'border-brand-border opacity-75'
+          }`}>
             
             {/* Casting Image */}
             <div className="relative aspect-[4/5] bg-black overflow-hidden">
@@ -38,6 +40,14 @@ export default function CastingCalls() {
                 className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              {!casting.isOpen && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30">
+                  <div className="relative h-24 w-24 rotate-45 opacity-90">
+                    <span className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
+                    <span className="absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
+                  </div>
+                </div>
+              )}
               
               {/* Ref Code */}
               <div className="absolute top-4 left-4 z-10 font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase">
@@ -59,12 +69,18 @@ export default function CastingCalls() {
                 {casting.description}
               </p>
               
-              <Link
-                href={`#inquiry?subject=casting&ref=${casting.ref}`}
-                className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-red border border-brand-red/30 px-4 py-2.5 text-center hover:bg-brand-red/10 transition-colors"
-              >
-                APPLY FOR CASTING
-              </Link>
+              {casting.isOpen ? (
+                <Link
+                  href={`/#inquiry?subject=casting&ref=${casting.ref}`}
+                  className="brand-action mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-red border border-brand-red/30 px-4 py-2.5 text-center hover:bg-brand-red hover:text-black transition-colors"
+                >
+                  APPLY FOR CASTING
+                </Link>
+              ) : (
+                <div className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-ink/35 border border-brand-ink/10 px-4 py-2.5 text-center">
+                  casting closed
+                </div>
+              )}
             </div>
           </div>
         ))}

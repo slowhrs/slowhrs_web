@@ -25,7 +25,9 @@ export default function UpcomingEvents() {
       {/* Flyer Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
         {FLYERS.map((flyer, i) => (
-          <div key={flyer.id} className={`group border border-brand-border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 4)}`}>
+          <div key={flyer.id} className={`group border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 4)} ${
+            flyer.status === 'open' ? 'border-brand-red/40 shadow-[0_0_28px_rgba(230,0,22,0.08)]' : 'border-brand-border opacity-70'
+          }`}>
             
             {/* Flyer Image */}
             <div className="relative aspect-[3/4] bg-black overflow-hidden">
@@ -42,6 +44,13 @@ export default function UpcomingEvents() {
               <div className="absolute top-4 right-4 z-10 font-mono text-[9px] tracking-[0.2em] text-black uppercase bg-brand-red px-3 py-1.5 font-bold">
                 {flyer.date}
               </div>
+              {flyer.status === 'passed' && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
+                  <span className="border border-brand-ink/30 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.25em] text-brand-ink/70 -rotate-6">
+                    passed
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Info */}
@@ -53,22 +62,19 @@ export default function UpcomingEvents() {
                 {flyer.description}
               </p>
               
-              {flyer.rsvpUrl ? (
+              {flyer.status === 'open' && flyer.rsvpUrl ? (
                 <a
                   href={flyer.rsvpUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-red border border-brand-red/30 px-4 py-2.5 text-center hover:bg-brand-red/10 transition-colors"
+                  className="brand-action mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-red border border-brand-red/40 px-4 py-2.5 text-center hover:bg-brand-red hover:text-black transition-colors"
                 >
-                  RSVP ↗
+                  {flyer.ctaLabel} ↗
                 </a>
               ) : (
-                <a
-                  href="#inquiry"
-                  className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-ink/60 border border-brand-ink/20 px-4 py-2.5 text-center hover:border-brand-ink/40 transition-colors"
-                >
-                  REQUEST ACCESS
-                </a>
+                <div className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-ink/35 border border-brand-ink/10 px-4 py-2.5 text-center">
+                  {flyer.ctaLabel}
+                </div>
               )}
             </div>
           </div>

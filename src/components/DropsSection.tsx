@@ -92,7 +92,7 @@ export default function DropsSection() {
 
           <div className="relative z-10 p-6 md:p-10 h-full flex flex-col justify-end min-h-[400px] lg:min-h-[600px]">
             {/* Logo GIF accent */}
-            <div className="absolute top-6 left-6 w-[60px] md:w-[80px] opacity-40">
+            <div className="absolute top-6 left-6 w-[110px] md:w-[160px] opacity-90 drop-shadow-[0_0_18px_rgba(230,0,22,0.25)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/assets/drops/clothing/slowhrs_logo.gif" alt="" className="w-full h-auto pixel" />
             </div>
@@ -107,12 +107,12 @@ export default function DropsSection() {
               {goneCount} of {DROPS.length} pieces sold out. {availableCount > 0 ? `${availableCount} remaining.` : 'archive collection.'}
             </p>
             <div className="flex items-center gap-4">
-              <Link href="#drops-grid" className="flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
+              <Link href="#drops-grid" className="brand-action flex items-center gap-3 bg-brand-ink text-black px-6 py-3 self-start hover:bg-brand-red transition-colors duration-300">
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase font-bold">VIEW DROP</span>
                 <span className="font-serif italic text-[1.2rem] leading-none">→</span>
               </Link>
               <div className="w-[32px] opacity-70 drop-shadow-[0_0_8px_rgba(230,0,22,0.3)]">
-                <Image src="/assets/icons/cart.png" alt="" width={32} height={32} className="w-full h-auto pixel" aria-hidden="true" />
+                <Image src="/assets/icons/cart.png" alt="" width={32} height={32} className="w-full h-auto pixel" style={{ height: "auto" }} aria-hidden="true" />
               </div>
             </div>
           </div>

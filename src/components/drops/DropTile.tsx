@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import LazyVideo from "@/components/LazyVideo";
 import SizePicker from "@/components/SizePicker";
 import type { Drop, Size } from "@/lib/data/drops";
@@ -49,23 +50,21 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
       onMouseLeave={resetTilt}
       onClick={isTouchDevice && !allSoldOut ? () => setIsExpanded((value) => !value) : undefined}
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-[var(--asphalt)]">
+      <div className="drop-media relative aspect-[4/5] overflow-hidden">
         <LazyVideo
           src={drop.video}
           poster={drop.poster}
-          className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] ${
-            allSoldOut ? "grayscale" : ""
-          }`}
+          className="h-full w-full object-cover scale-[1.04] transition-transform duration-700 group-hover:scale-[1.12]"
         />
 
         {allSoldOut && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/15">
             <Image
               src="/assets/widgets/gone.png"
               alt="sold out"
               width={140}
               height={70}
-              className="pixel w-1/3 h-auto -rotate-12 opacity-95 drop-shadow-[0_0_12px_rgba(230,0,22,0.55)]"
+              className="pixel w-1/4 max-w-[120px] h-auto -rotate-12 opacity-85 drop-shadow-[0_0_12px_rgba(230,0,22,0.55)]"
             />
           </div>
         )}
@@ -110,6 +109,7 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
 
         <div className="mt-auto">
           {!allSoldOut ? (
+            drop.stripe_price_id ? (
             <form action="/api/checkout" method="POST">
               <input type="hidden" name="product_id" value={drop.id} />
               <input type="hidden" name="size" value={selectedSize ?? ""} />
@@ -126,6 +126,25 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
                 {selectedSize ? `secure ${selectedSize} →` : "select size"}
               </button>
             </form>
+            ) : selectedSize ? (
+              <Link
+                href={`/#inquiry?subject=order&product=${encodeURIComponent(drop.id)}&size=${selectedSize}`}
+                className="brand-action block w-full border border-red py-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg"
+              >
+                message to order {selectedSize} →
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsExpanded(true);
+                }}
+                className="w-full border border-border-2 py-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-ink-faint transition-all duration-300 ease-out hover:border-red hover:text-red"
+              >
+                select size
+              </button>
+            )
           ) : (
             <p className="border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-dim">
               sold out. archive only.

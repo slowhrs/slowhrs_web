@@ -2,7 +2,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import EventTile from "@/components/events/EventTile";
 import type { EventData } from "@/components/events/EventTile";
 import Footer from "@/components/Footer";
-import Link from "next/link";
 
 export const metadata = {
   title: "SLOWHRS | Events",
@@ -14,21 +13,21 @@ const FALLBACK_EVENTS: EventData[] = [
   {
     id: "fallback-1",
     name: "VOGUE SAFARI: CONTENT PRE GAME",
-    date: "2025-05-08T19:00:00-07:00",
+    date: "2026-05-08T19:00:00-07:00",
     location: "Los Angeles",
     blurb: "luxury safari editorial. models, creatives, cameras. come ready.",
-    partiful_url: "https://partiful.com/e/1G8p2pfAqQsOiV4y3aHO",
+    partiful_url: null,
     cover_video: "/assets/events/block_party.mp4",
     produced_by_slowhrs: true,
-    is_upcoming: true,
+    is_upcoming: false,
   },
   {
     id: "fallback-2",
-    name: "Block Party",
-    date: "2025-08-12T21:00:00-07:00",
+    name: "DJ Battles — Moteoff",
+    date: "2026-05-29T21:00:00-07:00",
     location: "Mid-City, Los Angeles",
-    blurb: "crew run. hosts in the room. doors at 9.",
-    partiful_url: null,
+    blurb: "4 djs. 4 rounds. the crowd decides.",
+    partiful_url: "https://www.djmote.com/eventViewFromInviteLink?type=event_promoter&promoter_link_token=RLtkvbYxZcA7-wQQ5VoJzZYW8W2sdCql9DsmpTmaK5b6Oi4G0Z00qvjAYodsaVq-&organization_id=26&uuid=70ae9369-dff5-4088-b935-3c549b7b7243",
     cover_video: "/assets/events/block_party.mp4",
     produced_by_slowhrs: true,
     is_upcoming: true,
@@ -36,7 +35,7 @@ const FALLBACK_EVENTS: EventData[] = [
   {
     id: "fallback-3",
     name: "Destroy Lonely · WYA Trap Rave",
-    date: "2025-03-14T22:30:00-07:00",
+    date: "2026-03-14T22:30:00-07:00",
     location: "Los Angeles",
     blurb: "we shot the room. destroy lonely on stage. crew on the floor.",
     partiful_url: null,
@@ -58,7 +57,7 @@ const FALLBACK_EVENTS: EventData[] = [
   {
     id: "fallback-5",
     name: "Fast Life Campaign",
-    date: "2024-11-20T14:00:00-08:00",
+    date: "2026-11-20T14:00:00-08:00",
     location: "Hollywood, Los Angeles",
     blurb: "the fall clothing reel. shot on hollywood blvd.",
     partiful_url: null,
@@ -69,7 +68,7 @@ const FALLBACK_EVENTS: EventData[] = [
   {
     id: "fallback-6",
     name: "Runway · Spring Show",
-    date: "2025-04-25T20:00:00-07:00",
+    date: "2026-04-25T20:00:00-07:00",
     location: "Los Angeles",
     blurb: "the runway. one night. members in the front row.",
     partiful_url: null,

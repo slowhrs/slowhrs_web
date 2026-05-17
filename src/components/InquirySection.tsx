@@ -22,12 +22,12 @@ export default function InquirySection() {
   const [prefillDetails, setPrefillDetails] = React.useState<string>("");
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Parse hash params for pre-fill from drops/casting links
+  // Parse hash/search params for pre-fill from drops/casting links.
   useEffect(() => {
     const parseHashParams = () => {
       const hash = window.location.hash;
-      if (!hash.includes('?')) return;
-      const queryString = hash.split('?')[1];
+      const queryString = hash.includes('?') ? hash.split('?')[1] : window.location.search.slice(1);
+      if (!queryString) return;
       const params = new URLSearchParams(queryString);
       const subject = params.get('subject');
       const product = params.get('product');
@@ -37,7 +37,7 @@ export default function InquirySection() {
       if (subject === 'order' && product) {
         const generalType = INQUIRY_TYPES.find(t => t.id === 'general') || INQUIRY_TYPES[0];
         setSelectedType(generalType);
-        setPrefillDetails(`ORDER REQUEST — Product: ${product}${size ? `, Size: ${size}` : ''}\n\nPlease hold this piece for me.`);
+        setPrefillDetails(`ORDER REQUEST — Product: ${product}${size ? `, Size: ${size}` : ''}\n\nPlease hold this piece for me. If approved, send the Stripe checkout link.`);
       } else if (subject === 'casting' && ref) {
         const modelType = INQUIRY_TYPES.find(t => t.id === 'model') || INQUIRY_TYPES[0];
         setSelectedType(modelType);
@@ -199,7 +199,15 @@ export default function InquirySection() {
 
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase ml-1">Details</label>
-                  <textarea name="details" required rows={3} className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none" placeholder={selectedType.placeholder} defaultValue={prefillDetails}></textarea>
+                  <textarea
+                    name="details"
+                    required
+                    rows={3}
+                    className="bg-transparent border border-brand-border p-3 font-mono text-[11px] tracking-[0.1em] text-brand-ink placeholder:text-brand-ink/20 focus:outline-none focus:border-brand-red transition-colors resize-none"
+                    placeholder={selectedType.placeholder}
+                    value={prefillDetails}
+                    onChange={(event) => setPrefillDetails(event.target.value)}
+                  ></textarea>
                 </div>
 
                 {errorMsg && (
