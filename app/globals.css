@@ -257,3 +257,69 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(230, 0, 22, 0.6);
 }
+
+/* =========================================================
+   DROP TILE INTERACTION
+   ========================================================= */
+.drop-tile {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
+  transition:
+    transform 300ms ease-out,
+    box-shadow 300ms ease-out,
+    border-color 300ms ease-out;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+}
+
+.drop-tile:hover {
+  border-color: var(--border-2);
+  box-shadow: 0 24px 48px -12px rgba(230, 0, 22, 0.15);
+}
+
+.drop-tile-sold-out {
+  transform: none !important;
+  opacity: 0.72;
+}
+
+.drop-tile-sold-out:hover {
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.duration-400 {
+  transition-duration: 400ms;
+}
+
+@keyframes pulse-scarcity {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-scarcity {
+  animation: pulse-scarcity 1.8s ease-in-out infinite;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .drop-tile {
+    transform: none !important;
+    perspective: none !important;
+  }
+
+  .drop-tile:hover {
+    box-shadow: none;
+  }
+
+  .animate-pulse-scarcity {
+    animation: none !important;
+  }
+}

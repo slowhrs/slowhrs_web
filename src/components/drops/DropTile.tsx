@@ -1,94 +1,138 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import LazyVideo from "@/components/LazyVideo";
-import type { Drop } from "@/lib/data/drops";
-import { isAvailable } from "@/lib/data/drops";
+import SizePicker from "@/components/SizePicker";
+import type { Drop, Size } from "@/lib/data/drops";
+import { getStockStatus } from "@/lib/data/drops";
 
-interface DropTileProps {
-  drop: Drop;
-  index: number;
-}
+export default function DropTile({ drop }: { drop: Drop; index?: number }) {
+  const [selectedSize, setSelectedSize] = useState<Size | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+  const status = getStockStatus(drop);
+  const allSoldOut = status === "gone";
 
-export default function DropTile({ drop, index }: DropTileProps) {
-  const available = isAvailable(drop);
-  const isReversed = index % 2 === 1;
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(hover: none)").matches);
+  }, []);
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+    if (isTouchDevice || allSoldOut) return;
+
+    const card = cardRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    card.style.setProperty("--tilt-x", `${y * -4}deg`);
+    card.style.setProperty("--tilt-y", `${x * 4}deg`);
+  };
+
+  const resetTilt = () => {
+    setIsExpanded(false);
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.setProperty("--tilt-x", "0deg");
+    card.style.setProperty("--tilt-y", "0deg");
+  };
 
   return (
-    <div
-      className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center py-16 md:py-24 ${
-        isReversed ? "md:direction-rtl" : ""
-      }`}
-      style={isReversed ? { direction: "rtl" } : undefined}
+    <article
+      ref={cardRef}
+      className={`drop-tile group ${allSoldOut ? "drop-tile-sold-out" : ""}`}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={resetTilt}
+      onClick={isTouchDevice && !allSoldOut ? () => setIsExpanded((value) => !value) : undefined}
     >
-      {/* Video */}
-      <div
-        className="relative aspect-[4/5] overflow-hidden hover-lift light-sweep"
-        style={isReversed ? { direction: "ltr" } : undefined}
-      >
+      <div className="relative aspect-[4/5] overflow-hidden bg-[var(--asphalt)]">
         <LazyVideo
           src={drop.video}
           poster={drop.poster}
-          className={`absolute inset-0 w-full h-full object-cover ${!available ? "grayscale" : ""}`}
+          className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] ${
+            allSoldOut ? "grayscale" : ""
+          }`}
         />
 
-        {/* GONE sticker */}
-        {!available && (
-          <div className="absolute inset-0 flex items-center justify-center">
+        {allSoldOut && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
             <Image
               src="/assets/widgets/gone.png"
-              alt="SLOWHRS Sold Out"
-              title="Sold Out"
-              width={120}
-              height={40}
-              className="pixel w-[30%] h-auto"
+              alt="sold out"
+              width={140}
+              height={70}
+              className="pixel w-1/3 h-auto -rotate-12 opacity-95 drop-shadow-[0_0_12px_rgba(230,0,22,0.55)]"
             />
+          </div>
+        )}
+
+        {!allSoldOut && status === "low" && (
+          <div className="animate-pulse-scarcity absolute right-3 top-3 z-10 bg-red px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.22em] text-bg">
+            {drop.badge}
           </div>
         )}
       </div>
 
-      {/* Text */}
-      <div
-        className="flex flex-col justify-center"
-        style={isReversed ? { direction: "ltr" } : undefined}
-      >
-        <span className="font-mono uppercase text-[10px] tracking-[0.3em] text-red">
-          {drop.category}
-        </span>
-        <h3
-          className="font-display italic text-ink-warm mt-4 leading-tight"
-          style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", fontWeight: 300 }}
-        >
-          {drop.title}
-        </h3>
-        <p className="font-serif italic text-ink-warm-dim text-base mt-4 max-w-[400px] leading-relaxed">
-          {drop.description}
-        </p>
-        <div className="flex items-center gap-4 mt-3">
-          <span className="font-mono text-[12px] tracking-[0.1em] text-red font-bold">
-            ${drop.price}
-          </span>
-          <span className="font-mono text-[9px] tracking-[0.1em] text-brand-ink/40 uppercase">
-            {drop.badge}
-          </span>
+      <div className="flex min-h-[260px] flex-col gap-3 p-4 md:p-5">
+        <div className="flex items-baseline justify-between gap-4">
+          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-red">
+            {drop.category}
+          </p>
+          <p className="font-mono text-[12px] text-ink">${drop.price}</p>
         </div>
-        <div className="mt-6">
-          {!available ? (
-            <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink-warm-dim">
-              sold · archive only
-            </span>
+
+        <div>
+          <h3 className="font-serif text-[1.8rem] italic lowercase leading-none text-ink">
+            {drop.title.toLowerCase()}
+          </h3>
+          <p className="mt-3 line-clamp-2 font-serif text-sm italic leading-relaxed text-ink-dim">
+            {drop.description}
+          </p>
+        </div>
+
+        {!allSoldOut && (
+          <div
+            className={`overflow-hidden transition-all duration-400 ease-out ${
+              isExpanded ? "mt-2 max-h-32 opacity-100" : "mt-0 max-h-0 opacity-0"
+            }`}
+          >
+            <SizePicker
+              drop={drop}
+              selectedSize={selectedSize}
+              onSelect={setSelectedSize}
+            />
+          </div>
+        )}
+
+        <div className="mt-auto">
+          {!allSoldOut ? (
+            <form action="/api/checkout" method="POST">
+              <input type="hidden" name="product_id" value={drop.id} />
+              <input type="hidden" name="size" value={selectedSize ?? ""} />
+              <input type="hidden" name="stripe_price_id" value={drop.stripe_price_id ?? ""} />
+              <button
+                type="submit"
+                disabled={!selectedSize}
+                className={`w-full border py-3 font-mono text-[10px] uppercase tracking-[0.28em] transition-all duration-300 ease-out ${
+                  selectedSize
+                    ? "border-red text-red hover:translate-x-1 hover:bg-red hover:text-bg"
+                    : "cursor-not-allowed border-border-2 text-ink-faint"
+                }`}
+              >
+                {selectedSize ? `secure ${selectedSize} →` : "select size"}
+              </button>
+            </form>
           ) : (
-            <Link
-              href="/#drops"
-              className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink-warm-dim hover:text-red transition-colors border-b border-ink-warm-dim/30 hover:border-red pb-0.5"
-            >
-              available · shop now ↗
-            </Link>
+            <p className="border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-dim">
+              sold out. archive only.
+            </p>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

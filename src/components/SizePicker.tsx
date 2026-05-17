@@ -32,6 +32,7 @@ export default function SizePicker({ drop, selectedSize, onSelect }: SizePickerP
         return (
           <button
             key={size}
+            type="button"
             role="radio"
             aria-checked={isSelected}
             aria-disabled={isSoldOut}
