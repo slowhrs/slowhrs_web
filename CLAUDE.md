@@ -86,7 +86,7 @@ INQUIRY_EMAIL_TO=                # default: hello@slowhrs.com
 ```sql
 id UUID PK, created_at, email UNIQUE, full_name, instagram,
 city DEFAULT 'Los Angeles', what_you_do, why_apply,
-status CHECK ('tier_01','tier_02','tier_03','tier_04','tier_05','rejected'), reviewed_at, user_id FK→auth.users
+status CHECK ('tier_01','tier_02','tier_03','tier_04','tier_05','rejected'), events_attended INTEGER DEFAULT 0, reviewed_at, user_id FK→auth.users
 ```
 
 #### `members`

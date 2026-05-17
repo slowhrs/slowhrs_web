@@ -1,6 +1,5 @@
 import 'server-only';
 import { createServerClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 
 export type ApprovedMemberStatus = 'tier_02' | 'tier_03' | 'tier_04' | 'tier_05';
@@ -10,7 +9,7 @@ export type MemberProfile = {
   full_name: string;
   member_id: string;
   status: ApprovedMemberStatus;
-  hearts_earned?: number;
+  events_attended: number;
 };
 
 export type MemberDashboardEvent = {
@@ -31,12 +30,11 @@ export async function getMember(): Promise<MemberProfile | null> {
 
   if (!user?.email) return null;
 
-  const admin = createAdminClient();
-  const { data, error } = await admin
+  const { data, error } = await supabase
     .from('applications')
-    .select('email, full_name, member_id, status')
+    .select('email, full_name, member_id, status, events_attended')
     .eq('email', user.email.toLowerCase())
-    .single();
+    .maybeSingle();
 
   if (error || !data || !APPROVED_STATUSES.includes(data.status as ApprovedMemberStatus)) {
     return null;
@@ -51,22 +49,12 @@ export async function requireMember(): Promise<MemberProfile> {
   return member;
 }
 
-export async function isApprovedMember(email: string): Promise<boolean> {
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from('applications')
-    .select('status')
-    .eq('email', email.toLowerCase().trim())
-    .single();
-
-  return Boolean(data && APPROVED_STATUSES.includes(data.status as ApprovedMemberStatus));
-}
-
 export async function getUpcomingMemberEvents(): Promise<MemberDashboardEvent[]> {
-  const admin = createAdminClient();
-  const { data } = await admin
+  const supabase = await createServerClient();
+  const { data } = await supabase
     .from('events')
     .select('id, name, date, blurb, partiful_url')
+    .eq('is_public', true)
     .gte('date', new Date().toISOString())
     .order('date', { ascending: true })
     .limit(5);

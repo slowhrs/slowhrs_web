@@ -2,15 +2,25 @@
 
 import { z } from 'zod';
 import { createServerClient } from '@/lib/supabase/server';
-import { isApprovedMember } from '@/lib/auth/member';
+import { isApprovedMember } from '@/lib/auth/member-admin';
 
 const SignInSchema = z.object({
   email: z.string().email().toLowerCase().trim(),
+  next: z.string().optional(),
 });
+
+function safeNextPath(value: string | undefined): string {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) {
+    return '/dashboard';
+  }
+
+  return value;
+}
 
 export async function requestMagicLink(formData: FormData) {
   const parsed = SignInSchema.safeParse({
     email: formData.get('email'),
+    next: formData.get('next') || undefined,
   });
 
   if (!parsed.success) {
@@ -18,6 +28,7 @@ export async function requestMagicLink(formData: FormData) {
   }
 
   const { email } = parsed.data;
+  const next = safeNextPath(parsed.data.next);
   const isMember = await isApprovedMember(email);
   if (!isMember) {
     return {
@@ -28,10 +39,12 @@ export async function requestMagicLink(formData: FormData) {
 
   const supabase = await createServerClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://slowhrs.com';
+  const redirectUrl = new URL('/auth/callback', origin.replace(/\/$/, ''));
+  redirectUrl.searchParams.set('next', next);
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${origin.replace(/\/$/, '')}/auth/callback`,
+      emailRedirectTo: redirectUrl.toString(),
       shouldCreateUser: true,
     },
   });

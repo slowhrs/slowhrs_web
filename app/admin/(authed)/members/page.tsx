@@ -1,25 +1,26 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getTier } from "@/lib/membership";
-import { toggleContributor, toggleArchitect } from "@/app/actions/admin/contributor";
+import { updateMemberAdminFieldsForm } from "@/app/actions/admin/member";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "SLOWHRS | admin // members" };
 
+const TIERS = [
+  { value: "tier_02", label: "tier 02 // the room" },
+  { value: "tier_03", label: "tier 03 // the regular" },
+  { value: "tier_04", label: "tier 04 // inner room" },
+  { value: "tier_05", label: "tier 05 // architects" },
+] as const;
+
 export default async function AdminMembersPage() {
   const supabase = createAdminClient();
   const { data: members } = await supabase
-    .from("members")
-    .select("*")
-    .order("member_number", { ascending: true });
+    .from("applications")
+    .select("id, created_at, email, full_name, instagram, member_id, status, events_attended")
+    .in("status", ["tier_02", "tier_03", "tier_04", "tier_05"])
+    .order("reviewed_at", { ascending: false, nullsFirst: false });
 
-  // Fetch emails from auth for each member
-  const membersWithEmails = await Promise.all(
-    (members || []).map(async (m: { user_id: string; member_number: number; full_name: string; instagram: string | null; hearts: number; is_contributor: boolean; is_architect: boolean }) => {
-      const { data } = await supabase.auth.admin.getUserById(m.user_id);
-      return { ...m, email: data?.user?.email || '—' };
-    })
-  );
+  const approvedMembers = members || [];
 
   return (
     <main className="min-h-screen bg-bg pt-[52px] px-6 md:px-12">
@@ -30,7 +31,7 @@ export default async function AdminMembersPage() {
               members
             </h1>
             <p className="font-mono text-[10px] text-ink-faint mt-1">
-              {membersWithEmails.length} total
+              {approvedMembers.length} approved
             </p>
           </div>
           <Link href="/admin" className="font-mono text-[10px] text-ink-faint hover:text-red">
@@ -38,11 +39,17 @@ export default async function AdminMembersPage() {
           </Link>
         </div>
 
+        <div className="mb-6 border border-border bg-black/35 p-4">
+          <p className="max-w-[78ch] font-mono text-[9px] uppercase leading-[1.7] tracking-[0.15em] text-ink-dim">
+            This table controls what members see after login. Set how many events they went to, choose the tier, then save the row.
+          </p>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-border">
-                {["#", "name", "email", "ig", "hearts", "tier", "contributor", "architect"].map((h) => (
+                {["id", "name", "email", "ig", "events went", "tier", "save"].map((h) => (
                   <th key={h} className="font-mono text-[9px] tracking-[0.2em] text-ink-faint uppercase py-3 pr-4">
                     {h}
                   </th>
@@ -50,71 +57,71 @@ export default async function AdminMembersPage() {
               </tr>
             </thead>
             <tbody>
-              {membersWithEmails.map((m) => {
-                const tier = getTier(m);
-                return (
-                  <tr key={m.user_id} className="border-b border-border/50 hover:bg-white/[0.02]">
-                    <td className="py-3 pr-4 font-mono text-[11px] text-ink-faint">
-                      {m.member_number}
-                    </td>
-                    <td className="py-3 pr-4 font-mono text-[11px] text-ink">
-                      {m.full_name}
-                    </td>
-                    <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim">
-                      <button
-                        onClick={undefined}
-                        className="hover:text-red transition-colors cursor-text select-all"
-                        title="click to select"
+              {approvedMembers.map((m) => (
+                <tr key={m.id} className="border-b border-border/50 hover:bg-white/[0.02]">
+                  <td className="py-3 pr-4 font-mono text-[11px] text-ink-faint">
+                    {m.member_id}
+                  </td>
+                  <td className="py-3 pr-4 font-mono text-[11px] text-ink">
+                    {m.full_name}
+                  </td>
+                  <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim">
+                    {m.email}
+                  </td>
+                  <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
+                    {m.instagram ? (
+                      <a
+                        href={`https://instagram.com/${m.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-red transition-colors"
                       >
-                        {m.email}
+                        @{m.instagram.replace('@', '')}
+                      </a>
+                    ) : '—'}
+                  </td>
+                  <td className="py-3 pr-4">
+                    <input
+                      form={`member-${m.id}`}
+                      name="events_attended"
+                      type="number"
+                      min="0"
+                      defaultValue={m.events_attended ?? 0}
+                      className="w-20 border border-border bg-black px-3 py-2 font-mono text-[11px] text-ink outline-none focus:border-red"
+                    />
+                  </td>
+                  <td className="py-3 pr-4">
+                    <select
+                      form={`member-${m.id}`}
+                      name="status"
+                      defaultValue={m.status}
+                      className="border border-border bg-black px-3 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink outline-none focus:border-red"
+                    >
+                      {TIERS.map((tier) => (
+                        <option key={tier.value} value={tier.value}>
+                          {tier.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <form action={updateMemberAdminFieldsForm} id={`member-${m.id}`}>
+                      <input type="hidden" name="id" value={m.id} />
+                      <button
+                        type="submit"
+                        className="brand-action border border-red/45 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.2em] text-red hover:bg-red hover:text-bg"
+                      >
+                        save
                       </button>
-                    </td>
-                    <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                      {m.instagram ? (
-                        <a
-                          href={`https://instagram.com/${m.instagram.replace('@', '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-red transition-colors"
-                        >
-                          @{m.instagram.replace('@', '')}
-                        </a>
-                      ) : '—'}
-                    </td>
-                    <td className="py-3 pr-4 font-mono text-[11px] text-ink-dim">
-                      {m.hearts}
-                    </td>
-                    <td className="py-3 pr-4 font-mono text-[10px] text-ink-dim">
-                      {tier.display}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <form action={async () => {
-                        "use server";
-                        await toggleContributor(m.user_id, !m.is_contributor);
-                      }}>
-                        <button type="submit" className={`font-mono text-[10px] ${m.is_contributor ? "text-green-500" : "text-ink-faint"} hover:text-red`}>
-                          {m.is_contributor ? "yes" : "no"}
-                        </button>
-                      </form>
-                    </td>
-                    <td className="py-3 pr-4">
-                      <form action={async () => {
-                        "use server";
-                        await toggleArchitect(m.user_id, !m.is_architect);
-                      }}>
-                        <button type="submit" className={`font-mono text-[10px] ${m.is_architect ? "text-gold" : "text-ink-faint"} hover:text-red`}>
-                          {m.is_architect ? "yes" : "no"}
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                );
-              })}
+                    </form>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        {membersWithEmails.length === 0 && (
+        {approvedMembers.length === 0 && (
           <p className="font-mono text-[11px] text-ink-faint mt-8">no members yet.</p>
         )}
       </div>
