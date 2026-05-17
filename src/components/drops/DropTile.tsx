@@ -113,7 +113,6 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
             <form action="/api/checkout" method="POST">
               <input type="hidden" name="product_id" value={drop.id} />
               <input type="hidden" name="size" value={selectedSize ?? ""} />
-              <input type="hidden" name="stripe_price_id" value={drop.stripe_price_id ?? ""} />
               <button
                 type="submit"
                 disabled={!selectedSize}
