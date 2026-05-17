@@ -67,8 +67,10 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          as="video"
+          as="fetch"
           href="/assets/videos/hero-recap.mp4"
+          type="video/mp4"
+          crossOrigin="anonymous"
           fetchPriority="high"
         />
       </head>
