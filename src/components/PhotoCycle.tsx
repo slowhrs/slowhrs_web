@@ -24,10 +24,15 @@ export default function PhotoCycle({
 
   useEffect(() => {
     if (images.length <= 1) return;
-    const timer = setInterval(() => {
+    const advance = () => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, interval);
-    return () => clearInterval(timer);
+    };
+    const firstAdvance = window.setTimeout(advance, 700);
+    const timer = setInterval(advance, interval);
+    return () => {
+      window.clearTimeout(firstAdvance);
+      clearInterval(timer);
+    };
   }, [images.length, interval]);
 
   return (
@@ -42,7 +47,7 @@ export default function PhotoCycle({
           className={`object-cover transition-opacity duration-700 ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
-          priority={i === 0}
+          priority={i < 2}
         />
       ))}
     </div>

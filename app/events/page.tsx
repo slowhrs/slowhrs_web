@@ -1,6 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { EventData } from "@/components/events/EventTile";
+import EventPhotoCarousel from "@/components/EventPhotoCarousel";
 import Footer from "@/components/Footer";
+import { EVENT_PHOTO_SETS, getPhotoUrls } from "@/lib/data/eventPhotos";
 
 export const metadata = {
   title: "SLOWHRS | Events",
@@ -349,6 +351,44 @@ export default async function EventsPage() {
               </div>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-black/35 px-5 py-12 md:px-12 md:py-16">
+        <div className="mx-auto max-w-[1400px]">
+          <div className="mb-6 flex items-end justify-between gap-6">
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-red">photo evidence</p>
+              <h2 className="mt-2 font-serif text-[2.4rem] italic leading-none text-ink">frames in motion.</h2>
+            </div>
+            <p className="hidden max-w-[34ch] text-right font-mono text-[9px] uppercase leading-[1.7] tracking-[0.12em] text-ink-faint md:block">
+              auto cycling photo boxes from private rooms, shoots, and runway files.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {EVENT_PHOTO_SETS.map((set, index) => (
+              <article key={set.archiveId} className="overflow-hidden border border-border bg-[#050505]">
+                <div className="flex items-center justify-between border-b border-border bg-bg/80 px-3 py-3">
+                  <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-red">photo box {String(index + 1).padStart(2, "0")}</span>
+                  <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-ink-faint">{set.count} frames</span>
+                </div>
+                <div className="relative aspect-[4/5]">
+                  <EventPhotoCarousel
+                    photos={getPhotoUrls(set)}
+                    interval={1900 + index * 200}
+                    alt={set.alt}
+                    className="absolute inset-0 h-full w-full"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10" />
+                </div>
+                <div className="border-t border-border p-4">
+                  <h3 className="font-serif text-[1.2rem] italic leading-tight text-ink">{set.title}</h3>
+                  <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.16em] text-ink-faint">autoplay evidence file</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
       <Footer />

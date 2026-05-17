@@ -21,35 +21,40 @@ interface EventPhotoCarouselProps {
  */
 export default function EventPhotoCarousel({
   photos,
-  interval = 4000,
+  interval = 2400,
   alt = "SLOWHRS Event",
   className = "",
 }: EventPhotoCarouselProps) {
   const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   const advance = useCallback(() => {
     setCurrent((prev) => (prev + 1) % photos.length);
   }, [photos.length]);
 
   useEffect(() => {
-    if (photos.length <= 1 || isPaused) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => setIsReducedMotion(motion.matches);
+    syncMotion();
+    motion.addEventListener("change", syncMotion);
+    return () => motion.removeEventListener("change", syncMotion);
+  }, []);
 
-    // Respect reduced motion preference
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
-
+  useEffect(() => {
+    if (photos.length <= 1 || isReducedMotion) return;
+    const firstAdvance = window.setTimeout(advance, 900);
     const timer = setInterval(advance, interval);
-    return () => clearInterval(timer);
-  }, [photos.length, interval, isPaused, advance]);
+    return () => {
+      window.clearTimeout(firstAdvance);
+      clearInterval(timer);
+    };
+  }, [photos.length, interval, isReducedMotion, advance]);
 
   if (photos.length === 0) return null;
 
   return (
     <div
       className={`relative overflow-hidden bg-black ${className}`}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       role="region"
       aria-label={`${alt} photo gallery — ${photos.length} photos`}
       aria-roledescription="carousel"
@@ -65,7 +70,7 @@ export default function EventPhotoCarousel({
           className={`object-cover transition-opacity duration-1000 ease-in-out ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
-          priority={i === 0}
+          priority={i < 2}
         />
       ))}
 
@@ -74,7 +79,7 @@ export default function EventPhotoCarousel({
 
       {/* Photo Counter */}
       <div className="absolute bottom-3 right-3 z-20 font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase bg-black/60 px-2 py-1">
-        {String(current + 1).padStart(2, "0")}/{String(photos.length).padStart(2, "0")}
+        {isReducedMotion ? "still" : "auto"} {String(current + 1).padStart(2, "0")}/{String(photos.length).padStart(2, "0")}
       </div>
 
       {/* Manual Navigation Dots */}

@@ -18,16 +18,20 @@ export default function CastingCalls() {
             we need faces.
           </h2>
           <p className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] text-brand-ink/60 max-w-[50ch] leading-[1.6] uppercase">
-            models. creatives. performers. apply through the casting link below.
+            content creators are open now. all other calls are closed, passed, or not available.
           </p>
         </div>
       </div>
 
       {/* Casting Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-        {CASTING_CALLS.map((casting, i) => (
+        {CASTING_CALLS.map((casting, i) => {
+          const isContentCreatorOpen = casting.id === "content_creators" && casting.isOpen;
+          const formHref = `/inquire?subject=casting&note=${encodeURIComponent(`${casting.ref} // Content Creators Wanted application. Portfolio links, your niche, posting cadence, and why you fit SLOWHRS.`)}`;
+
+          return (
           <div key={casting.id} className={`group border bg-[#050505] overflow-hidden flex flex-col reveal reveal-d${Math.min(i + 1, 5)} ${
-            casting.isOpen ? 'border-brand-red/40 shadow-[0_0_24px_rgba(230,0,22,0.08)]' : 'border-brand-border opacity-75'
+            isContentCreatorOpen ? 'border-brand-red/40 shadow-[0_0_24px_rgba(230,0,22,0.08)]' : 'border-brand-border opacity-60'
           }`}>
             
             {/* Casting Image */}
@@ -37,14 +41,21 @@ export default function CastingCalls() {
                 alt={`${casting.title} — SLOWHRS Casting Call`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                className={`object-cover transition-opacity duration-500 ${
+                  isContentCreatorOpen ? "opacity-80 group-hover:opacity-100" : "opacity-45 grayscale"
+                }`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              {!casting.isOpen && (
+              {!isContentCreatorOpen && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30">
-                  <div className="relative h-24 w-24 rotate-45 opacity-90">
-                    <span className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
-                    <span className="absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="relative h-20 w-20 rotate-45 opacity-90">
+                      <span className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
+                      <span className="absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2 bg-brand-red shadow-[0_0_12px_rgba(230,0,22,0.75)]" />
+                    </div>
+                    <span className="border border-brand-red/35 bg-black/70 px-3 py-1 font-mono text-[8px] uppercase tracking-[0.24em] text-brand-red">
+                      {casting.statusLabel}
+                    </span>
                   </div>
                 </div>
               )}
@@ -69,21 +80,22 @@ export default function CastingCalls() {
                 {casting.description}
               </p>
               
-              {casting.isOpen ? (
+              {isContentCreatorOpen ? (
                 <Link
-                  href={`/#inquiry?subject=casting&ref=${casting.ref}`}
+                  href={formHref}
                   className="brand-action mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-red border border-brand-red/30 px-4 py-2.5 text-center hover:bg-brand-red hover:text-black transition-colors"
                 >
-                  APPLY FOR CASTING
+                  APPLY: CONTENT CREATOR FORM
                 </Link>
               ) : (
-                <div className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-ink/35 border border-brand-ink/10 px-4 py-2.5 text-center">
-                  casting closed
+                <div aria-disabled="true" className="mt-auto font-mono text-[9px] tracking-[0.2em] uppercase text-brand-ink/35 border border-brand-ink/10 px-4 py-2.5 text-center cursor-not-allowed">
+                  {casting.statusLabel}
                 </div>
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
