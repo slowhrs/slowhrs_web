@@ -37,11 +37,17 @@ export function LazyVideo({
     if (!video || isReducedMotion) return;
 
     video.muted = true;
+    video.defaultMuted = true;
     video.playsInline = true;
     video.play().catch(() => {
       // Autoplay can still be blocked; the poster remains visible.
     });
   }, [isReducedMotion]);
+
+  useEffect(() => {
+    if (!shouldLoad || isReducedMotion) return;
+    playIfAllowed();
+  }, [isReducedMotion, playIfAllowed, shouldLoad]);
 
   useEffect(() => {
     if (priority || shouldLoad) return;
@@ -95,6 +101,7 @@ export function LazyVideo({
       preload="auto"
       autoPlay={shouldLoad && !isReducedMotion}
       onCanPlay={playIfAllowed}
+      onLoadedMetadata={playIfAllowed}
       onLoadedData={() => {
         setHasLoaded(true);
         playIfAllowed();

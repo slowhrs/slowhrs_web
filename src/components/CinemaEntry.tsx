@@ -27,6 +27,15 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
   const [videoSrc] = useState(() =>
     ENTRY_VIDEOS[Math.floor(Math.random() * ENTRY_VIDEOS.length)]
   );
+  const posterSrc = videoSrc.replace(/\.mp4$/, ".jpg");
+
+  const playEntryVideo = useCallback((video: HTMLVideoElement | null) => {
+    if (!video || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.play().catch(() => {});
+  }, []);
 
   // Live LA timecode — HH:MM:SS PT
   useEffect(() => {
@@ -116,7 +125,7 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
       // t=2.0s — recap reel ramps in behind logo
       if (videoRef.current) {
         const v = videoRef.current;
-        v.play().catch(() => {});
+        playEntryVideo(v);
         tl.to(v, { opacity: 0.3, duration: 1 }, 2.0);
       }
 
@@ -151,7 +160,7 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
         tl.kill();
       };
     },
-    { scope: containerRef, dependencies: [doWipe] }
+    { scope: containerRef, dependencies: [doWipe, playEntryVideo] }
   );
 
   return (
@@ -167,10 +176,14 @@ export default function CinemaEntry({ onComplete }: CinemaEntryProps) {
       <video
         ref={videoRef}
         src={videoSrc}
+        poster={posterSrc}
+        autoPlay
         muted
-        playsInline
+          playsInline
         loop
         preload="auto"
+        onCanPlay={(event) => playEntryVideo(event.currentTarget)}
+        onLoadedData={(event) => playEntryVideo(event.currentTarget)}
         className="absolute inset-0 w-full h-full object-cover opacity-0"
       />
 

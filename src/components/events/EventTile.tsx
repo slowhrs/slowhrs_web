@@ -74,10 +74,20 @@ export default function EventTile({ event }: EventTileProps) {
             src={event.cover_video}
             poster={posterFor(event.cover_video)}
             muted
-            playsInline
+              playsInline
             loop
             autoPlay
-            preload="metadata"
+            preload="auto"
+            onCanPlay={(playEvent) => {
+              playEvent.currentTarget.muted = true;
+              playEvent.currentTarget.defaultMuted = true;
+              playEvent.currentTarget.play().catch(() => {});
+            }}
+            onLoadedData={(playEvent) => {
+              playEvent.currentTarget.muted = true;
+              playEvent.currentTarget.defaultMuted = true;
+              playEvent.currentTarget.play().catch(() => {});
+            }}
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Bottom gradient for text readability */}

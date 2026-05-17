@@ -82,6 +82,17 @@ export default function HomepageHero({ videoSrc }: HomepageHeroProps) {
           playsInline
           loop
           autoPlay
+          preload="auto"
+          onCanPlay={(event) => {
+            event.currentTarget.muted = true;
+            event.currentTarget.defaultMuted = true;
+            event.currentTarget.play().catch(() => {});
+          }}
+          onLoadedData={(event) => {
+            event.currentTarget.muted = true;
+            event.currentTarget.defaultMuted = true;
+            event.currentTarget.play().catch(() => {});
+          }}
           className="absolute inset-0 w-full h-full object-cover"
         />
 

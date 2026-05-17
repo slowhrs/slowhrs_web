@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { EventData } from "@/components/events/EventTile";
 import EventPhotoCarousel from "@/components/EventPhotoCarousel";
+import LazyVideo from "@/components/LazyVideo";
 import Footer from "@/components/Footer";
 import { EVENT_PHOTO_SETS, getPhotoUrls } from "@/lib/data/eventPhotos";
 
@@ -275,15 +276,11 @@ export default async function EventsPage() {
           {nextEvent && (
             <div className="group relative min-h-[560px] overflow-hidden border border-red/40 bg-black shadow-[0_0_80px_rgba(230,0,22,0.13)]">
               {nextEvent.cover_video && (
-                <video
+                <LazyVideo
                   src={nextEvent.cover_video}
                   poster={posterFor(nextEvent.cover_video)}
-                  muted
-                  playsInline
-                  loop
-                  autoPlay
-                  preload="auto"
                   className="absolute inset-0 h-full w-full object-cover brightness-90 contrast-110 saturate-125 transition-transform duration-1000 group-hover:scale-[1.03]"
+                  priority
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
@@ -328,14 +325,9 @@ export default async function EventsPage() {
               </div>
               <div className="relative aspect-video overflow-hidden bg-black">
                 {event.cover_video && (
-                  <video
+                  <LazyVideo
                     src={event.cover_video}
                     poster={posterFor(event.cover_video)}
-                    muted
-                    playsInline
-                    loop
-                    autoPlay
-                    preload="metadata"
                     className="h-full w-full object-cover brightness-90 contrast-110 saturate-125 transition-transform duration-700 group-hover:scale-[1.05]"
                   />
                 )}

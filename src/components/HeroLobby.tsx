@@ -23,6 +23,14 @@ const HERO_VIDEOS = [
 const CLIP_DURATION = 8000; // 8s per clip before crossfade
 const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
 
+function playVideo(video: HTMLVideoElement | null) {
+  if (!video || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.play().catch(() => {});
+}
+
 export default function HeroLobby() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [nextIdx, setNextIdx] = useState(1);
@@ -55,13 +63,11 @@ export default function HeroLobby() {
 
   // Ensure videos play when src changes
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    activeVideoRef.current?.play().catch(() => {});
+    playVideo(activeVideoRef.current);
   }, [activeIdx]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    nextVideoRef.current?.play().catch(() => {});
+    playVideo(nextVideoRef.current);
   }, [nextIdx]);
 
   return (
@@ -72,33 +78,35 @@ export default function HeroLobby() {
         <video
           ref={activeVideoRef}
           key={`active-${activeIdx}`}
+          src={HERO_VIDEOS[activeIdx]}
           autoPlay
           loop
           muted
           playsInline
           poster={posterFor(HERO_VIDEOS[activeIdx])}
           preload="auto"
+          onCanPlay={(event) => playVideo(event.currentTarget)}
+          onLoadedData={(event) => playVideo(event.currentTarget)}
           className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
           style={{ opacity: isFading ? 0 : 1 }}
-        >
-          <source src={HERO_VIDEOS[activeIdx]} type="video/mp4" />
-        </video>
+        />
 
         {/* Next layer (top — fades in during crossfade) */}
         <video
           ref={nextVideoRef}
           key={`next-${nextIdx}`}
+          src={HERO_VIDEOS[nextIdx]}
           autoPlay
           loop
           muted
           playsInline
           poster={posterFor(HERO_VIDEOS[nextIdx])}
-          preload="metadata"
+          preload="auto"
+          onCanPlay={(event) => playVideo(event.currentTarget)}
+          onLoadedData={(event) => playVideo(event.currentTarget)}
           className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
           style={{ opacity: isFading ? 1 : 0 }}
-        >
-          <source src={HERO_VIDEOS[nextIdx]} type="video/mp4" />
-        </video>
+        />
 
         {/* Gradient masks */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85 z-[1]"></div>
