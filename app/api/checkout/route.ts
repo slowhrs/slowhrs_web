@@ -91,6 +91,34 @@ function isMissingStripePriceError(error: unknown) {
   );
 }
 
+function isUnsupportedCheckoutBrandingError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+
+  const stripeError = error as { param?: string; message?: string };
+  return (
+    stripeError.param === 'branding_settings' ||
+    /branding_settings|unknown parameter.*branding|received unknown parameter/i.test(stripeError.message ?? '')
+  );
+}
+
+async function createCheckoutSession(
+  stripe: Stripe,
+  params: Stripe.Checkout.SessionCreateParams
+): Promise<Stripe.Checkout.Session> {
+  try {
+    return await stripe.checkout.sessions.create(params);
+  } catch (error) {
+    if (!params.branding_settings || !isUnsupportedCheckoutBrandingError(error)) {
+      throw error;
+    }
+
+    console.error('[checkout] Stripe rejected hosted Checkout branding settings; retrying without them.');
+    const fallbackParams: Stripe.Checkout.SessionCreateParams = { ...params };
+    delete fallbackParams.branding_settings;
+    return stripe.checkout.sessions.create(fallbackParams);
+  }
+}
+
 function parseCheckoutQuantity(value: FormDataEntryValue | null): number | null {
   if (value === null) return MIN_CHECKOUT_QUANTITY;
   if (typeof value !== 'string') return null;
@@ -273,7 +301,7 @@ export async function POST(req: NextRequest) {
 
     let session: Stripe.Checkout.Session;
     try {
-      session = await stripe.checkout.sessions.create({
+      session = await createCheckoutSession(stripe, {
         ...baseSessionParams,
         line_items: [
           drop.stripe_price_id
@@ -306,7 +334,7 @@ export async function POST(req: NextRequest) {
         stripe_price_id: drop.stripe_price_id,
       });
 
-      session = await stripe.checkout.sessions.create({
+      session = await createCheckoutSession(stripe, {
         ...baseSessionParams,
         line_items: [
           {
