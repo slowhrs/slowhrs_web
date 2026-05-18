@@ -1,5 +1,6 @@
 import 'server-only';
 import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 
 export type ApprovedMemberStatus = 'tier_02' | 'tier_03' | 'tier_04' | 'tier_05';
@@ -32,10 +33,12 @@ export async function getMember(): Promise<MemberProfile | null> {
 
   if (!user?.email) return null;
 
-  const { data, error } = await supabase
+  const admin = createAdminClient();
+  const normalizedEmail = user.email.toLowerCase().trim();
+  const { data, error } = await admin
     .from('applications')
     .select('email, full_name, member_id, status, events_attended, created_at')
-    .eq('email', user.email.toLowerCase())
+    .ilike('email', normalizedEmail)
     .maybeSingle();
 
   if (error || !data || !APPROVED_STATUSES.includes(data.status as ApprovedMemberStatus)) {

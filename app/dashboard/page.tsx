@@ -3,6 +3,9 @@ import { requireMember } from '@/lib/auth/member';
 import { getDashboardData } from '@/lib/data/dashboard';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const TIER_META = {
   tier_02: {
     label: 'the room',

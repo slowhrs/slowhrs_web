@@ -3,6 +3,7 @@ import { signOut } from '@/app/actions/signOut';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const member = await requireMember();

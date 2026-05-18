@@ -9,7 +9,7 @@ export async function isApprovedMember(email: string): Promise<boolean> {
   const { data } = await admin
     .from('applications')
     .select('status')
-    .eq('email', email.toLowerCase().trim())
+    .ilike('email', email.toLowerCase().trim())
     .maybeSingle();
 
   return Boolean(data && APPROVED_STATUSES.includes(data.status as ApprovedMemberStatus));
