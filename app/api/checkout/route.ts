@@ -71,6 +71,41 @@ function isMissingStripePriceError(error: unknown) {
   );
 }
 
+function stripeCheckoutError(req: NextRequest, error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
+  }
+
+  const stripeError = error as { code?: string; message?: string; statusCode?: number; type?: string };
+  const message = stripeError.message ?? '';
+
+  if (
+    stripeError.type === 'StripeAuthenticationError' ||
+    stripeError.statusCode === 401 ||
+    /invalid api key|expired api key|no api key/i.test(message)
+  ) {
+    console.error('[checkout] Stripe authentication failed. Check STRIPE_SECRET_KEY in Vercel.');
+    return checkoutError(req, 503, 'stripe_auth_failed', 'Stripe checkout is not configured correctly.');
+  }
+
+  if (
+    stripeError.type === 'StripePermissionError' ||
+    stripeError.statusCode === 403 ||
+    /permission|not authorized|restricted api key/i.test(message)
+  ) {
+    console.error('[checkout] Stripe permission failed. Check STRIPE_SECRET_KEY permissions in Vercel.');
+    return checkoutError(req, 503, 'stripe_permission_failed', 'Stripe checkout is missing permission.');
+  }
+
+  if (/account.*not.*activated|charges.*disabled|not currently able to make live charges/i.test(message)) {
+    console.error('[checkout] Stripe account cannot create live charges yet.');
+    return checkoutError(req, 503, 'stripe_account_inactive', 'Stripe account is not ready for live checkout.');
+  }
+
+  console.error('[checkout] error:', error);
+  return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
+}
+
 /**
  * POST /api/checkout
  * Creates a Stripe Checkout Session for a drop purchase.
@@ -175,7 +210,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.redirect(session.url);
   } catch (err) {
-    console.error('[checkout] error:', err);
-    return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
+    return stripeCheckoutError(req, err);
   }
 }
