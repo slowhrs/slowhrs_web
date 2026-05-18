@@ -342,6 +342,26 @@ body {
     0 10px 18px rgba(0, 0, 0, 0.22);
 }
 
+.checkout-portal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.14) 45%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  transition: transform 520ms ease;
+}
+
+.checkout-portal:hover::before,
+.checkout-portal:disabled::before {
+  transform: translateX(120%);
+}
+
 .archive-disc {
   animation: slowhrs-disc-spin 8s linear infinite;
   transform-origin: center;

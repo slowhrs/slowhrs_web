@@ -37,7 +37,10 @@ export default function SizePicker({ drop, selectedSize, onSelect }: SizePickerP
             aria-checked={isSelected}
             aria-disabled={isSoldOut}
             disabled={isSoldOut}
-            onClick={() => onSelect(size)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onSelect(size);
+            }}
             className={`
               font-mono text-[9px] tracking-[0.15em] uppercase
               w-[36px] h-[28px] flex items-center justify-center

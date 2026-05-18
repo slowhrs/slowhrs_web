@@ -10,6 +10,7 @@ import { getStockStatus } from "@/lib/data/drops";
 export default function DropTile({ drop }: { drop: Drop; index?: number }) {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isTouchDevice] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(hover: none)").matches : false
   );
@@ -111,14 +112,26 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
           {!allSoldOut ? (
             drop.stripe_price_id ? (
               selectedSize ? (
-                <form action="/api/checkout" method="POST">
+                <form
+                  action="/api/checkout"
+                  method="POST"
+                  onClick={(event) => event.stopPropagation()}
+                  onSubmit={() => setIsCheckingOut(true)}
+                  className="space-y-2"
+                >
                   <input type="hidden" name="product_id" value={drop.id} />
                   <input type="hidden" name="size" value={selectedSize} />
+                  <input type="hidden" name="quantity" value="1" />
+                  <p className="font-mono text-[8px] uppercase tracking-[0.22em] text-ink-dim">
+                    {selectedSize} selected // ships from the room
+                  </p>
                   <button
                     type="submit"
-                    className="w-full border border-red py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg"
+                    disabled={isCheckingOut}
+                    className="checkout-portal brand-action relative flex w-full items-center justify-between overflow-hidden border border-red bg-red/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg disabled:pointer-events-none disabled:opacity-80"
                   >
-                    secure {selectedSize} →
+                    <span>{isCheckingOut ? "opening stripe" : `secure ${selectedSize}`}</span>
+                    <span aria-hidden="true">{isCheckingOut ? "..." : "→"}</span>
                   </button>
                 </form>
               ) : (
