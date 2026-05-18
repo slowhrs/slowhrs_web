@@ -17,7 +17,7 @@ function checkoutError(req: NextRequest, status: number, code: string, message: 
 
   const url = new URL('/', req.url);
   url.searchParams.set('error', code);
-  return NextResponse.redirect(url);
+  return NextResponse.redirect(url, 303);
 }
 
 function checkoutNotConfigured(req: NextRequest, productId: string, size: string) {
@@ -32,7 +32,7 @@ function checkoutNotConfigured(req: NextRequest, productId: string, size: string
 
   const inquiryUrl = new URL('/', req.url);
   inquiryUrl.hash = `inquiry?subject=order&product=${encodeURIComponent(productId)}&size=${encodeURIComponent(size)}`;
-  return NextResponse.redirect(inquiryUrl);
+  return NextResponse.redirect(inquiryUrl, 303);
 }
 
 function getCheckoutOrigin(req: NextRequest) {
@@ -118,7 +118,7 @@ function checkoutUnavailable(
 
   const inquiryUrl = new URL('/', req.url);
   inquiryUrl.hash = `inquiry?subject=order&product=${encodeURIComponent(productId)}&size=${encodeURIComponent(size)}`;
-  return NextResponse.redirect(inquiryUrl);
+  return NextResponse.redirect(inquiryUrl, 303);
 }
 
 function stripeCheckoutError(req: NextRequest, error: unknown, productId?: string, size?: string) {
@@ -316,7 +316,7 @@ export async function POST(req: NextRequest) {
       throw new Error('Stripe session URL not returned');
     }
 
-    return NextResponse.redirect(session.url);
+    return NextResponse.redirect(session.url, 303);
   } catch (err) {
     return stripeCheckoutError(req, err, submittedProductId, submittedSize);
   }
