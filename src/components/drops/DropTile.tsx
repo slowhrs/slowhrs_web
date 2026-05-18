@@ -17,6 +17,7 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
   const cardRef = useRef<HTMLElement>(null);
   const status = getStockStatus(drop);
   const allSoldOut = status === "gone";
+  const shouldShowSizePicker = isExpanded || isTouchDevice;
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     if (isTouchDevice || allSoldOut) return;
@@ -97,7 +98,7 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
         {!allSoldOut && (
           <div
             className={`overflow-hidden transition-all duration-400 ease-out ${
-              isExpanded ? "mt-2 max-h-32 opacity-100" : "mt-0 max-h-0 opacity-0"
+              shouldShowSizePicker ? "mt-2 max-h-32 opacity-100" : "mt-0 max-h-0 opacity-0"
             }`}
           >
             <SizePicker
