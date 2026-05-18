@@ -132,11 +132,10 @@ is_pinned, pinned_at, is_deleted
 ```
 Indexes on `(channel, created_at DESC)` and `(channel, is_pinned)`. Realtime enabled.
 
-#### `orders` (referenced in webhook but NOT in migration — needs creation)
+#### `orders`
 ```sql
--- PENDING: create this table
-stripe_session_id, product_id, size, product_title,
-customer_email, amount_cents, currency, status
+id UUID PK, created_at, stripe_session_id UNIQUE, product_id, size, product_title,
+customer_email, amount_cents, currency DEFAULT 'usd', status DEFAULT 'paid'
 ```
 
 ### Triggers

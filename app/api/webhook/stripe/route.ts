@@ -46,16 +46,21 @@ export async function POST(req: NextRequest) {
 
     try {
       const supabase = createAdminClient();
-      const { error: dbError } = await supabase.from('orders').insert({
-        stripe_session_id: session.id,
-        product_id,
-        size,
-        product_title: drop_title,
-        customer_email: session.customer_details?.email || null,
-        amount_cents: session.amount_total || 0,
-        currency: session.currency || 'usd',
-        status: 'paid',
-      });
+      const { error: dbError } = await supabase
+        .from('orders')
+        .upsert(
+          {
+            stripe_session_id: session.id,
+            product_id,
+            size,
+            product_title: drop_title,
+            customer_email: session.customer_details?.email || null,
+            amount_cents: session.amount_total || 0,
+            currency: session.currency || 'usd',
+            status: 'paid',
+          },
+          { onConflict: 'stripe_session_id', ignoreDuplicates: true }
+        );
 
       if (dbError) {
         console.error('[stripe-webhook] failed to write order:', JSON.stringify(dbError));
