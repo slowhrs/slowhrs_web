@@ -28,7 +28,6 @@ loadEnv();
 
 const PASS = '✅';
 const FAIL = '❌';
-const WARN = '⚠️';
 
 async function main() {
   console.log('\n=== SLOWHRS SUPABASE DIAGNOSTIC ===\n');
@@ -46,8 +45,8 @@ async function main() {
   console.log(`  ANON_KEY:            ${anonKey ? PASS + ' ' + anonKey.slice(0, 20) + '...' : FAIL + ' MISSING'}`);
   console.log(`  SERVICE_ROLE_KEY:    ${serviceKey ? PASS + ' ' + serviceKey.slice(0, 20) + '...' : FAIL + ' MISSING'}`);
   console.log(`  RESEND_API_KEY:      ${resendKey ? PASS + ' ' + resendKey.slice(0, 15) + '...' : FAIL + ' MISSING'}`);
-  console.log(`  RESEND_FROM_EMAIL:   ${resendFrom ? PASS + ' ' + resendFrom : WARN + ' defaults to onboarding@resend.dev'}`);
-  console.log(`  INQUIRY_EMAIL_TO:    ${inquiryTo ? PASS + ' ' + inquiryTo : WARN + ' defaults to hello@slowhrs.com'}`);
+  console.log(`  RESEND_FROM_EMAIL:   ${resendFrom ? PASS + ' ' + resendFrom : FAIL + ' MISSING in production'}`);
+  console.log(`  INQUIRY_EMAIL_TO:    ${inquiryTo ? PASS + ' ' + inquiryTo : FAIL + ' MISSING in production'}`);
   console.log();
 
   if (!url || !serviceKey) {
@@ -92,7 +91,7 @@ async function main() {
     name: 'Diagnostic Bot',
     email: 'test@diagnostic.local',
     instagram: '@test_diag',
-    message: 'Automated diagnostic. Safe to delete.',
+    details: 'Automated diagnostic. Safe to delete.',
   };
 
   const { data: inserted, error: insertError } = await supabase
@@ -139,14 +138,19 @@ async function main() {
   // 5. RESEND CHECK
   console.log('\n5. RESEND EMAIL CONFIG');
   if (!resendKey) {
-    console.log(`  ${FAIL} No RESEND_API_KEY — emails will silently fail`);
+    console.log(`  ${FAIL} No RESEND_API_KEY — production email sends will fail loudly`);
   } else {
     console.log(`  ${PASS} API key present`);
     if (resendFrom?.includes('onboarding@resend.dev')) {
-      console.log(`  ${WARN} Using Resend test sender — emails only reach the account owner`);
+      console.log(`  ${FAIL} Using Resend test sender — production requires a verified sending domain`);
       console.log(`     To send to real users: verify your domain at resend.com/domains`);
+    } else if (!resendFrom) {
+      console.log(`  ${FAIL} Missing RESEND_FROM_EMAIL`);
     } else {
       console.log(`  ${PASS} Custom from: ${resendFrom}`);
+    }
+    if (!inquiryTo) {
+      console.log(`  ${FAIL} Missing INQUIRY_EMAIL_TO`);
     }
   }
 

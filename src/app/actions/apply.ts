@@ -58,11 +58,17 @@ export async function submitApplication(formData: FormData) {
       return { success: false, error: 'something went wrong. try again.' };
     }
 
-    // Send receipt to applicant + notification to owner (non-blocking)
-    Promise.all([
-      sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase()).catch(err => console.error('[apply] receipt email failed:', err)),
-      sendApplicationNotification({ full_name, email, instagram, city, what_you_do, why_apply }).catch(err => console.error('[apply] owner notification failed:', err))
-    ]);
+    // Await these in serverless so the runtime does not terminate before Resend accepts them.
+    await Promise.allSettled([
+      sendApplicationReceipt(email, full_name.split(' ')[0].toLowerCase()),
+      sendApplicationNotification({ full_name, email, instagram, city, what_you_do, why_apply })
+    ]).then((results) => {
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(index === 0 ? '[apply] receipt email failed:' : '[apply] owner notification failed:', result.reason);
+        }
+      });
+    });
 
     return { success: true, member_id: newApp.member_id };
   } catch (err) {
