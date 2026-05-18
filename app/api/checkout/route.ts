@@ -238,9 +238,6 @@ export async function POST(req: NextRequest) {
         submit: {
           message: 'FINAL RUN. CONFIRM THE DROP.',
         },
-        shipping_address: {
-          message: 'SHIP TO WHERE THE NIGHT ENDS.',
-        },
       },
       metadata: {
         product_id,
