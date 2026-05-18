@@ -58,7 +58,7 @@ function getFrom(): string {
       throw new Error('[resend] RESEND_FROM_EMAIL is required in production');
     }
 
-    return 'onboarding@resend.dev';
+    return 'room@slowhrs.com';
   }
 
   if (isProductionRuntime() && /@resend\.dev$/i.test(from)) {
@@ -69,24 +69,7 @@ function getFrom(): string {
 }
 
 function getMemberMagicLinkFrom(): string {
-  const from = process.env.RESEND_AUTH_FROM_EMAIL?.trim();
-  if (from) return from;
-
-  // Resend blocks unverified custom domains. Keep member login working while
-  // slowhrs.com DNS/domain verification is completed in Resend.
-  return 'onboarding@resend.dev';
-}
-
-function getMemberMagicLinkDelivery(to: string): { to: string; originalTo: string | null } {
-  const originalTo = to.toLowerCase().trim();
-  const overrideTo = process.env.RESEND_AUTH_DELIVERY_TO?.trim() || 'slowhrs@gmail.com';
-  const from = getMemberMagicLinkFrom();
-
-  if (isProductionRuntime() && /@resend\.dev$/i.test(from) && originalTo !== overrideTo.toLowerCase()) {
-    return { to: overrideTo, originalTo };
-  }
-
-  return { to, originalTo: null };
+  return process.env.RESEND_FROM_EMAIL?.trim() || 'room@slowhrs.com';
 }
 
 function getOwnerEmail(): string {
@@ -238,29 +221,25 @@ export async function sendApprovalEmail(to: string, name: string) {
   }, 'approval email');
 }
 
-export async function sendMemberMagicLinkEmail(to: string, actionLink: string) {
-  const escapedActionLink = escapeHtml(actionLink);
-  const delivery = getMemberMagicLinkDelivery(to);
-  const escapedOriginalTo = delivery.originalTo ? escapeHtml(delivery.originalTo) : null;
-
+export async function sendMemberMagicLinkEmail(to: string, magicLinkUrl: string) {
+  const escapedMagicLinkUrl = escapeHtml(magicLinkUrl);
   return sendEmail({
     from: `SLOWHRS <${getMemberMagicLinkFrom()}>`,
-    to: delivery.to,
-    subject: 'your slowhrs room link',
+    to,
+    subject: 'your link into the room',
     html: `
       <div style="background:#050505;color:#ededeb;font-family:Arial,sans-serif;padding:28px;line-height:1.6">
         <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#e60016">slowhrs member access</p>
         <h1 style="font-family:Georgia,serif;font-style:italic;font-weight:400;margin:18px 0 10px">the room.</h1>
-        ${escapedOriginalTo ? `<p style="font-size:12px;color:#9b9b97">temporary delivery copy for: ${escapedOriginalTo}</p>` : ''}
         <p>tap below to enter. this one-time link expires soon and only works for this inbox.</p>
         <p style="margin:28px 0">
-          <a href="${escapedActionLink}" style="border:1px solid #e60016;color:#e60016;padding:12px 18px;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:0.18em">enter the room</a>
+          <a href="${escapedMagicLinkUrl}" style="border:1px solid #e60016;color:#e60016;padding:12px 18px;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:0.18em">enter the room</a>
         </p>
-        <p style="font-size:12px;color:#9b9b97">if the button does not open, paste this link:<br><a href="${escapedActionLink}" style="color:#e60016">${escapedActionLink}</a></p>
+        <p style="font-size:12px;color:#9b9b97">if the button does not open, paste this link:<br><a href="${escapedMagicLinkUrl}" style="color:#e60016">${escapedMagicLinkUrl}</a></p>
         <p style="font-size:12px;color:#9b9b97">— slowhrs</p>
       </div>
     `,
-    text: `${delivery.originalTo ? `temporary delivery copy for: ${delivery.originalTo}\n\n` : ''}this is your one-time link.\n\ntap it to enter the room:\n${actionLink}\n\n— slowhrs`,
+    text: `this is your one-time link.\n\ntap it to enter the room:\n${magicLinkUrl}\n\n— slowhrs`,
   }, 'member magic link email');
 }
 

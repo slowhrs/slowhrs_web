@@ -10,6 +10,8 @@ const SignInSchema = z.object({
   next: z.string().optional(),
 });
 
+const VERIFY_TYPE = 'magiclink';
+
 function safeNextPath(value: string | undefined): string {
   if (!value) return '/dashboard';
   if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard';
@@ -31,18 +33,6 @@ function getMemberAuthOrigin(): string {
   if (configuredOrigin) return configuredOrigin;
 
   return 'https://slowhrs.com';
-}
-
-function getRedirectUrl(next: string): string {
-  const redirectUrl = new URL('/auth/callback', getMemberAuthOrigin());
-  redirectUrl.searchParams.set('next', next);
-  return redirectUrl.toString();
-}
-
-function forceActionLinkRedirect(actionLink: string, redirectTo: string): string {
-  const link = new URL(actionLink);
-  link.searchParams.set('redirect_to', redirectTo);
-  return link.toString();
 }
 
 function normalizeProductionOrigin(value: string | undefined): string | null {
@@ -81,14 +71,10 @@ export async function requestMagicLink(formData: FormData) {
     };
   }
 
-  const redirectTo = getRedirectUrl(next);
   const supabase = createAdminClient();
   const { data, error } = await supabase.auth.admin.generateLink({
-    type: 'magiclink',
+    type: VERIFY_TYPE,
     email,
-    options: {
-      redirectTo,
-    },
   });
 
   if (error) {
@@ -104,20 +90,19 @@ export async function requestMagicLink(formData: FormData) {
     return { success: false, error: 'something went wrong. try again.' };
   }
 
-  const rawActionLink = data.properties?.action_link;
-  if (!rawActionLink) {
-    console.error('[signIn] magic link generation returned no action link');
+  const hashedToken = data.properties?.hashed_token;
+  if (!hashedToken) {
+    console.error('[signIn] magic link generation returned no hashed token');
     return { success: false, error: 'something went wrong. try again.' };
   }
 
   try {
-    const actionLink = forceActionLinkRedirect(rawActionLink, redirectTo);
-    if (actionLink.includes('localhost') || actionLink.includes('127.0.0.1')) {
-      console.error('[signIn] blocked unsafe magic link redirect');
-      return { success: false, error: 'something went wrong. try again.' };
-    }
+    const magicLinkUrl = new URL('/auth/confirm', getMemberAuthOrigin());
+    magicLinkUrl.searchParams.set('token_hash', hashedToken);
+    magicLinkUrl.searchParams.set('type', VERIFY_TYPE);
+    magicLinkUrl.searchParams.set('next', next);
 
-    await sendMemberMagicLinkEmail(email, actionLink);
+    await sendMemberMagicLinkEmail(email, magicLinkUrl.toString());
   } catch (err) {
     console.error('[signIn] magic link email send failed:', err);
     return { success: false, error: 'something went wrong. try again.' };
