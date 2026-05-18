@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ALL_SIZES, getDropById } from '@/lib/data/drops';
 import type { Size } from '@/lib/data/drops';
 
+const MIN_CHECKOUT_QUANTITY = 1;
+const MAX_CHECKOUT_QUANTITY = 2;
+
 function wantsJson(req: NextRequest) {
   return req.headers.get('accept')?.includes('application/json');
 }
@@ -78,6 +81,20 @@ function isMissingStripePriceError(error: unknown) {
       stripeError.message ?? ''
     )
   );
+}
+
+function parseCheckoutQuantity(value: FormDataEntryValue | null): number | null {
+  if (value === null) return MIN_CHECKOUT_QUANTITY;
+  if (typeof value !== 'string') return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return MIN_CHECKOUT_QUANTITY;
+
+  const quantity = Number(trimmed);
+  if (!Number.isInteger(quantity)) return null;
+  if (quantity < MIN_CHECKOUT_QUANTITY || quantity > MAX_CHECKOUT_QUANTITY) return null;
+
+  return quantity;
 }
 
 function checkoutUnavailable(
@@ -173,6 +190,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const product_id = formData.get('product_id') as string;
     const size = formData.get('size') as Size;
+    const quantity = parseCheckoutQuantity(formData.get('quantity'));
     submittedProductId = product_id;
     submittedSize = size;
 
@@ -193,6 +211,10 @@ export async function POST(req: NextRequest) {
       return checkoutError(req, 400, 'size_unavailable', 'size unavailable');
     }
 
+    if (!quantity) {
+      return checkoutError(req, 400, 'invalid_quantity', 'invalid quantity');
+    }
+
     const stripeKey = normalizeStripeSecretKey(process.env.STRIPE_SECRET_KEY);
     if (!stripeKey) {
       return checkoutNotConfigured(req, product_id, size);
@@ -201,16 +223,24 @@ export async function POST(req: NextRequest) {
     const stripe = new Stripe(stripeKey);
     const origin = getCheckoutOrigin(req);
     const baseSessionParams = {
-      payment_method_types: ['card'],
       mode: 'payment',
       metadata: {
         product_id,
         size,
+        quantity: String(quantity),
         drop_title: drop.title,
       },
       success_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#drops`,
     } satisfies Stripe.Checkout.SessionCreateParams;
+    const quantityParams = {
+      quantity,
+      adjustable_quantity: {
+        enabled: true,
+        minimum: MIN_CHECKOUT_QUANTITY,
+        maximum: MAX_CHECKOUT_QUANTITY,
+      },
+    };
 
     let session: Stripe.Checkout.Session;
     try {
@@ -220,7 +250,7 @@ export async function POST(req: NextRequest) {
           drop.stripe_price_id
             ? {
                 price: drop.stripe_price_id,
-                quantity: 1,
+                ...quantityParams,
               }
             : {
                 price_data: {
@@ -231,7 +261,7 @@ export async function POST(req: NextRequest) {
                     description: drop.description,
                   },
                 },
-                quantity: 1,
+                ...quantityParams,
               },
         ],
       });
@@ -258,7 +288,7 @@ export async function POST(req: NextRequest) {
                 description: drop.description,
               },
             },
-            quantity: 1,
+            ...quantityParams,
           },
         ],
       });
