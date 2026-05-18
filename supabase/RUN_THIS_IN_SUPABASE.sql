@@ -112,6 +112,9 @@ CREATE TABLE IF NOT EXISTS orders (
   product_title TEXT,
   size TEXT NOT NULL,
   customer_email TEXT,
+  shipping_name TEXT,
+  shipping_phone TEXT,
+  shipping_address JSONB,
   amount_cents INTEGER NOT NULL DEFAULT 0,
   currency TEXT NOT NULL DEFAULT 'usd',
   status TEXT NOT NULL DEFAULT 'paid'

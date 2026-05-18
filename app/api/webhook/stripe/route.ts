@@ -35,12 +35,13 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
     const { product_id, size, drop_title } = session.metadata || {};
+    const customerDetails = session.customer_details;
 
     console.log('[stripe-webhook] checkout completed:', {
       session_id: session.id,
       product_id,
       size,
-      customer_email: session.customer_details?.email,
+      customer_email: customerDetails?.email,
       amount: session.amount_total,
     });
 
@@ -54,7 +55,10 @@ export async function POST(req: NextRequest) {
             product_id,
             size,
             product_title: drop_title,
-            customer_email: session.customer_details?.email || null,
+            customer_email: customerDetails?.email || null,
+            shipping_name: customerDetails?.name || null,
+            shipping_phone: customerDetails?.phone || null,
+            shipping_address: customerDetails?.address || null,
             amount_cents: session.amount_total || 0,
             currency: session.currency || 'usd',
             status: 'paid',
@@ -74,7 +78,7 @@ export async function POST(req: NextRequest) {
       await sendOrderNotification({
         productTitle: drop_title || product_id || 'unknown',
         size: size || 'unknown',
-        customerEmail: session.customer_details?.email || 'unknown',
+        customerEmail: customerDetails?.email || 'unknown',
         amount: session.amount_total ? `$${(session.amount_total / 100).toFixed(2)}` : 'unknown',
       });
     } catch (emailErr) {

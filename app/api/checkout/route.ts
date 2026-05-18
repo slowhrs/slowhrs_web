@@ -234,7 +234,16 @@ export async function POST(req: NextRequest) {
     const baseSessionParams = {
       mode: 'payment',
       submit_type: 'pay',
+      shipping_address_collection: {
+        allowed_countries: ['US'],
+      },
+      phone_number_collection: {
+        enabled: true,
+      },
       custom_text: {
+        shipping_address: {
+          message: 'PACKAGES SHIP TO THE ADDRESS YOU ENTER HERE.',
+        },
         submit: {
           message: 'FINAL RUN. CONFIRM THE DROP.',
         },
