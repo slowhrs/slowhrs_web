@@ -92,7 +92,7 @@ export default function RootLayout({
                   },
                   "description": "A private creative society in Los Angeles built around fashion, film, nightlife, and member access.",
                   "sameAs": [
-                    "https://instagram.com/slowhrs"
+                    "https://www.instagram.com/slowhrs/"
                   ]
                 },
                 {

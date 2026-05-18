@@ -99,12 +99,12 @@ export default function Footer() {
               inquire
             </Link>
             <a
-              href="https://instagram.com/slowhrstv"
+              href="https://www.instagram.com/slowhrs/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-[10px] tracking-[0.15em] text-ink-dim hover:text-red transition-colors uppercase"
             >
-              @slowhrstv
+              @slowhrs
             </a>
           </div>
         </div>

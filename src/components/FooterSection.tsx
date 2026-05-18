@@ -43,8 +43,8 @@ export default function FooterSection() {
           <div className="flex flex-col gap-6 reveal reveal-d1">
             <h4 className="font-mono text-[9px] tracking-[0.3em] text-brand-ink/40 uppercase border-b border-brand-border/40 pb-2">Connect</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="https://instagram.com/slowhrstv" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">Instagram</Link>
-              <Link href="https://tiktok.com/@slowhrstv" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">TikTok</Link>
+              <Link href="https://www.instagram.com/slowhrs/" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">Instagram</Link>
+              <Link href="https://www.tiktok.com/@slowhrs_?lang=en" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">TikTok</Link>
               <Link href="https://youtube.com/@slowhrstv" target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">YouTube</Link>
               <Link href="#inquiry" className="font-mono text-[10px] tracking-[0.1em] text-brand-ink/60 hover:text-brand-ink transition-colors uppercase w-fit">Contact</Link>
             </nav>

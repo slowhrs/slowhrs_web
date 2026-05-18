@@ -197,12 +197,12 @@ export default async function EventsPage() {
             no events yet.
           </p>
           <a
-            href="https://instagram.com/slowhrstv"
+            href="https://www.instagram.com/slowhrs/"
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-faint hover:text-red transition-colors mt-4 inline-block"
           >
-            follow @slowhrstv ↗
+            follow @slowhrs ↗
           </a>
         </div>
       </main>
