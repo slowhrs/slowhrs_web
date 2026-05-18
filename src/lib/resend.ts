@@ -68,6 +68,15 @@ function getFrom(): string {
   return from;
 }
 
+function getMemberMagicLinkFrom(): string {
+  const from = process.env.RESEND_AUTH_FROM_EMAIL?.trim();
+  if (from) return from;
+
+  // Resend blocks unverified custom domains. Keep member login working while
+  // slowhrs.com DNS/domain verification is completed in Resend.
+  return 'onboarding@resend.dev';
+}
+
 function getOwnerEmail(): string {
   const ownerEmail = process.env.INQUIRY_EMAIL_TO?.trim();
 
@@ -221,7 +230,7 @@ export async function sendMemberMagicLinkEmail(to: string, actionLink: string) {
   const escapedActionLink = escapeHtml(actionLink);
 
   return sendEmail({
-    from: `SLOWHRS <${getFrom()}>`,
+    from: `SLOWHRS <${getMemberMagicLinkFrom()}>`,
     to,
     subject: 'your slowhrs room link',
     html: `
