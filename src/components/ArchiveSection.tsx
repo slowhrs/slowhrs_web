@@ -219,13 +219,16 @@ export default function ArchiveSection() {
             photo evidence / contact sheets
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {EVENT_PHOTO_SETS.map((set, i) => (
+            {EVENT_PHOTO_SETS.map((set, i) => {
+              const baseInterval = set.count >= 15 ? 1000 : set.count >= 10 ? 900 : set.count >= 8 ? 850 : 800;
+              const cardInterval = baseInterval + (i % 4) * 60;
+              return (
               <div key={set.archiveId} className={`group border border-brand-border bg-[#050505] overflow-hidden reveal reveal-d${Math.min(i + 1, 4)}`}>
                 {/* Photo Carousel */}
                 <div className="relative aspect-[4/5]">
                   <EventPhotoCarousel
                     photos={getPhotoUrls(set)}
-                    interval={3500 + i * 500}
+                    interval={cardInterval}
                     alt={set.alt}
                     className="absolute inset-0 w-full h-full"
                   />
@@ -246,7 +249,8 @@ export default function ArchiveSection() {
                   </h4>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

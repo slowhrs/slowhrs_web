@@ -1,23 +1,58 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import SizePicker from "@/components/SizePicker";
 import type { Drop, Size } from "@/lib/data/drops";
 import { getStockStatus } from "@/lib/data/drops";
 
+type CheckoutSessionResult =
+  | { url: string }
+  | { error: string; message?: string };
+
+let stripeConnectionWarmed = false;
+function warmStripeConnection() {
+  if (stripeConnectionWarmed) return;
+  if (typeof window === "undefined") return;
+  stripeConnectionWarmed = true;
+
+  for (const href of [
+    "https://checkout.stripe.com/",
+    "https://js.stripe.com/",
+    "https://api.stripe.com/",
+  ]) {
+    try {
+      void fetch(href, {
+        method: "GET",
+        mode: "no-cors",
+        credentials: "omit",
+        cache: "no-store",
+        keepalive: true,
+      });
+    } catch {
+      // best-effort TLS warmup; ignore failures
+    }
+  }
+}
+
 export default function DropTile({ drop }: { drop: Drop; index?: number }) {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isTouchDevice] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(hover: none)").matches : false
   );
   const cardRef = useRef<HTMLElement>(null);
+  const sessionCacheRef = useRef<Map<string, Promise<CheckoutSessionResult>>>(new Map());
   const status = getStockStatus(drop);
   const allSoldOut = status === "gone";
   const shouldShowSizePicker = isExpanded || isTouchDevice;
+
+  useEffect(() => {
+    sessionCacheRef.current.clear();
+  }, [drop.id]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     if (isTouchDevice || allSoldOut) return;
@@ -40,11 +75,83 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
     card.style.setProperty("--tilt-y", "0deg");
   };
 
+  const requestCheckoutSession = useCallback(
+    (size: Size) => {
+      const key = `${drop.id}:${size}`;
+      const cache = sessionCacheRef.current;
+      const existing = cache.get(key);
+      if (existing) return existing;
+
+      const body = new FormData();
+      body.set("product_id", drop.id);
+      body.set("size", size);
+      body.set("quantity", "1");
+
+      const promise = fetch("/api/checkout", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body,
+        cache: "no-store",
+        credentials: "same-origin",
+        keepalive: true,
+      })
+        .then(async (res) => {
+          const data = (await res.json().catch(() => null)) as CheckoutSessionResult | null;
+          if (!data) {
+            return { error: "checkout_failed", message: "checkout failed" } satisfies CheckoutSessionResult;
+          }
+          return data;
+        })
+        .catch(() => {
+          cache.delete(key);
+          return { error: "network", message: "network error" } satisfies CheckoutSessionResult;
+        });
+
+      cache.set(key, promise);
+      return promise;
+    },
+    [drop.id]
+  );
+
+  const prefetchSession = useCallback(() => {
+    warmStripeConnection();
+    if (!selectedSize || allSoldOut || !drop.stripe_price_id) return;
+    void requestCheckoutSession(selectedSize);
+  }, [selectedSize, allSoldOut, drop.stripe_price_id, requestCheckoutSession]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (!selectedSize) return;
+    event.preventDefault();
+    setIsCheckingOut(true);
+    setCheckoutError(null);
+    warmStripeConnection();
+
+    const result = await requestCheckoutSession(selectedSize);
+    if ("url" in result && result.url) {
+      window.location.assign(result.url);
+      return;
+    }
+
+    sessionCacheRef.current.delete(`${drop.id}:${selectedSize}`);
+    setIsCheckingOut(false);
+    const errorMessage =
+      "message" in result && typeof result.message === "string" ? result.message : "checkout failed";
+    setCheckoutError(errorMessage);
+
+    const form = event.currentTarget;
+    if (form && typeof form.submit === "function") {
+      form.submit();
+    }
+  };
+
   return (
     <article
       ref={cardRef}
       className={`drop-tile group ${allSoldOut ? "drop-tile-sold-out" : ""}`}
-      onMouseEnter={() => setIsExpanded(true)}
+      onMouseEnter={() => {
+        setIsExpanded(true);
+        warmStripeConnection();
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={resetTilt}
       onClick={isTouchDevice && !allSoldOut ? () => setIsExpanded((value) => !value) : undefined}
@@ -104,7 +211,13 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
             <SizePicker
               drop={drop}
               selectedSize={selectedSize}
-              onSelect={setSelectedSize}
+              onSelect={(size) => {
+                setSelectedSize(size);
+                if (size) {
+                  warmStripeConnection();
+                  void requestCheckoutSession(size);
+                }
+              }}
             />
           </div>
         )}
@@ -117,7 +230,7 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
                   action="/api/checkout"
                   method="POST"
                   onClick={(event) => event.stopPropagation()}
-                  onSubmit={() => setIsCheckingOut(true)}
+                  onSubmit={handleSubmit}
                   className="space-y-2"
                 >
                   <input type="hidden" name="product_id" value={drop.id} />
@@ -129,11 +242,31 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
                   <button
                     type="submit"
                     disabled={isCheckingOut}
-                    className="checkout-portal brand-action relative flex w-full items-center justify-between overflow-hidden border border-red bg-red/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg disabled:pointer-events-none disabled:opacity-80"
+                    onMouseEnter={prefetchSession}
+                    onFocus={prefetchSession}
+                    onTouchStart={prefetchSession}
+                    className="checkout-portal brand-action relative flex w-full items-center justify-between overflow-hidden border border-red bg-red/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg disabled:pointer-events-none disabled:opacity-90"
+                    aria-live="polite"
+                    aria-busy={isCheckingOut}
                   >
-                    <span>{isCheckingOut ? "opening stripe" : `secure ${selectedSize}`}</span>
-                    <span aria-hidden="true">{isCheckingOut ? "..." : "→"}</span>
+                    <span className="flex items-center gap-2">
+                      {isCheckingOut && (
+                        <span
+                          className="inline-block h-[10px] w-[10px] animate-spin rounded-full border border-current border-t-transparent"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span>
+                        {isCheckingOut ? "opening secure checkout" : `secure ${selectedSize}`}
+                      </span>
+                    </span>
+                    <span aria-hidden="true">{isCheckingOut ? "···" : "→"}</span>
                   </button>
+                  {checkoutError && (
+                    <p className="font-mono text-[8px] uppercase tracking-[0.22em] text-red">
+                      {checkoutError} — retrying...
+                    </p>
+                  )}
                 </form>
               ) : (
                 <button
@@ -142,6 +275,7 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
                     event.stopPropagation();
                     setIsExpanded(true);
                   }}
+                  onMouseEnter={warmStripeConnection}
                   className="w-full border border-border-2 py-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-ink-faint transition-all duration-300 ease-out hover:border-red hover:text-red"
                 >
                   select size

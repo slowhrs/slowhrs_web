@@ -372,7 +372,10 @@ export default async function EventsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {EVENT_PHOTO_SETS.map((set, index) => (
+            {EVENT_PHOTO_SETS.map((set, index) => {
+              const baseInterval = set.count >= 15 ? 1000 : set.count >= 10 ? 900 : set.count >= 8 ? 850 : 800;
+              const cardInterval = baseInterval + (index % 4) * 60;
+              return (
               <article key={set.archiveId} className="overflow-hidden border border-border bg-[#050505]">
                 <div className="flex items-center justify-between border-b border-border bg-bg/80 px-3 py-3">
                   <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-red">photo box {String(index + 1).padStart(2, "0")}</span>
@@ -381,7 +384,7 @@ export default async function EventsPage() {
                 <div className="relative aspect-[4/5]">
                   <EventPhotoCarousel
                     photos={getPhotoUrls(set)}
-                    interval={1900 + index * 200}
+                    interval={cardInterval}
                     alt={set.alt}
                     className="absolute inset-0 h-full w-full"
                   />
@@ -392,7 +395,8 @@ export default async function EventsPage() {
                   <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.16em] text-ink-faint">autoplay evidence file</p>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

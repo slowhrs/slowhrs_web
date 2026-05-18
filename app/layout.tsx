@@ -65,8 +65,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${courier.variable}`}>
       <head>
-        <link rel="preconnect" href="https://checkout.stripe.com" />
+        <link rel="preconnect" href="https://checkout.stripe.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://js.stripe.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.stripe.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://checkout.stripe.com" />
+        <link rel="dns-prefetch" href="https://js.stripe.com" />
+        <link rel="dns-prefetch" href="https://api.stripe.com" />
         <link
           rel="preload"
           as="image"

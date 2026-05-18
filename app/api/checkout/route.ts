@@ -363,6 +363,18 @@ export async function POST(req: NextRequest) {
       throw new Error('Stripe session URL not returned');
     }
 
+    if (wantsJson(req)) {
+      return NextResponse.json(
+        { url: session.url },
+        {
+          status: 200,
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+          },
+        }
+      );
+    }
+
     return NextResponse.redirect(session.url, 303);
   } catch (err) {
     return stripeCheckoutError(req, err, submittedProductId, submittedSize);

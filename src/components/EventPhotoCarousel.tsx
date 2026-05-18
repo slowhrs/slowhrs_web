@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Image from "next/image";
 
 interface EventPhotoCarouselProps {
   /** Array of photo paths */
   photos: string[];
-  /** Autoplay interval in ms */
+  /** Autoplay frame interval in ms. Defaults to a VHS-style ~900ms flipbook cadence. */
   interval?: number;
   /** Alt text prefix */
   alt?: string;
@@ -15,85 +15,173 @@ interface EventPhotoCarouselProps {
 }
 
 /**
- * Autoplay crossfade slideshow for event photos.
- * 4s per photo by default. Respects prefers-reduced-motion.
- * Photo counter overlay in bottom-right.
+ * VHS-flipbook autoplay carousel.
+ *
+ * Cycles frames continuously like a looping video, but built from stills.
+ * - Pauses when offscreen (IntersectionObserver) to save mobile battery.
+ * - Pauses on hover (desktop) so a viewer can study a frame.
+ * - Respects `prefers-reduced-motion: reduce` — stays on frame 1, manual nav still works.
+ * - Click anywhere on the frame advances to the next photo.
+ * - Only mounts the current frame plus the next 1-2 to avoid eating bandwidth on a 17-frame gallery.
  */
 export default function EventPhotoCarousel({
   photos,
-  interval = 2400,
+  interval = 900,
   alt = "SLOWHRS Event",
   className = "",
 }: EventPhotoCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const [isOnscreen, setIsOnscreen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const total = photos.length;
+  const safeInterval = Math.max(500, interval);
 
   const advance = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % photos.length);
-  }, [photos.length]);
+    setCurrent((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const goBack = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + total) % total);
+  }, [total]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncMotion = () => setIsReducedMotion(motion.matches);
-    syncMotion();
-    motion.addEventListener("change", syncMotion);
-    return () => motion.removeEventListener("change", syncMotion);
+    const sync = () => setIsReducedMotion(motion.matches);
+    sync();
+    motion.addEventListener("change", sync);
+    return () => motion.removeEventListener("change", sync);
   }, []);
 
   useEffect(() => {
-    if (photos.length <= 1 || isReducedMotion) return;
-    const firstAdvance = window.setTimeout(advance, 900);
-    const timer = setInterval(advance, interval);
-    return () => {
-      window.clearTimeout(firstAdvance);
-      clearInterval(timer);
-    };
-  }, [photos.length, interval, isReducedMotion, advance]);
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setIsOnscreen(true);
+      return;
+    }
 
-  if (photos.length === 0) return null;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setIsOnscreen(entry.isIntersecting);
+        }
+      },
+      { threshold: 0.1, rootMargin: "50px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (total <= 1) return;
+    if (isReducedMotion) return;
+    if (!isOnscreen) return;
+    if (isHovering) return;
+
+    const timer = window.setInterval(advance, safeInterval);
+    return () => window.clearInterval(timer);
+  }, [total, safeInterval, isReducedMotion, isOnscreen, isHovering, advance]);
+
+  /**
+   * Sliding mount window: only render the currently-visible frame plus a small lookahead/lookbehind.
+   * Keeps a 17-frame gallery from hammering mobile bandwidth on first paint while ensuring the next
+   * frame is already loaded by the time we crossfade.
+   */
+  const mounted = useMemo(() => {
+    const set = new Set<number>();
+    set.add(current);
+    if (total > 1) set.add((current + 1) % total);
+    if (total > 2) set.add((current + 2) % total);
+    if (total > 1) set.add((current - 1 + total) % total);
+    return set;
+  }, [current, total]);
+
+  const counterLabel = useMemo(() => {
+    return `still ${String(current + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
+  }, [current, total]);
+
+  const handleFrameClick = () => {
+    if (total <= 1) return;
+    advance();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (total <= 1) return;
+    if (event.key === "ArrowRight" || event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      advance();
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      goBack();
+    }
+  };
+
+  if (total === 0) return null;
 
   return (
     <div
-      className={`relative overflow-hidden bg-black ${className}`}
+      ref={containerRef}
+      className={`relative overflow-hidden bg-black select-none ${className}`}
       role="region"
-      aria-label={`${alt} photo gallery — ${photos.length} photos`}
+      aria-label={`${alt} contact sheet — ${total} frames, autoplay`}
       aria-roledescription="carousel"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      onClick={handleFrameClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={total > 1 ? 0 : -1}
+      style={{ cursor: total > 1 ? "pointer" : "default" }}
     >
-      {/* Photo Layers */}
-      {photos.map((src, i) => (
-        <Image
-          key={src}
-          src={src}
-          alt={`${alt} — photo ${i + 1} of ${photos.length}`}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={`object-cover transition-opacity duration-1000 ease-in-out ${
-            i === current ? "opacity-100" : "opacity-0"
-          }`}
-          priority={i < 2}
-        />
-      ))}
+      {photos.map((src, i) => {
+        if (!mounted.has(i)) return null;
+        const isCurrent = i === current;
+        const isNext = i === (current + 1) % total;
+        return (
+          <Image
+            key={src}
+            src={src}
+            alt={`${alt} — frame ${i + 1} of ${total}`}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className={`object-cover transition-opacity duration-500 ease-out ${
+              isCurrent ? "opacity-100" : "opacity-0"
+            }`}
+            priority={i < 2}
+            fetchPriority={isCurrent || isNext ? "high" : "auto"}
+            draggable={false}
+          />
+        );
+      })}
 
-      {/* Scanline overlay for VHS feel */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.02)_50%,rgba(255,255,255,0)_50%)] bg-[length:100%_4px] opacity-15 z-10" />
 
-      {/* Photo Counter */}
-      <div className="absolute bottom-3 right-3 z-20 font-mono text-[8px] tracking-[0.2em] text-brand-ink/40 uppercase bg-black/60 px-2 py-1">
-        {isReducedMotion ? "still" : "auto"} {String(current + 1).padStart(2, "0")}/{String(photos.length).padStart(2, "0")}
+      <div
+        className="absolute bottom-3 right-3 z-20 font-mono text-[8px] tracking-[0.2em] text-brand-ink/55 uppercase bg-black/65 px-2 py-1 backdrop-blur-[1px] border border-brand-ink/10"
+        aria-live="polite"
+      >
+        {counterLabel}
       </div>
 
-      {/* Manual Navigation Dots */}
-      {photos.length > 1 && (
+      {total > 1 && (
         <div className="absolute bottom-3 left-3 z-20 flex gap-1">
           {photos.map((_, i) => (
             <button
               key={i}
-              onClick={() => setCurrent(i)}
-              aria-label={`View photo ${i + 1}`}
-              className={`w-[6px] h-[6px] transition-all duration-300 ${
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                setCurrent(i);
+              }}
+              aria-label={`Jump to frame ${i + 1}`}
+              aria-current={i === current ? "true" : undefined}
+              className={`h-[6px] transition-all duration-300 ${
                 i === current
-                  ? "bg-brand-red shadow-[0_0_4px_var(--red)]"
-                  : "bg-brand-ink/20 hover:bg-brand-ink/40"
+                  ? "bg-brand-red w-[14px] shadow-[0_0_4px_var(--red)]"
+                  : "bg-brand-ink/20 w-[6px] hover:bg-brand-ink/40"
               }`}
             />
           ))}
