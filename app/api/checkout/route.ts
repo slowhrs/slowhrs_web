@@ -70,6 +70,14 @@ function normalizeStripeSecretKey(value: string | undefined): string | null {
   return assignmentMatch ? assignmentMatch[2].trim() : trimmed;
 }
 
+function getCheckoutImageUrls(origin: string, posterPath: string): string[] {
+  try {
+    return [new URL(posterPath, origin).toString()];
+  } catch {
+    return [];
+  }
+}
+
 function isMissingStripePriceError(error: unknown) {
   if (!error || typeof error !== 'object') return false;
 
@@ -222,13 +230,27 @@ export async function POST(req: NextRequest) {
 
     const stripe = new Stripe(stripeKey);
     const origin = getCheckoutOrigin(req);
+    const checkoutImageUrls = getCheckoutImageUrls(origin, drop.poster);
     const baseSessionParams = {
       mode: 'payment',
+      submit_type: 'pay',
+      custom_text: {
+        submit: {
+          message: 'FINAL RUN. CONFIRM THE DROP.',
+        },
+        shipping_address: {
+          message: 'SHIP TO WHERE THE NIGHT ENDS.',
+        },
+        after_submit: {
+          message: 'ORDER LOCKED. WATCH YOUR EMAIL.',
+        },
+      },
       metadata: {
         product_id,
         size,
         quantity: String(quantity),
         drop_title: drop.title,
+        product_image_url: checkoutImageUrls[0] ?? '',
       },
       success_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#drops`,
@@ -259,6 +281,7 @@ export async function POST(req: NextRequest) {
                   product_data: {
                     name: `${drop.title} (${size})`,
                     description: drop.description,
+                    ...(checkoutImageUrls.length > 0 ? { images: checkoutImageUrls } : {}),
                   },
                 },
                 ...quantityParams,
@@ -286,6 +309,7 @@ export async function POST(req: NextRequest) {
               product_data: {
                 name: `${drop.title} (${size})`,
                 description: drop.description,
+                ...(checkoutImageUrls.length > 0 ? { images: checkoutImageUrls } : {}),
               },
             },
             ...quantityParams,
