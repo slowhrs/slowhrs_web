@@ -14,10 +14,15 @@ type NetworkInformationLike = {
 
 const POSTER_SRC = "/assets/videos/hero-poster.jpg";
 
-function prefersPosterOnly() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
-
-  const connection = (navigator as Navigator & { connection?: NetworkInformationLike }).connection;
+// Initial render: always emit the <video> tag so the browser starts buffering
+// the source on the first paint (poster painted as the first frame). Only swap
+// to poster-only after mount if the visitor has reduce-motion or save-data on.
+function isPosterOnlyClient(): boolean {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return true;
+  const connection = (
+    navigator as Navigator & { connection?: NetworkInformationLike }
+  ).connection;
   return Boolean(
     connection?.saveData ||
       connection?.effectiveType === "slow-2g" ||
@@ -27,11 +32,10 @@ function prefersPosterOnly() {
 
 function playVideo(video: HTMLVideoElement | null) {
   if (!video) return;
-
   video.muted = true;
   video.defaultMuted = true;
   video.playsInline = true;
-  video.play().catch(() => {});
+  void video.play().catch(() => {});
 }
 
 const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVideo(
@@ -39,11 +43,11 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
   forwardedRef
 ) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [posterOnly, setPosterOnly] = useState(true);
+  const [posterOnly, setPosterOnly] = useState(false);
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePosterMode = () => setPosterOnly(prefersPosterOnly());
+    const updatePosterMode = () => setPosterOnly(isPosterOnlyClient());
 
     updatePosterMode();
     motionQuery.addEventListener("change", updatePosterMode);
@@ -87,7 +91,7 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
       muted
       playsInline
       poster={POSTER_SRC}
-      preload="metadata"
+      preload="auto"
       onCanPlay={(event) => playVideo(event.currentTarget)}
       onLoadedData={(event) => playVideo(event.currentTarget)}
       className={className}

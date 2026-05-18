@@ -20,7 +20,10 @@ export function LazyVideo({
   priority = false,
 }: LazyVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(true);
+  // Only priority videos load on mount; everything else waits for the
+  // IntersectionObserver below. Without this, every video on the page would
+  // fetch on first paint and absolutely cook mobile bandwidth.
+  const [shouldLoad, setShouldLoad] = useState(priority);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
@@ -98,7 +101,7 @@ export function LazyVideo({
       disablePictureInPicture
       loop
       playsInline
-      preload="auto"
+      preload={shouldLoad ? (priority ? "auto" : "metadata") : "none"}
       autoPlay={shouldLoad && !isReducedMotion}
       onCanPlay={playIfAllowed}
       onLoadedMetadata={playIfAllowed}

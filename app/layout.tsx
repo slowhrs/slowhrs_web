@@ -73,6 +73,28 @@ export default function RootLayout({
           href="/assets/videos/hero-poster.jpg"
           fetchPriority="high"
         />
+        {/* Start fetching the right hero variant before React mounts. */}
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-mobile.mp4"
+          type="video/mp4"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-mobile.webm"
+          type="video/webm"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-desktop.webm"
+          type="video/webm"
+          media="(min-width: 768px)"
+        />
       </head>
       <body className="antialiased font-sans">
         <script
