@@ -71,7 +71,23 @@ function isMissingStripePriceError(error: unknown) {
   );
 }
 
-function stripeCheckoutError(req: NextRequest, error: unknown) {
+function checkoutUnavailable(
+  req: NextRequest,
+  code: string,
+  message: string,
+  productId: string,
+  size: string
+) {
+  if (wantsJson(req)) {
+    return NextResponse.json({ error: code, message }, { status: 503 });
+  }
+
+  const inquiryUrl = new URL('/', req.url);
+  inquiryUrl.hash = `inquiry?subject=order&product=${encodeURIComponent(productId)}&size=${encodeURIComponent(size)}`;
+  return NextResponse.redirect(inquiryUrl);
+}
+
+function stripeCheckoutError(req: NextRequest, error: unknown, productId?: string, size?: string) {
   if (!error || typeof error !== 'object') {
     return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
   }
@@ -85,6 +101,16 @@ function stripeCheckoutError(req: NextRequest, error: unknown) {
     /invalid api key|expired api key|no api key/i.test(message)
   ) {
     console.error('[checkout] Stripe authentication failed. Check STRIPE_SECRET_KEY in Vercel.');
+    if (productId && size) {
+      return checkoutUnavailable(
+        req,
+        'stripe_auth_failed',
+        'Stripe checkout is not configured correctly.',
+        productId,
+        size
+      );
+    }
+
     return checkoutError(req, 503, 'stripe_auth_failed', 'Stripe checkout is not configured correctly.');
   }
 
@@ -94,11 +120,31 @@ function stripeCheckoutError(req: NextRequest, error: unknown) {
     /permission|not authorized|restricted api key/i.test(message)
   ) {
     console.error('[checkout] Stripe permission failed. Check STRIPE_SECRET_KEY permissions in Vercel.');
+    if (productId && size) {
+      return checkoutUnavailable(
+        req,
+        'stripe_permission_failed',
+        'Stripe checkout is missing permission.',
+        productId,
+        size
+      );
+    }
+
     return checkoutError(req, 503, 'stripe_permission_failed', 'Stripe checkout is missing permission.');
   }
 
   if (/account.*not.*activated|charges.*disabled|not currently able to make live charges/i.test(message)) {
     console.error('[checkout] Stripe account cannot create live charges yet.');
+    if (productId && size) {
+      return checkoutUnavailable(
+        req,
+        'stripe_account_inactive',
+        'Stripe account is not ready for live checkout.',
+        productId,
+        size
+      );
+    }
+
     return checkoutError(req, 503, 'stripe_account_inactive', 'Stripe account is not ready for live checkout.');
   }
 
@@ -111,10 +157,15 @@ function stripeCheckoutError(req: NextRequest, error: unknown) {
  * Creates a Stripe Checkout Session for a drop purchase.
  */
 export async function POST(req: NextRequest) {
+  let submittedProductId: string | undefined;
+  let submittedSize: string | undefined;
+
   try {
     const formData = await req.formData();
     const product_id = formData.get('product_id') as string;
     const size = formData.get('size') as Size;
+    submittedProductId = product_id;
+    submittedSize = size;
 
     const drop = getDropById(product_id);
     if (!drop) {
@@ -210,6 +261,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.redirect(session.url);
   } catch (err) {
-    return stripeCheckoutError(req, err);
+    return stripeCheckoutError(req, err, submittedProductId, submittedSize);
   }
 }
