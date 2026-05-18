@@ -1,10 +1,26 @@
-import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { ALL_SIZES, getDropById } from '@/lib/data/drops';
-import type { Size } from '@/lib/data/drops';
+import type { Drop, Size } from '@/lib/data/drops';
 
 const MIN_CHECKOUT_QUANTITY = 1;
 const MAX_CHECKOUT_QUANTITY = 2;
+const STRIPE_CHECKOUT_SESSIONS_URL = 'https://api.stripe.com/v1/checkout/sessions';
+const STRIPE_API_VERSION = '2026-04-22.dahlia';
+
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
+type StripeCheckoutSession = {
+  url?: string;
+};
+
+type StripeApiError = {
+  code?: string;
+  param?: string;
+  message?: string;
+  statusCode?: number;
+  type?: string;
+};
 
 function wantsJson(req: NextRequest) {
   return req.headers.get('accept')?.includes('application/json');
@@ -81,7 +97,7 @@ function getCheckoutImageUrls(origin: string, posterPath: string): string[] {
 function isMissingStripePriceError(error: unknown) {
   if (!error || typeof error !== 'object') return false;
 
-  const stripeError = error as { code?: string; param?: string; message?: string; type?: string };
+  const stripeError = error as StripeApiError;
   return (
     stripeError.code === 'resource_missing' ||
     stripeError.param === 'line_items[0][price]' ||
@@ -126,7 +142,7 @@ function stripeCheckoutError(req: NextRequest, error: unknown, productId?: strin
     return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
   }
 
-  const stripeError = error as { code?: string; message?: string; statusCode?: number; type?: string };
+  const stripeError = error as StripeApiError;
   const message = stripeError.message ?? '';
 
   if (
@@ -186,6 +202,81 @@ function stripeCheckoutError(req: NextRequest, error: unknown, productId?: strin
   return checkoutError(req, 500, 'checkout_failed', 'checkout failed');
 }
 
+function appendBaseSessionParams(
+  body: URLSearchParams,
+  {
+    origin,
+    drop,
+    productId,
+    size,
+    quantity,
+    checkoutImageUrl,
+  }: {
+    origin: string;
+    drop: Drop;
+    productId: string;
+    size: Size;
+    quantity: number;
+    checkoutImageUrl?: string;
+  }
+) {
+  body.set('mode', 'payment');
+  body.set('submit_type', 'pay');
+  body.set('shipping_address_collection[allowed_countries][0]', 'US');
+  body.set('phone_number_collection[enabled]', 'true');
+  body.set('custom_text[shipping_address][message]', 'PACKAGES SHIP TO THE ADDRESS YOU ENTER HERE.');
+  body.set('custom_text[submit][message]', 'FINAL RUN. CONFIRM THE DROP.');
+  body.set('metadata[product_id]', productId);
+  body.set('metadata[size]', size);
+  body.set('metadata[quantity]', String(quantity));
+  body.set('metadata[drop_title]', drop.title);
+  if (checkoutImageUrl) {
+    body.set('metadata[product_image_url]', checkoutImageUrl);
+  }
+  body.set('success_url', `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`);
+  body.set('cancel_url', `${origin}/#drops`);
+  body.set('line_items[0][quantity]', String(quantity));
+  body.set('line_items[0][adjustable_quantity][enabled]', 'true');
+  body.set('line_items[0][adjustable_quantity][minimum]', String(MIN_CHECKOUT_QUANTITY));
+  body.set('line_items[0][adjustable_quantity][maximum]', String(MAX_CHECKOUT_QUANTITY));
+}
+
+function appendInlinePriceData(
+  body: URLSearchParams,
+  { drop, size, checkoutImageUrl }: { drop: Drop; size: Size; checkoutImageUrl?: string }
+) {
+  body.set('line_items[0][price_data][currency]', 'usd');
+  body.set('line_items[0][price_data][unit_amount]', String(drop.price * 100));
+  body.set('line_items[0][price_data][product_data][name]', `${drop.title} (${size})`);
+  body.set('line_items[0][price_data][product_data][description]', drop.description);
+  if (checkoutImageUrl) {
+    body.set('line_items[0][price_data][product_data][images][0]', checkoutImageUrl);
+  }
+}
+
+async function postStripeCheckoutSession(stripeKey: string, body: URLSearchParams) {
+  const response = await fetch(STRIPE_CHECKOUT_SESSIONS_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${stripeKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Stripe-Version': STRIPE_API_VERSION,
+    },
+    body,
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    const stripeError = ((payload as { error?: StripeApiError } | null)?.error ?? {
+      message: 'Stripe checkout failed.',
+    }) as StripeApiError;
+    stripeError.statusCode = response.status;
+    throw stripeError;
+  }
+
+  return payload as StripeCheckoutSession;
+}
+
 /**
  * POST /api/checkout
  * Creates a Stripe Checkout Session for a drop purchase.
@@ -228,69 +319,29 @@ export async function POST(req: NextRequest) {
       return checkoutNotConfigured(req, product_id, size);
     }
 
-    const stripe = new Stripe(stripeKey);
     const origin = getCheckoutOrigin(req);
     const checkoutImageUrls = getCheckoutImageUrls(origin, drop.poster);
+    const checkoutImageUrl = checkoutImageUrls[0];
     const baseSessionParams = {
-      mode: 'payment',
-      submit_type: 'pay',
-      shipping_address_collection: {
-        allowed_countries: ['US'],
-      },
-      phone_number_collection: {
-        enabled: true,
-      },
-      custom_text: {
-        shipping_address: {
-          message: 'PACKAGES SHIP TO THE ADDRESS YOU ENTER HERE.',
-        },
-        submit: {
-          message: 'FINAL RUN. CONFIRM THE DROP.',
-        },
-      },
-      metadata: {
-        product_id,
-        size,
-        quantity: String(quantity),
-        drop_title: drop.title,
-        product_image_url: checkoutImageUrls[0] ?? '',
-      },
-      success_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/#drops`,
-    } satisfies Stripe.Checkout.SessionCreateParams;
-    const quantityParams = {
+      origin,
+      drop,
+      productId: product_id,
+      size,
       quantity,
-      adjustable_quantity: {
-        enabled: true,
-        minimum: MIN_CHECKOUT_QUANTITY,
-        maximum: MAX_CHECKOUT_QUANTITY,
-      },
+      checkoutImageUrl,
     };
 
-    let session: Stripe.Checkout.Session;
+    const checkoutBody = new URLSearchParams();
+    appendBaseSessionParams(checkoutBody, baseSessionParams);
+    if (drop.stripe_price_id) {
+      checkoutBody.set('line_items[0][price]', drop.stripe_price_id);
+    } else {
+      appendInlinePriceData(checkoutBody, { drop, size, checkoutImageUrl });
+    }
+
+    let session: StripeCheckoutSession;
     try {
-      session = await stripe.checkout.sessions.create({
-        ...baseSessionParams,
-        line_items: [
-          drop.stripe_price_id
-            ? {
-                price: drop.stripe_price_id,
-                ...quantityParams,
-              }
-            : {
-                price_data: {
-                  currency: 'usd',
-                  unit_amount: drop.price * 100,
-                  product_data: {
-                    name: `${drop.title} (${size})`,
-                    description: drop.description,
-                    ...(checkoutImageUrls.length > 0 ? { images: checkoutImageUrls } : {}),
-                  },
-                },
-                ...quantityParams,
-              },
-        ],
-      });
+      session = await postStripeCheckoutSession(stripeKey, checkoutBody);
     } catch (error) {
       if (!drop.stripe_price_id || !isMissingStripePriceError(error)) {
         throw error;
@@ -302,23 +353,10 @@ export async function POST(req: NextRequest) {
         stripe_price_id: drop.stripe_price_id,
       });
 
-      session = await stripe.checkout.sessions.create({
-        ...baseSessionParams,
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              unit_amount: drop.price * 100,
-              product_data: {
-                name: `${drop.title} (${size})`,
-                description: drop.description,
-                ...(checkoutImageUrls.length > 0 ? { images: checkoutImageUrls } : {}),
-              },
-            },
-            ...quantityParams,
-          },
-        ],
-      });
+      const fallbackBody = new URLSearchParams();
+      appendBaseSessionParams(fallbackBody, baseSessionParams);
+      appendInlinePriceData(fallbackBody, { drop, size, checkoutImageUrl });
+      session = await postStripeCheckoutSession(stripeKey, fallbackBody);
     }
 
     if (!session.url) {
