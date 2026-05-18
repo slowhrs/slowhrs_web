@@ -45,15 +45,31 @@ function getOwnerEmail(): string {
 }
 
 function getSiteOrigin(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
-  }
+  const configuredOrigin = normalizeProductionOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+  if (configuredOrigin) return configuredOrigin;
 
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
+  const vercelOrigin = process.env.VERCEL_URL
+    ? normalizeProductionOrigin(`https://${process.env.VERCEL_URL}`)
+    : null;
+  if (vercelOrigin) return vercelOrigin;
 
   return 'https://slowhrs.com';
+}
+
+function normalizeProductionOrigin(value: string | undefined): string | null {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.toLowerCase();
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+      return null;
+    }
+
+    return url.origin;
+  } catch {
+    return null;
+  }
 }
 
 function escapeHtml(value: string): string {

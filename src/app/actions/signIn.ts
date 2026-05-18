@@ -17,6 +17,34 @@ function safeNextPath(value: string | undefined): string {
   return value;
 }
 
+function getMemberAuthOrigin(): string {
+  const configuredOrigin = normalizeProductionOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+  if (configuredOrigin) return configuredOrigin;
+
+  const vercelOrigin = process.env.VERCEL_URL
+    ? normalizeProductionOrigin(`https://${process.env.VERCEL_URL}`)
+    : null;
+  if (vercelOrigin) return vercelOrigin;
+
+  return 'https://slowhrs.com';
+}
+
+function normalizeProductionOrigin(value: string | undefined): string | null {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.toLowerCase();
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+      return null;
+    }
+
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
 export async function requestMagicLink(formData: FormData) {
   const parsed = SignInSchema.safeParse({
     email: formData.get('email'),
@@ -38,8 +66,7 @@ export async function requestMagicLink(formData: FormData) {
   }
 
   const supabase = await createServerClient();
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://slowhrs.com';
-  const redirectUrl = new URL('/auth/callback', origin.replace(/\/$/, ''));
+  const redirectUrl = new URL('/auth/callback', getMemberAuthOrigin());
   redirectUrl.searchParams.set('next', next);
   const { error } = await supabase.auth.signInWithOtp({
     email,
