@@ -2,7 +2,8 @@
 
 
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, type RefObject } from "react";
+import HeroVideo from "./HeroVideo";
 import StatusStrip from "./StatusStrip";
 
 /**
@@ -11,10 +12,12 @@ import StatusStrip from "./StatusStrip";
  * hero-recap is the brand reel, newyears is the atmosphere,
  * fast_life is the clothing, christmas_drop is the shorter filler.
  */
+const HERO_RECAP_VIDEO = "/assets/videos/hero-recap.mp4";
+
 const HERO_VIDEOS = [
   "/assets/events/block_party.mp4",
   "/assets/events/destroy_lonely.mp4",
-  "/assets/videos/hero-recap.mp4",
+  HERO_RECAP_VIDEO,
   "/assets/events/newyears.mp4",
   "/assets/drops/fast_life_reel.mp4",
   "/assets/drops/christmas_drop.mp4",
@@ -70,43 +73,47 @@ export default function HeroLobby() {
     playVideo(nextVideoRef.current);
   }, [nextIdx]);
 
+  const renderVideoLayer = (
+    src: string,
+    ref: RefObject<HTMLVideoElement | null>,
+    key: string,
+    opacity: number
+  ) => {
+    const className = "absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out";
+    const style = { opacity };
+
+    if (src === HERO_RECAP_VIDEO) {
+      return <HeroVideo ref={ref} key={key} className={className} style={style} />;
+    }
+
+    return (
+      <video
+        ref={ref}
+        key={key}
+        src={src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={posterFor(src)}
+        preload="metadata"
+        onCanPlay={(event) => playVideo(event.currentTarget)}
+        onLoadedData={(event) => playVideo(event.currentTarget)}
+        className={className}
+        style={style}
+      />
+    );
+  };
+
   return (
     <section className="relative min-h-[calc(100vh-26px)] overflow-hidden grid grid-rows-[1fr_auto] p-0">
       {/* ── Background Video Layers ── */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         {/* Active layer (bottom) */}
-        <video
-          ref={activeVideoRef}
-          key={`active-${activeIdx}`}
-          src={HERO_VIDEOS[activeIdx]}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={posterFor(HERO_VIDEOS[activeIdx])}
-          preload="auto"
-          onCanPlay={(event) => playVideo(event.currentTarget)}
-          onLoadedData={(event) => playVideo(event.currentTarget)}
-          className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
-          style={{ opacity: isFading ? 0 : 1 }}
-        />
+        {renderVideoLayer(HERO_VIDEOS[activeIdx], activeVideoRef, `active-${activeIdx}`, isFading ? 0 : 1)}
 
         {/* Next layer (top — fades in during crossfade) */}
-        <video
-          ref={nextVideoRef}
-          key={`next-${nextIdx}`}
-          src={HERO_VIDEOS[nextIdx]}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={posterFor(HERO_VIDEOS[nextIdx])}
-          preload="auto"
-          onCanPlay={(event) => playVideo(event.currentTarget)}
-          onLoadedData={(event) => playVideo(event.currentTarget)}
-          className="absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out"
-          style={{ opacity: isFading ? 1 : 0 }}
-        />
+        {renderVideoLayer(HERO_VIDEOS[nextIdx], nextVideoRef, `next-${nextIdx}`, isFading ? 1 : 0)}
 
         {/* Gradient masks */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85 z-[1]"></div>
