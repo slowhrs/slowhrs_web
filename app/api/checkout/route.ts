@@ -234,7 +234,17 @@ export async function POST(req: NextRequest) {
     const baseSessionParams = {
       mode: 'payment',
       submit_type: 'pay',
+      branding_settings: {
+        background_color: '#0a0a0a',
+        border_style: 'rectangular',
+        button_color: '#e60016',
+        display_name: 'SLOWHRS',
+        font_family: 'inconsolata',
+      },
       custom_text: {
+        after_submit: {
+          message: 'ORDER LOCKS AFTER PAYMENT.',
+        },
         submit: {
           message: 'FINAL RUN. CONFIRM THE DROP.',
         },
