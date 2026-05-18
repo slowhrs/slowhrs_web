@@ -241,9 +241,6 @@ export async function POST(req: NextRequest) {
         shipping_address: {
           message: 'SHIP TO WHERE THE NIGHT ENDS.',
         },
-        after_submit: {
-          message: 'ORDER LOCKED. WATCH YOUR EMAIL.',
-        },
       },
       metadata: {
         product_id,
