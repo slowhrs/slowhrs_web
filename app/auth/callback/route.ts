@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server';
+import { createRouteHandlerClient } from '@/lib/supabase/route';
 import { NextRequest, NextResponse } from 'next/server';
 
 function safeNextPath(value: string | null): string {
@@ -23,10 +23,11 @@ export async function GET(request: NextRequest) {
   const next = safeNextPath(searchParams.get('next'));
 
   if (code) {
-    const supabase = await createServerClient();
+    const redirectResponse = NextResponse.redirect(`${origin}${next}`);
+    const supabase = createRouteHandlerClient(request, redirectResponse);
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return redirectResponse;
     }
     console.error('[auth/callback] exchange failed:', error);
   }

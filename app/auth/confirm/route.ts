@@ -1,6 +1,6 @@
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createRouteHandlerClient } from '@/lib/supabase/route';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,14 +42,15 @@ export async function GET(request: NextRequest) {
 
   if (tokenHash && type) {
     try {
-      const supabase = await createServerClient();
+      const redirectResponse = NextResponse.redirect(`${origin}${next}`);
+      const supabase = createRouteHandlerClient(request, redirectResponse);
       const { error } = await supabase.auth.verifyOtp({
         token_hash: tokenHash,
         type,
       });
 
       if (!error) {
-        return NextResponse.redirect(`${origin}${next}`);
+        return redirectResponse;
       }
 
       console.error('[auth/confirm] token verification failed:', {
