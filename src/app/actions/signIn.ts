@@ -21,11 +21,6 @@ function getMemberAuthOrigin(): string {
   const configuredOrigin = normalizeProductionOrigin(process.env.NEXT_PUBLIC_SITE_URL);
   if (configuredOrigin) return configuredOrigin;
 
-  const vercelOrigin = process.env.VERCEL_URL
-    ? normalizeProductionOrigin(`https://${process.env.VERCEL_URL}`)
-    : null;
-  if (vercelOrigin) return vercelOrigin;
-
   return 'https://slowhrs.com';
 }
 
@@ -78,6 +73,10 @@ export async function requestMagicLink(formData: FormData) {
 
   if (error) {
     console.error('[signIn] OTP send failed:', error);
+    if (error.status === 429 || /rate limit|security purposes/i.test(error.message)) {
+      return { success: false, error: 'too many login emails. wait a minute, then try again.' };
+    }
+
     return { success: false, error: 'something went wrong. try again.' };
   }
 

@@ -48,11 +48,6 @@ function getSiteOrigin(): string {
   const configuredOrigin = normalizeProductionOrigin(process.env.NEXT_PUBLIC_SITE_URL);
   if (configuredOrigin) return configuredOrigin;
 
-  const vercelOrigin = process.env.VERCEL_URL
-    ? normalizeProductionOrigin(`https://${process.env.VERCEL_URL}`)
-    : null;
-  if (vercelOrigin) return vercelOrigin;
-
   return 'https://slowhrs.com';
 }
 
