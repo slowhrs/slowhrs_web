@@ -110,21 +110,29 @@ export default function DropTile({ drop }: { drop: Drop; index?: number }) {
         <div className="mt-auto">
           {!allSoldOut ? (
             drop.stripe_price_id ? (
-            <form action="/api/checkout" method="POST">
-              <input type="hidden" name="product_id" value={drop.id} />
-              <input type="hidden" name="size" value={selectedSize ?? ""} />
-              <button
-                type="submit"
-                disabled={!selectedSize}
-                className={`w-full border py-3 font-mono text-[10px] uppercase tracking-[0.28em] transition-all duration-300 ease-out ${
-                  selectedSize
-                    ? "border-red text-red hover:translate-x-1 hover:bg-red hover:text-bg"
-                    : "cursor-not-allowed border-border-2 text-ink-faint"
-                }`}
-              >
-                {selectedSize ? `secure ${selectedSize} →` : "select size"}
-              </button>
-            </form>
+              selectedSize ? (
+                <form action="/api/checkout" method="POST">
+                  <input type="hidden" name="product_id" value={drop.id} />
+                  <input type="hidden" name="size" value={selectedSize} />
+                  <button
+                    type="submit"
+                    className="w-full border border-red py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-red transition-all duration-300 ease-out hover:translate-x-1 hover:bg-red hover:text-bg"
+                  >
+                    secure {selectedSize} →
+                  </button>
+                </form>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsExpanded(true);
+                  }}
+                  className="w-full border border-border-2 py-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-ink-faint transition-all duration-300 ease-out hover:border-red hover:text-red"
+                >
+                  select size
+                </button>
+              )
             ) : selectedSize ? (
               <Link
                 href={`/#inquiry?subject=order&product=${encodeURIComponent(drop.id)}&size=${selectedSize}`}
