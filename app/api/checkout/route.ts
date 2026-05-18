@@ -270,9 +270,6 @@ export async function POST(req: NextRequest) {
         font_family: 'inconsolata',
       },
       custom_text: {
-        after_submit: {
-          message: 'ORDER LOCKS AFTER PAYMENT.',
-        },
         submit: {
           message: 'FINAL RUN. CONFIRM THE DROP.',
         },
