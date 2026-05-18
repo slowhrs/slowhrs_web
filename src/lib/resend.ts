@@ -217,6 +217,29 @@ export async function sendApprovalEmail(to: string, name: string) {
   }, 'approval email');
 }
 
+export async function sendMemberMagicLinkEmail(to: string, actionLink: string) {
+  const escapedActionLink = escapeHtml(actionLink);
+
+  return sendEmail({
+    from: `SLOWHRS <${getFrom()}>`,
+    to,
+    subject: 'your slowhrs room link',
+    html: `
+      <div style="background:#050505;color:#ededeb;font-family:Arial,sans-serif;padding:28px;line-height:1.6">
+        <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#e60016">slowhrs member access</p>
+        <h1 style="font-family:Georgia,serif;font-style:italic;font-weight:400;margin:18px 0 10px">the room.</h1>
+        <p>tap below to enter. this one-time link expires soon and only works for this inbox.</p>
+        <p style="margin:28px 0">
+          <a href="${escapedActionLink}" style="border:1px solid #e60016;color:#e60016;padding:12px 18px;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:0.18em">enter the room</a>
+        </p>
+        <p style="font-size:12px;color:#9b9b97">if the button does not open, paste this link:<br><a href="${escapedActionLink}" style="color:#e60016">${escapedActionLink}</a></p>
+        <p style="font-size:12px;color:#9b9b97">— slowhrs</p>
+      </div>
+    `,
+    text: `this is your one-time link.\n\ntap it to enter the room:\n${actionLink}\n\n— slowhrs`,
+  }, 'member magic link email');
+}
+
 export async function sendRejectionEmail(to: string, name: string) {
   return sendEmail({
     from: `SLOWHRS <${getFrom()}>`,

@@ -1,8 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { createServerClient } from '@/lib/supabase/server';
 import { isApprovedMember } from '@/lib/auth/member-admin';
+import { sendMemberMagicLinkEmail } from '@/lib/resend';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 const SignInSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
@@ -30,6 +31,18 @@ function getMemberAuthOrigin(): string {
   if (configuredOrigin) return configuredOrigin;
 
   return 'https://slowhrs.com';
+}
+
+function getRedirectUrl(next: string): string {
+  const redirectUrl = new URL('/auth/callback', getMemberAuthOrigin());
+  redirectUrl.searchParams.set('next', next);
+  return redirectUrl.toString();
+}
+
+function forceActionLinkRedirect(actionLink: string, redirectTo: string): string {
+  const link = new URL(actionLink);
+  link.searchParams.set('redirect_to', redirectTo);
+  return link.toString();
 }
 
 function normalizeProductionOrigin(value: string | undefined): string | null {
@@ -68,19 +81,18 @@ export async function requestMagicLink(formData: FormData) {
     };
   }
 
-  const supabase = await createServerClient();
-  const redirectUrl = new URL('/auth/callback', getMemberAuthOrigin());
-  redirectUrl.searchParams.set('next', next);
-  const { error } = await supabase.auth.signInWithOtp({
+  const redirectTo = getRedirectUrl(next);
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.auth.admin.generateLink({
+    type: 'magiclink',
     email,
     options: {
-      emailRedirectTo: redirectUrl.toString(),
-      shouldCreateUser: true,
+      redirectTo,
     },
   });
 
   if (error) {
-    console.error('[signIn] OTP send failed:', error);
+    console.error('[signIn] magic link generation failed:', error);
     if (error.status === 429 || /rate limit|security purposes/i.test(error.message)) {
       return {
         success: false,
@@ -89,6 +101,25 @@ export async function requestMagicLink(formData: FormData) {
       };
     }
 
+    return { success: false, error: 'something went wrong. try again.' };
+  }
+
+  const rawActionLink = data.properties?.action_link;
+  if (!rawActionLink) {
+    console.error('[signIn] magic link generation returned no action link');
+    return { success: false, error: 'something went wrong. try again.' };
+  }
+
+  try {
+    const actionLink = forceActionLinkRedirect(rawActionLink, redirectTo);
+    if (actionLink.includes('localhost') || actionLink.includes('127.0.0.1')) {
+      console.error('[signIn] blocked unsafe magic link redirect');
+      return { success: false, error: 'something went wrong. try again.' };
+    }
+
+    await sendMemberMagicLinkEmail(email, actionLink);
+  } catch (err) {
+    console.error('[signIn] magic link email send failed:', err);
     return { success: false, error: 'something went wrong. try again.' };
   }
 
