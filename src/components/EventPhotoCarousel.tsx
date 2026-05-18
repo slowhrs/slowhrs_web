@@ -32,7 +32,9 @@ export default function EventPhotoCarousel({
 }: EventPhotoCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
-  const [isOnscreen, setIsOnscreen] = useState(false);
+  // Default to onscreen so the first autoplay tick fires immediately; the IntersectionObserver
+  // (when present) will pause us once it confirms the card is actually scrolled out of view.
+  const [isOnscreen, setIsOnscreen] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
