@@ -221,8 +221,32 @@ export async function sendApprovalEmail(to: string, name: string) {
   }, 'approval email');
 }
 
-export async function sendMemberMagicLinkEmail(to: string, magicLinkUrl: string) {
+export async function sendMemberMagicLinkEmail(
+  to: string,
+  magicLinkUrl: string,
+  code?: string | null
+) {
   const escapedMagicLinkUrl = escapeHtml(magicLinkUrl);
+  const trimmedCode = code?.trim();
+  const escapedCode = trimmedCode ? escapeHtml(trimmedCode) : null;
+  const codeUrl = new URL('/sign-in/code', getSiteOrigin());
+  codeUrl.searchParams.set('email', to.toLowerCase().trim());
+  const escapedCodeUrl = escapeHtml(codeUrl.toString());
+
+  const codeHtml = escapedCode
+    ? `
+        <div style="margin-top:24px;padding:16px 18px;border:1px solid #1a1a1a;background:#0b0b0b">
+          <p style="margin:0;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#9b9b97">code (if the button is stuck)</p>
+          <p style="margin:10px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:22px;letter-spacing:0.4em;color:#ededeb">${escapedCode}</p>
+          <p style="margin:12px 0 0;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9b9b97">paste at <a href="${escapedCodeUrl}" style="color:#e60016">slowhrs.com/sign-in/code</a></p>
+        </div>
+      `
+    : '';
+
+  const codeText = trimmedCode
+    ? `\n\ncode (if the button is stuck): ${trimmedCode}\npaste at: ${codeUrl.toString()}`
+    : '';
+
   return sendEmail({
     from: `SLOWHRS <${getMemberMagicLinkFrom()}>`,
     to,
@@ -236,10 +260,11 @@ export async function sendMemberMagicLinkEmail(to: string, magicLinkUrl: string)
           <a href="${escapedMagicLinkUrl}" style="border:1px solid #e60016;color:#e60016;padding:12px 18px;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:0.18em">enter the room</a>
         </p>
         <p style="font-size:12px;color:#9b9b97">if the button does not open, paste this link:<br><a href="${escapedMagicLinkUrl}" style="color:#e60016">${escapedMagicLinkUrl}</a></p>
+        ${codeHtml}
         <p style="font-size:12px;color:#9b9b97">— slowhrs</p>
       </div>
     `,
-    text: `this is your one-time link.\n\ntap it to enter the room:\n${magicLinkUrl}\n\n— slowhrs`,
+    text: `this is your one-time link.\n\ntap it to enter the room:\n${magicLinkUrl}${codeText}\n\n— slowhrs`,
   }, 'member magic link email');
 }
 

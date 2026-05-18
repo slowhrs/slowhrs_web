@@ -96,13 +96,15 @@ export async function requestMagicLink(formData: FormData) {
     return { success: false, error: 'something went wrong. try again.' };
   }
 
+  const emailOtp = data.properties?.email_otp ?? null;
+
   try {
     const magicLinkUrl = new URL('/auth/confirm', getMemberAuthOrigin());
     magicLinkUrl.searchParams.set('token_hash', hashedToken);
     magicLinkUrl.searchParams.set('type', VERIFY_TYPE);
     magicLinkUrl.searchParams.set('next', next);
 
-    await sendMemberMagicLinkEmail(email, magicLinkUrl.toString());
+    await sendMemberMagicLinkEmail(email, magicLinkUrl.toString(), emailOtp);
   } catch (err) {
     console.error('[signIn] magic link email send failed:', err);
     return { success: false, error: 'something went wrong. try again.' };

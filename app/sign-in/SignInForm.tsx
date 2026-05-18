@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { requestMagicLink } from "@/app/actions/signIn";
 
 type SignInFormProps = {
@@ -19,8 +20,18 @@ export default function SignInForm({
   const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [email, setEmail] = useState(initialEmail);
   const hasApprovedEmail = initialEmail.length > 0;
   const isWaiting = status === "submitting" || cooldown > 0;
+
+  const codeHref = useMemo(() => {
+    const trimmed = email.trim().toLowerCase();
+    const params = new URLSearchParams();
+    if (trimmed) params.set("email", trimmed);
+    if (nextPath && nextPath !== "/dashboard") params.set("next", nextPath);
+    const qs = params.toString();
+    return qs ? `/sign-in/code?${qs}` : "/sign-in/code";
+  }, [email, nextPath]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -42,7 +53,7 @@ export default function SignInForm({
     const form = event.currentTarget;
     const result = await requestMagicLink(new FormData(form));
     if (result.success) {
-      if (!hasApprovedEmail) form.reset();
+      if (!hasApprovedEmail) setEmail("");
       setStatus("sent");
       setMessage(result.message || "check your inbox.");
       setCooldown(60);
@@ -86,11 +97,23 @@ export default function SignInForm({
                 name="email"
                 type="email"
                 required
-                defaultValue={initialEmail}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="email"
                 className="border-b border-border-2 bg-transparent py-3 font-mono text-[14px] text-ink placeholder:text-ink-faint focus:border-red focus:outline-none"
               />
               <input type="hidden" name="next" value={nextPath} />
+
+              <p className="font-mono text-[9px] uppercase leading-[1.7] tracking-[0.18em] text-ink-faint">
+                trouble with the link?{" "}
+                <Link
+                  href={codeHref}
+                  className="text-red transition-colors hover:text-red-bright"
+                >
+                  enter your code instead
+                </Link>
+                .
+              </p>
 
               {message && (
                 <p
