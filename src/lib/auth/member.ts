@@ -5,11 +5,13 @@ import { redirect } from 'next/navigation';
 export type ApprovedMemberStatus = 'tier_02' | 'tier_03' | 'tier_04' | 'tier_05';
 
 export type MemberProfile = {
+  user_id: string;
   email: string;
   full_name: string;
   member_id: string;
   status: ApprovedMemberStatus;
   events_attended: number;
+  created_at: string | null;
 };
 
 export type MemberDashboardEvent = {
@@ -32,7 +34,7 @@ export async function getMember(): Promise<MemberProfile | null> {
 
   const { data, error } = await supabase
     .from('applications')
-    .select('email, full_name, member_id, status, events_attended')
+    .select('email, full_name, member_id, status, events_attended, created_at')
     .eq('email', user.email.toLowerCase())
     .maybeSingle();
 
@@ -40,7 +42,10 @@ export async function getMember(): Promise<MemberProfile | null> {
     return null;
   }
 
-  return data as MemberProfile;
+  return {
+    ...(data as Omit<MemberProfile, 'user_id'>),
+    user_id: user.id,
+  };
 }
 
 export async function requireMember(): Promise<MemberProfile> {
