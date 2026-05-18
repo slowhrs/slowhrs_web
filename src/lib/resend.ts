@@ -77,6 +77,18 @@ function getMemberMagicLinkFrom(): string {
   return 'onboarding@resend.dev';
 }
 
+function getMemberMagicLinkDelivery(to: string): { to: string; originalTo: string | null } {
+  const originalTo = to.toLowerCase().trim();
+  const overrideTo = process.env.RESEND_AUTH_DELIVERY_TO?.trim() || 'slowhrs@gmail.com';
+  const from = getMemberMagicLinkFrom();
+
+  if (isProductionRuntime() && /@resend\.dev$/i.test(from) && originalTo !== overrideTo.toLowerCase()) {
+    return { to: overrideTo, originalTo };
+  }
+
+  return { to, originalTo: null };
+}
+
 function getOwnerEmail(): string {
   const ownerEmail = process.env.INQUIRY_EMAIL_TO?.trim();
 
@@ -228,15 +240,18 @@ export async function sendApprovalEmail(to: string, name: string) {
 
 export async function sendMemberMagicLinkEmail(to: string, actionLink: string) {
   const escapedActionLink = escapeHtml(actionLink);
+  const delivery = getMemberMagicLinkDelivery(to);
+  const escapedOriginalTo = delivery.originalTo ? escapeHtml(delivery.originalTo) : null;
 
   return sendEmail({
     from: `SLOWHRS <${getMemberMagicLinkFrom()}>`,
-    to,
+    to: delivery.to,
     subject: 'your slowhrs room link',
     html: `
       <div style="background:#050505;color:#ededeb;font-family:Arial,sans-serif;padding:28px;line-height:1.6">
         <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#e60016">slowhrs member access</p>
         <h1 style="font-family:Georgia,serif;font-style:italic;font-weight:400;margin:18px 0 10px">the room.</h1>
+        ${escapedOriginalTo ? `<p style="font-size:12px;color:#9b9b97">temporary delivery copy for: ${escapedOriginalTo}</p>` : ''}
         <p>tap below to enter. this one-time link expires soon and only works for this inbox.</p>
         <p style="margin:28px 0">
           <a href="${escapedActionLink}" style="border:1px solid #e60016;color:#e60016;padding:12px 18px;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:0.18em">enter the room</a>
@@ -245,7 +260,7 @@ export async function sendMemberMagicLinkEmail(to: string, actionLink: string) {
         <p style="font-size:12px;color:#9b9b97">— slowhrs</p>
       </div>
     `,
-    text: `this is your one-time link.\n\ntap it to enter the room:\n${actionLink}\n\n— slowhrs`,
+    text: `${delivery.originalTo ? `temporary delivery copy for: ${delivery.originalTo}\n\n` : ''}this is your one-time link.\n\ntap it to enter the room:\n${actionLink}\n\n— slowhrs`,
   }, 'member magic link email');
 }
 
