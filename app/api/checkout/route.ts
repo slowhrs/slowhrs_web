@@ -58,6 +58,15 @@ function normalizeProductionOrigin(value: string | undefined): string | null {
   }
 }
 
+function normalizeStripeSecretKey(value: string | undefined): string | null {
+  if (!value) return null;
+
+  const trimmed = value.trim().replace(/^['"]|['"]$/g, '');
+  const assignmentMatch = trimmed.match(/^STRIPE_SECRET_KEY\s*=\s*(['"]?)(.+?)\1$/);
+
+  return assignmentMatch ? assignmentMatch[2].trim() : trimmed;
+}
+
 function isMissingStripePriceError(error: unknown) {
   if (!error || typeof error !== 'object') return false;
 
@@ -184,7 +193,7 @@ export async function POST(req: NextRequest) {
       return checkoutError(req, 400, 'size_unavailable', 'size unavailable');
     }
 
-    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    const stripeKey = normalizeStripeSecretKey(process.env.STRIPE_SECRET_KEY);
     if (!stripeKey) {
       return checkoutNotConfigured(req, product_id, size);
     }
