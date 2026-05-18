@@ -5,16 +5,24 @@ import { createServerClient } from '@/lib/supabase/server';
 import { isApprovedMember } from '@/lib/auth/member-admin';
 
 const SignInSchema = z.object({
-  email: z.string().email().toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email(),
   next: z.string().optional(),
 });
 
 function safeNextPath(value: string | undefined): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//')) {
+  if (!value) return '/dashboard';
+  if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard';
+
+  try {
+    const url = new URL(value, 'https://slowhrs.com');
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    if (url.pathname === '/' || url.pathname === '/events') return path;
+    if (url.pathname === '/dashboard' || url.pathname.startsWith('/dashboard/')) return path;
+  } catch {
     return '/dashboard';
   }
 
-  return value;
+  return '/dashboard';
 }
 
 function getMemberAuthOrigin(): string {
@@ -74,7 +82,11 @@ export async function requestMagicLink(formData: FormData) {
   if (error) {
     console.error('[signIn] OTP send failed:', error);
     if (error.status === 429 || /rate limit|security purposes/i.test(error.message)) {
-      return { success: false, error: 'too many login emails. wait a minute, then try again.' };
+      return {
+        success: false,
+        error: 'too many login emails. wait a minute, then try again.',
+        retryAfter: 60,
+      };
     }
 
     return { success: false, error: 'something went wrong. try again.' };

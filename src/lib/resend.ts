@@ -189,6 +189,7 @@ export async function sendApplicationNotification(application: {
   }, 'application notification');
 }
 
+// CRITICAL: this URL pattern must match /sign-in's expected query params
 export async function sendApprovalEmail(to: string, name: string) {
   const signInUrl = new URL('/sign-in', getSiteOrigin());
   signInUrl.searchParams.set('email', to.toLowerCase().trim());
