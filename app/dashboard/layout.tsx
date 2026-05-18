@@ -2,6 +2,8 @@ import { requireMember } from '@/lib/auth/member';
 import { signOut } from '@/app/actions/signOut';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const member = await requireMember();
 

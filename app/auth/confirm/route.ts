@@ -2,6 +2,8 @@ import type { EmailOtpType } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 
+export const dynamic = 'force-dynamic';
+
 const ALLOWED_OTP_TYPES = new Set<EmailOtpType>([
   'email',
   'signup',
@@ -50,7 +52,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(`${origin}${next}`);
       }
 
-      console.error('[auth/confirm] token verification failed:', error);
+      console.error('[auth/confirm] token verification failed:', {
+        message: error.message,
+        type,
+      });
     } catch (error) {
       console.error('[auth/confirm] verification unavailable:', error);
     }
