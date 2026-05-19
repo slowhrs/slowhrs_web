@@ -103,8 +103,9 @@ export default function EventPhotoCarousel({
   }, [current, total]);
 
   const counterLabel = useMemo(() => {
-    return `still ${String(current + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
-  }, [current, total]);
+    const prefix = isReducedMotion ? "still" : isHovering ? "hold" : "auto";
+    return `${prefix} ${String(current + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
+  }, [current, total, isReducedMotion, isHovering]);
 
   const handleFrameClick = () => {
     if (total <= 1) return;
