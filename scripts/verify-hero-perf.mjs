@@ -26,6 +26,8 @@ const URL =
 const POSTER_TARGET_MS = 1500;
 const PLAY_TARGET_MS = 4000;
 
+const BYPASS = process.env.VERCEL_PROTECTION_BYPASS || "";
+
 const browser = await puppeteer.launch({
   headless: "shell",
   args: ["--force-prefers-reduced-motion=no-preference"],
@@ -38,6 +40,9 @@ try {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "no-preference" },
   ]);
+  if (BYPASS) {
+    await page.setExtraHTTPHeaders({ "x-vercel-protection-bypass": BYPASS });
+  }
 
   const start = Date.now();
   await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 60000 });

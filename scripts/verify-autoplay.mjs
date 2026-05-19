@@ -10,6 +10,8 @@ u.searchParams.set("_t", "verify_pup");
 u.hash = "#archive";
 const TARGET = u.toString();
 
+const BYPASS = process.env.VERCEL_PROTECTION_BYPASS || "";
+
 const browser = await puppeteer.launch({
   headless: "shell",
   args: ["--force-prefers-reduced-motion=no-preference"],
@@ -21,6 +23,9 @@ try {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "no-preference" },
   ]);
+  if (BYPASS) {
+    await page.setExtraHTTPHeaders({ "x-vercel-protection-bypass": BYPASS });
+  }
   console.log(`[verify-autoplay] target=${TARGET}`);
   await page.goto(TARGET, { waitUntil: "domcontentloaded", timeout: 60000 });
 
