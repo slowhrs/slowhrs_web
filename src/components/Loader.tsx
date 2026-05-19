@@ -147,7 +147,7 @@ export default function Loader() {
       </div>
 
       <p className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[8px] tracking-[0.32em] uppercase text-brand-ink-dim/70">
-        tap to enter ↗
+        tap to enter
       </p>
 
       <style jsx>{`

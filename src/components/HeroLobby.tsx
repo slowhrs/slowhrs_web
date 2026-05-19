@@ -165,10 +165,10 @@ export default function HeroLobby() {
         {/* CTAs */}
         <div className="flex flex-col items-start gap-4 font-mono text-[11px] tracking-[0.25em] uppercase text-brand-ink-dim reveal reveal-d3">
           <Link href="#access" className="hover:text-brand-red transition-colors border-b border-transparent hover:border-brand-red pb-0.5 cta-breathe">
-            get on the list ↗
+            get on the list <span className="hidden md:inline">↗</span>
           </Link>
           <Link href="#inquiry" className="hover:text-brand-red transition-colors border-b border-transparent hover:border-brand-red pb-0.5">
-            we filmed your event ↗
+            we filmed your event <span className="hidden md:inline">↗</span>
           </Link>
           <div className="flex flex-wrap gap-6 mt-4">
             <Link href="#events" className="text-[10px] text-brand-ink-dim/60 hover:text-brand-ink transition-colors">
