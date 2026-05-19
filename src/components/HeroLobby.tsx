@@ -95,6 +95,23 @@ export default function HeroLobby() {
     return () => window.clearInterval(playTimer);
   }, []);
 
+  // Hidden layers often never fire `playing` until they are active — kick the
+  // visible clip so we drop the poster overlay instead of freezing on a still.
+  useLayoutEffect(() => {
+    const video = videoRefs.current[activeIdx];
+    if (!video) return;
+
+    playVideo(video);
+
+    if (activeIdx !== 0 && video.currentTime > 0 && !video.paused) {
+      markLayerPlaying(activeIdx);
+    }
+
+    const onPlaying = () => markLayerPlaying(activeIdx);
+    video.addEventListener("playing", onPlaying);
+    return () => video.removeEventListener("playing", onPlaying);
+  }, [activeIdx, markLayerPlaying]);
+
   const renderVideoLayer = (src: string, index: number) => {
     const posterSrc = posterFor(src);
     const isActive = index === activeIdx;
@@ -126,8 +143,13 @@ export default function HeroLobby() {
         markLayerPlaying(index);
         playVideo(event.currentTarget);
       },
-      onTimeUpdate: (event: SyntheticEvent<HTMLVideoElement>) =>
-        avoidBlackTail(event.currentTarget),
+      onTimeUpdate: (event: SyntheticEvent<HTMLVideoElement>) => {
+        const video = event.currentTarget;
+        if (isActive && video.currentTime > 0) {
+          markLayerPlaying(index);
+        }
+        avoidBlackTail(video);
+      },
     };
 
     if (src === HERO_RECAP_VIDEO) {
