@@ -55,10 +55,9 @@ export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
           <li>
             <Link
               href={memberHref}
-              className="font-mono text-[10px] tracking-[0.22em] text-brand-ink-dim uppercase transition-colors hover:text-brand-red inline-flex items-center gap-1.5"
+              className="font-mono text-[10px] tracking-[0.22em] text-brand-ink-dim uppercase transition-colors hover:text-brand-red"
             >
-              <span>{memberLabel}</span>
-              <span aria-hidden="true" className="font-mono text-[9px] leading-none translate-y-[1px]">›</span>
+              {memberLabel}
             </Link>
           </li>
           <li>
@@ -103,15 +102,9 @@ export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
             <Link
               href={memberHref}
               onClick={() => setIsMenuOpen(false)}
-              className="group flex items-baseline gap-4 text-brand-ink hover:text-brand-red transition-colors"
+              className="font-serif italic text-[2rem] leading-none text-brand-ink block hover:text-brand-red transition-colors"
             >
-              <span className="font-serif italic text-[2rem] leading-none">{memberLabel}</span>
-              <span
-                aria-hidden="true"
-                className="font-mono text-[10px] tracking-[0.32em] uppercase text-brand-ink-dim/70 group-hover:text-brand-red transition-colors"
-              >
-                enter →
-              </span>
+              {memberLabel}
             </Link>
           </li>
           <li className="pt-4">
