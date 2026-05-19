@@ -1,43 +1,55 @@
 "use client";
 
-import { forwardRef, useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 type HeroVideoProps = {
   className?: string;
   style?: CSSProperties;
   heroLayer?: string;
-};
-
-type NetworkInformationLike = {
-  saveData?: boolean;
-  effectiveType?: string;
+  onPlayingChange?: (playing: boolean) => void;
 };
 
 const POSTER_SRC = "/assets/videos/hero-poster.jpg";
 
-// Decide once on the client whether to skip the actual <video> entirely:
-// reduce-motion users and save-data / 2g visitors get the poster only.
-function isPosterOnlyClient(): boolean {
-  if (typeof window === "undefined") return false;
-  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return true;
-  const connection = (
-    navigator as Navigator & { connection?: NetworkInformationLike }
-  ).connection;
-  return Boolean(
-    connection?.saveData ||
-      connection?.effectiveType === "slow-2g" ||
-      connection?.effectiveType === "2g"
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true
   );
 }
 
+function pickHeroSrc(): string {
+  const mobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 767px)").matches;
+  const probe = document.createElement("video");
+  const webm =
+    probe.canPlayType('video/webm; codecs="vp9"') !== "" ||
+    probe.canPlayType("video/webm") !== "";
+  if (mobile) {
+    return webm
+      ? "/assets/videos/hero-mobile.webm"
+      : "/assets/videos/hero-mobile.mp4";
+  }
+  return webm
+    ? "/assets/videos/hero-desktop.webm"
+    : "/assets/videos/hero-recap.mp4";
+}
+
 function forcePlay(video: HTMLVideoElement | null) {
-  if (!video) return;
-  // iOS Safari only allows muted + playsInline autoplay; set both before play.
+  if (!video || prefersReducedMotion()) return;
   video.muted = true;
   video.defaultMuted = true;
   video.playsInline = true;
   void video.play().catch(() => {
-    // Autoplay can be blocked. Poster stays painted via the bg-image fallback.
+    // Autoplay blocked — poster stays painted via the bg-image fallback.
   });
 }
 
@@ -50,37 +62,44 @@ function avoidBlackTail(video: HTMLVideoElement) {
 }
 
 const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVideo(
-  { className, style, heroLayer },
+  { className, style, heroLayer, onPlayingChange },
   forwardedRef
 ) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [posterOnly, setPosterOnly] = useState(false);
+  const [posterOnly] = useState(() => prefersReducedMotion());
+  const [heroSrc, setHeroSrc] = useState<string | null>(null);
+  const [posterBgVisible, setPosterBgVisible] = useState(true);
 
-  useEffect(() => {
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePosterMode = () => setPosterOnly(isPosterOnlyClient());
+  const markPlaying = useCallback(() => {
+    setPosterBgVisible(false);
+    onPlayingChange?.(true);
+  }, [onPlayingChange]);
 
-    updatePosterMode();
-    motionQuery.addEventListener("change", updatePosterMode);
-    return () => motionQuery.removeEventListener("change", updatePosterMode);
-  }, []);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (posterOnly) return;
-    forcePlay(videoRef.current);
+    setHeroSrc(pickHeroSrc());
   }, [posterOnly]);
 
-  const setVideoRef = (node: HTMLVideoElement | null) => {
-    videoRef.current = node;
-    if (typeof forwardedRef === "function") {
-      forwardedRef(node);
-    } else if (forwardedRef) {
-      forwardedRef.current = node;
-    }
-  };
+  useLayoutEffect(() => {
+    if (posterOnly || !heroSrc) return;
+    forcePlay(videoRef.current);
+  }, [posterOnly, heroSrc]);
 
-  // Poster is painted as a CSS background on both branches so the first
-  // pixel on screen is always the poster — no flash of asphalt.
+  const bindVideo = useCallback(
+    (node: HTMLVideoElement | null) => {
+      videoRef.current = node;
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef) {
+        forwardedRef.current = node;
+      }
+      if (node && !posterOnly) {
+        forcePlay(node);
+      }
+    },
+    [forwardedRef, posterOnly]
+  );
+
   const posterStyle: CSSProperties = {
     backgroundImage: `url(${POSTER_SRC})`,
     backgroundPosition: "center",
@@ -98,9 +117,20 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
     );
   }
 
+  if (!heroSrc) {
+    return (
+      <div
+        aria-hidden="true"
+        className={className}
+        style={{ ...posterStyle, ...style }}
+      />
+    );
+  }
+
   return (
     <video
-      ref={setVideoRef}
+      ref={bindVideo}
+      src={heroSrc}
       autoPlay
       loop
       muted
@@ -108,33 +138,20 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
       poster={POSTER_SRC}
       preload="auto"
       data-hero-video={heroLayer}
+      onLoadedMetadata={(event) => forcePlay(event.currentTarget)}
       onCanPlay={(event) => forcePlay(event.currentTarget)}
       onLoadedData={(event) => forcePlay(event.currentTarget)}
+      onPlaying={(event) => {
+        markPlaying();
+        forcePlay(event.currentTarget);
+      }}
       onTimeUpdate={(event) => avoidBlackTail(event.currentTarget)}
       className={className}
-      style={{ ...posterStyle, ...style }}
-    >
-      <source
-        src="/assets/videos/hero-mobile.webm"
-        type="video/webm"
-        media="(max-width: 767px)"
-      />
-      <source
-        src="/assets/videos/hero-mobile.mp4"
-        type="video/mp4"
-        media="(max-width: 767px)"
-      />
-      <source
-        src="/assets/videos/hero-desktop.webm"
-        type="video/webm"
-        media="(min-width: 768px)"
-      />
-      <source
-        src="/assets/videos/hero-recap.mp4"
-        type="video/mp4"
-        media="(min-width: 768px)"
-      />
-    </video>
+      style={{
+        ...(posterBgVisible ? posterStyle : { backgroundColor: "#050505" }),
+        ...style,
+      }}
+    />
   );
 });
 

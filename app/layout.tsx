@@ -72,14 +72,33 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://checkout.stripe.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://api.stripe.com" />
-        {/* One high-priority preload only: the hero poster paints the first
-            frame instantly. Video sources are fetched by HeroVideo with
-            preload="auto"; preloading them here competes with critical CSS. */}
+        {/* Poster for LCP; hero video variants start buffering before React mounts. */}
         <link
           rel="preload"
           as="image"
           href="/assets/videos/hero-poster.jpg"
           fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-mobile.webm"
+          type="video/webm"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-mobile.mp4"
+          type="video/mp4"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/assets/videos/hero-desktop.webm"
+          type="video/webm"
+          media="(min-width: 768px)"
         />
       </head>
       <body className="antialiased font-sans">
