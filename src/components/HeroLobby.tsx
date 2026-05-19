@@ -2,7 +2,7 @@
 
 
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback, type RefObject } from "react";
+import { useState, useEffect, useRef, useCallback, type CSSProperties, type RefObject } from "react";
 import HeroVideo from "./HeroVideo";
 import StatusStrip from "./StatusStrip";
 
@@ -24,7 +24,9 @@ const HERO_VIDEOS = [
 ];
 
 const CLIP_DURATION = 8000; // 8s per clip before crossfade
-const posterFor = (src: string) => src.replace(/\.mp4$/, ".jpg");
+const HERO_FALLBACK_POSTER = "/assets/videos/hero-poster.jpg";
+const posterFor = (src: string) =>
+  src === HERO_RECAP_VIDEO ? HERO_FALLBACK_POSTER : src.replace(/\.mp4$/, ".jpg");
 
 function playVideo(video: HTMLVideoElement | null) {
   if (!video || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -32,6 +34,14 @@ function playVideo(video: HTMLVideoElement | null) {
   video.defaultMuted = true;
   video.playsInline = true;
   video.play().catch(() => {});
+}
+
+function avoidBlackTail(video: HTMLVideoElement) {
+  if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+  if (video.duration - video.currentTime <= 0.25) {
+    video.currentTime = 0;
+    playVideo(video);
+  }
 }
 
 export default function HeroLobby() {
@@ -79,8 +89,15 @@ export default function HeroLobby() {
     key: string,
     opacity: number
   ) => {
-    const className = "absolute inset-0 w-full h-full object-cover filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out";
-    const style = { opacity };
+    const posterSrc = posterFor(src);
+    const className = "absolute inset-0 w-full h-full object-cover bg-cover bg-center filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out";
+    const style: CSSProperties = {
+      opacity,
+      backgroundImage: `url(${posterSrc})`,
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundColor: "#050505",
+    };
 
     if (src === HERO_RECAP_VIDEO) {
       return <HeroVideo ref={ref} key={key} className={className} style={style} />;
@@ -95,10 +112,11 @@ export default function HeroLobby() {
         loop
         muted
         playsInline
-        poster={posterFor(src)}
+        poster={posterSrc}
         preload="metadata"
         onCanPlay={(event) => playVideo(event.currentTarget)}
         onLoadedData={(event) => playVideo(event.currentTarget)}
+        onTimeUpdate={(event) => avoidBlackTail(event.currentTarget)}
         className={className}
         style={style}
       />
@@ -108,7 +126,13 @@ export default function HeroLobby() {
   return (
     <section className="relative min-h-[calc(100vh-26px)] overflow-hidden grid grid-rows-[1fr_auto] p-0">
       {/* ── Background Video Layers ── */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+      <div
+        className="absolute inset-0 z-0 overflow-hidden bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${posterFor(HERO_VIDEOS[activeIdx])})`,
+          backgroundColor: "#050505",
+        }}
+      >
         {/* Active layer (bottom) */}
         {renderVideoLayer(HERO_VIDEOS[activeIdx], activeVideoRef, `active-${activeIdx}`, isFading ? 0 : 1)}
 

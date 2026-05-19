@@ -40,6 +40,14 @@ function forcePlay(video: HTMLVideoElement | null) {
   });
 }
 
+function avoidBlackTail(video: HTMLVideoElement) {
+  if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+  if (video.duration - video.currentTime <= 0.25) {
+    video.currentTime = 0;
+    forcePlay(video);
+  }
+}
+
 const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVideo(
   { className, style },
   forwardedRef
@@ -100,6 +108,7 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
       preload="auto"
       onCanPlay={(event) => forcePlay(event.currentTarget)}
       onLoadedData={(event) => forcePlay(event.currentTarget)}
+      onTimeUpdate={(event) => avoidBlackTail(event.currentTarget)}
       className={className}
       style={{ ...posterStyle, ...style }}
     >
