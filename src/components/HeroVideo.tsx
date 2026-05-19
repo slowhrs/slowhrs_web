@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useRef, useState, type CSSProperties } from "rea
 type HeroVideoProps = {
   className?: string;
   style?: CSSProperties;
+  heroLayer?: string;
 };
 
 type NetworkInformationLike = {
@@ -49,7 +50,7 @@ function avoidBlackTail(video: HTMLVideoElement) {
 }
 
 const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVideo(
-  { className, style },
+  { className, style, heroLayer },
   forwardedRef
 ) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -106,6 +107,7 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
       playsInline
       poster={POSTER_SRC}
       preload="auto"
+      data-hero-video={heroLayer}
       onCanPlay={(event) => forcePlay(event.currentTarget)}
       onLoadedData={(event) => forcePlay(event.currentTarget)}
       onTimeUpdate={(event) => avoidBlackTail(event.currentTarget)}

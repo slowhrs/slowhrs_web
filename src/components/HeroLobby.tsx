@@ -2,22 +2,21 @@
 
 
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback, type CSSProperties, type RefObject } from "react";
+import { useState, useEffect, useRef, type CSSProperties } from "react";
 import HeroVideo from "./HeroVideo";
 import StatusStrip from "./StatusStrip";
 
 /**
- * Ordered by visual impact — best openers first.
- * block_party is the biggest crowd energy, destroy_lonely is the rave,
- * hero-recap is the brand reel, newyears is the atmosphere,
- * fast_life is the clothing, christmas_drop is the shorter filler.
+ * Keep the optimized recap first so the initial mobile hero uses the smallest
+ * tuned sources. The rest stay mounted behind it and keep playing so opacity
+ * changes never reveal a cold/frozen video.
  */
 const HERO_RECAP_VIDEO = "/assets/videos/hero-recap.mp4";
 
 const HERO_VIDEOS = [
+  HERO_RECAP_VIDEO,
   "/assets/events/block_party.mp4",
   "/assets/events/destroy_lonely.mp4",
-  HERO_RECAP_VIDEO,
   "/assets/events/newyears.mp4",
   "/assets/drops/fast_life_reel.mp4",
   "/assets/drops/christmas_drop.mp4",
@@ -46,53 +45,40 @@ function avoidBlackTail(video: HTMLVideoElement) {
 
 export default function HeroLobby() {
   const [activeIdx, setActiveIdx] = useState(0);
-  const [nextIdx, setNextIdx] = useState(1);
-  const [isFading, setIsFading] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const activeVideoRef = useRef<HTMLVideoElement>(null);
-  const nextVideoRef = useRef<HTMLVideoElement>(null);
-
-  const advance = useCallback(() => {
-    setIsFading(true);
-
-    // After crossfade completes, swap layers
-    setTimeout(() => {
-      setActiveIdx((prev) => {
-        const next = (prev + 1) % HERO_VIDEOS.length;
-        return next;
-      });
-      setNextIdx((prev) => (prev + 1) % HERO_VIDEOS.length);
-      setIsFading(false);
-    }, 1200); // match CSS transition duration
-  }, []);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
 
   // Auto-advance timer
   useEffect(() => {
-    timerRef.current = setInterval(advance, CLIP_DURATION);
+    timerRef.current = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % HERO_VIDEOS.length);
+    }, CLIP_DURATION);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [advance]);
+  }, []);
 
-  // Ensure videos play when src changes
+  // Keep every mounted hero layer moving. Hidden opacity layers are still
+  // intentionally playing so a future crossfade never reveals a frozen frame.
   useEffect(() => {
-    playVideo(activeVideoRef.current);
-  }, [activeIdx]);
+    const playAll = () => {
+      videoRefs.current.forEach((video) => playVideo(video));
+    };
 
-  useEffect(() => {
-    playVideo(nextVideoRef.current);
-  }, [nextIdx]);
+    playAll();
+    const playTimer = window.setInterval(playAll, 1000);
+    return () => window.clearInterval(playTimer);
+  }, []);
 
   const renderVideoLayer = (
     src: string,
-    ref: RefObject<HTMLVideoElement | null>,
-    key: string,
-    opacity: number
+    index: number
   ) => {
     const posterSrc = posterFor(src);
+    const isActive = index === activeIdx;
     const className = "absolute inset-0 w-full h-full object-cover bg-cover bg-center filter brightness-[0.65] contrast-[1.05] saturate-[1.1] transition-opacity duration-[1200ms] ease-in-out";
     const style: CSSProperties = {
-      opacity,
+      opacity: isActive ? 1 : 0,
       backgroundImage: `url(${posterSrc})`,
       backgroundPosition: "center",
       backgroundSize: "cover",
@@ -100,20 +86,33 @@ export default function HeroLobby() {
     };
 
     if (src === HERO_RECAP_VIDEO) {
-      return <HeroVideo ref={ref} key={key} className={className} style={style} />;
+      return (
+        <HeroVideo
+          ref={(node) => {
+            videoRefs.current[index] = node;
+          }}
+          key={src}
+          className={className}
+          style={style}
+          heroLayer={`hero-${index}`}
+        />
+      );
     }
 
     return (
       <video
-        ref={ref}
-        key={key}
+        ref={(node) => {
+          videoRefs.current[index] = node;
+        }}
+        key={src}
         src={src}
         autoPlay
         loop
         muted
         playsInline
         poster={posterSrc}
-        preload="metadata"
+        preload="auto"
+        data-hero-video={`hero-${index}`}
         onCanPlay={(event) => playVideo(event.currentTarget)}
         onLoadedData={(event) => playVideo(event.currentTarget)}
         onTimeUpdate={(event) => avoidBlackTail(event.currentTarget)}
@@ -133,11 +132,7 @@ export default function HeroLobby() {
           backgroundColor: "#050505",
         }}
       >
-        {/* Active layer (bottom) */}
-        {renderVideoLayer(HERO_VIDEOS[activeIdx], activeVideoRef, `active-${activeIdx}`, isFading ? 0 : 1)}
-
-        {/* Next layer (top — fades in during crossfade) */}
-        {renderVideoLayer(HERO_VIDEOS[nextIdx], nextVideoRef, `next-${nextIdx}`, isFading ? 1 : 0)}
+        {HERO_VIDEOS.map((src, index) => renderVideoLayer(src, index))}
 
         {/* Gradient masks */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85 z-[1]"></div>
@@ -151,13 +146,10 @@ export default function HeroLobby() {
             key={i}
             onClick={() => {
               if (timerRef.current) clearInterval(timerRef.current);
-              setIsFading(true);
-              setTimeout(() => {
-                setActiveIdx(i);
-                setNextIdx((i + 1) % HERO_VIDEOS.length);
-                setIsFading(false);
-              }, 300);
-              timerRef.current = setInterval(advance, CLIP_DURATION);
+              setActiveIdx(i);
+              timerRef.current = setInterval(() => {
+                setActiveIdx((prev) => (prev + 1) % HERO_VIDEOS.length);
+              }, CLIP_DURATION);
             }}
             aria-label={`Play video ${i + 1}`}
             className="group relative h-[3px] transition-all duration-300"
