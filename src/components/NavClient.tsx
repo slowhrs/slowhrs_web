@@ -100,11 +100,11 @@ export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
           ))}
           <li className="border-b border-brand-border/40 pb-4">
             <Link
-              href={memberHref}
+              href="/sign-in"
               onClick={() => setIsMenuOpen(false)}
               className="font-serif italic text-[2rem] leading-none text-brand-ink block hover:text-brand-red transition-colors"
             >
-              {memberLabel}
+              sign in
             </Link>
           </li>
           <li className="pt-4">
