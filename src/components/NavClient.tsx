@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 type NavClientProps = {
   memberHref: "/dashboard" | "/sign-in";
-  memberLabel: "the room ↗" | "sign in ↗";
+  memberLabel: "the room" | "sign in";
 };
 
 export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
@@ -53,8 +53,12 @@ export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
             </li>
           ))}
           <li>
-            <Link href={memberHref} className="font-mono text-[10px] tracking-[0.22em] text-brand-ink-dim uppercase transition-colors hover:text-brand-red">
-              {memberLabel}
+            <Link
+              href={memberHref}
+              className="font-mono text-[10px] tracking-[0.22em] text-brand-ink-dim uppercase transition-colors hover:text-brand-red inline-flex items-center gap-1.5"
+            >
+              <span>{memberLabel}</span>
+              <span aria-hidden="true" className="font-mono text-[9px] leading-none translate-y-[1px]">›</span>
             </Link>
           </li>
           <li>
@@ -99,9 +103,15 @@ export default function NavClient({ memberHref, memberLabel }: NavClientProps) {
             <Link
               href={memberHref}
               onClick={() => setIsMenuOpen(false)}
-              className="font-serif italic text-[2rem] text-brand-ink block hover:text-brand-red transition-colors"
+              className="group flex items-baseline gap-4 text-brand-ink hover:text-brand-red transition-colors"
             >
-              {memberLabel}
+              <span className="font-serif italic text-[2rem] leading-none">{memberLabel}</span>
+              <span
+                aria-hidden="true"
+                className="font-mono text-[10px] tracking-[0.32em] uppercase text-brand-ink-dim/70 group-hover:text-brand-red transition-colors"
+              >
+                enter →
+              </span>
             </Link>
           </li>
           <li className="pt-4">

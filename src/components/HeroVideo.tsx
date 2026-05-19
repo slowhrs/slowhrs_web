@@ -14,9 +14,8 @@ type NetworkInformationLike = {
 
 const POSTER_SRC = "/assets/videos/hero-poster.jpg";
 
-// Initial render: always emit the <video> tag so the browser starts buffering
-// the source on the first paint (poster painted as the first frame). Only swap
-// to poster-only after mount if the visitor has reduce-motion or save-data on.
+// Decide once on the client whether to skip the actual <video> entirely:
+// reduce-motion users and save-data / 2g visitors get the poster only.
 function isPosterOnlyClient(): boolean {
   if (typeof window === "undefined") return false;
   if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return true;
@@ -30,12 +29,15 @@ function isPosterOnlyClient(): boolean {
   );
 }
 
-function playVideo(video: HTMLVideoElement | null) {
+function forcePlay(video: HTMLVideoElement | null) {
   if (!video) return;
+  // iOS Safari only allows muted + playsInline autoplay; set both before play.
   video.muted = true;
   video.defaultMuted = true;
   video.playsInline = true;
-  void video.play().catch(() => {});
+  void video.play().catch(() => {
+    // Autoplay can be blocked. Poster stays painted via the bg-image fallback.
+  });
 }
 
 const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVideo(
@@ -51,12 +53,12 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
 
     updatePosterMode();
     motionQuery.addEventListener("change", updatePosterMode);
-
     return () => motionQuery.removeEventListener("change", updatePosterMode);
   }, []);
 
   useEffect(() => {
-    if (!posterOnly) playVideo(videoRef.current);
+    if (posterOnly) return;
+    forcePlay(videoRef.current);
   }, [posterOnly]);
 
   const setVideoRef = (node: HTMLVideoElement | null) => {
@@ -68,17 +70,21 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
     }
   };
 
+  // Poster is painted as a CSS background on both branches so the first
+  // pixel on screen is always the poster — no flash of asphalt.
+  const posterStyle: CSSProperties = {
+    backgroundImage: `url(${POSTER_SRC})`,
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundColor: "#050505",
+  };
+
   if (posterOnly) {
     return (
       <div
         aria-hidden="true"
         className={className}
-        style={{
-          ...style,
-          backgroundImage: `url(${POSTER_SRC})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-        }}
+        style={{ ...posterStyle, ...style }}
       />
     );
   }
@@ -92,10 +98,10 @@ const HeroVideo = forwardRef<HTMLVideoElement, HeroVideoProps>(function HeroVide
       playsInline
       poster={POSTER_SRC}
       preload="auto"
-      onCanPlay={(event) => playVideo(event.currentTarget)}
-      onLoadedData={(event) => playVideo(event.currentTarget)}
+      onCanPlay={(event) => forcePlay(event.currentTarget)}
+      onLoadedData={(event) => forcePlay(event.currentTarget)}
       className={className}
-      style={style}
+      style={{ ...posterStyle, ...style }}
     >
       <source
         src="/assets/videos/hero-mobile.webm"

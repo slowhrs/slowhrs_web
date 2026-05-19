@@ -1,81 +1,92 @@
 "use client";
 
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type LazyVideoProps = {
   src: string;
   poster: string;
   className?: string;
+  /**
+   * Threshold for the play/pause observer. The load observer always uses a
+   * generous 200px rootMargin so the video is ready by the time it scrolls
+   * into view.
+   */
   threshold?: number;
   rootMargin?: string;
+  /**
+   * Force-load on mount (bypass the load observer). Use sparingly — only the
+   * single most important above-the-fold video on a page should use this.
+   */
   priority?: boolean;
 };
 
+/**
+ * v2.4-4-velocity LazyVideo: two-observer pattern.
+ *  1. Load observer (rootMargin 200px) flips `shouldLoad` so the <video>
+ *     gets a real `src` and `preload="metadata"`.
+ *  2. Play observer (threshold 0.25) plays/pauses the video as it enters
+ *     and leaves the viewport.
+ * Poster is always painted as a CSS background so the box never flashes
+ * empty, and reduced-motion visitors get the poster forever.
+ */
 export function LazyVideo({
   src,
   poster,
   className = "",
   threshold = 0.25,
-  rootMargin = "100px",
+  rootMargin = "0px",
   priority = false,
 }: LazyVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Only priority videos load on mount; everything else waits for the
-  // IntersectionObserver below. Without this, every video on the page would
-  // fetch on first paint and absolutely cook mobile bandwidth.
   const [shouldLoad, setShouldLoad] = useState(priority);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncMotion = () => setIsReducedMotion(media.matches);
-    syncMotion();
-    media.addEventListener("change", syncMotion);
-    return () => media.removeEventListener("change", syncMotion);
+    const sync = () => setIsReducedMotion(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
   }, []);
 
   const playIfAllowed = useCallback(() => {
     const video = videoRef.current;
     if (!video || isReducedMotion) return;
-
+    // iOS Safari requires muted + playsInline before .play() resolves.
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
     video.play().catch(() => {
-      // Autoplay can still be blocked; the poster remains visible.
+      // Autoplay blocked — poster background stays painted, no console noise.
     });
   }, [isReducedMotion]);
 
-  useEffect(() => {
-    if (!shouldLoad || isReducedMotion) return;
-    playIfAllowed();
-  }, [isReducedMotion, playIfAllowed, shouldLoad]);
-
+  // Observer #1 — flip shouldLoad when the element approaches the viewport.
   useEffect(() => {
     if (priority || shouldLoad) return;
     const video = videoRef.current;
     if (!video) return;
 
-    const observer = new IntersectionObserver(
+    const loadObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          observer.disconnect();
+          loadObserver.disconnect();
         }
       },
-      { threshold, rootMargin }
+      { threshold: 0, rootMargin: "200px" }
     );
 
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, [priority, shouldLoad, threshold, rootMargin]);
+    loadObserver.observe(video);
+    return () => loadObserver.disconnect();
+  }, [priority, shouldLoad]);
 
+  // Observer #2 — play when ≥25% on screen, pause when leaving.
   useEffect(() => {
+    if (!shouldLoad || isReducedMotion) return;
     const video = videoRef.current;
-    if (!video || !shouldLoad) return;
-
-    if (isReducedMotion) return;
+    if (!video) return;
 
     const playObserver = new IntersectionObserver(
       ([entry]) => {
@@ -85,11 +96,18 @@ export function LazyVideo({
           video.pause();
         }
       },
-      { threshold: 0.15, rootMargin: "120px" }
+      { threshold, rootMargin }
     );
 
     playObserver.observe(video);
     return () => playObserver.disconnect();
+  }, [isReducedMotion, playIfAllowed, rootMargin, shouldLoad, threshold]);
+
+  // Kick playback as soon as we have data, in case the play observer already
+  // fired before metadata arrived.
+  useEffect(() => {
+    if (!shouldLoad || isReducedMotion) return;
+    playIfAllowed();
   }, [isReducedMotion, playIfAllowed, shouldLoad]);
 
   return (
@@ -101,7 +119,7 @@ export function LazyVideo({
       disablePictureInPicture
       loop
       playsInline
-      preload={shouldLoad ? (priority ? "auto" : "metadata") : "none"}
+      preload={shouldLoad ? "metadata" : "none"}
       autoPlay={shouldLoad && !isReducedMotion}
       onCanPlay={playIfAllowed}
       onLoadedMetadata={playIfAllowed}

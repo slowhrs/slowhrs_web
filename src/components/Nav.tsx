@@ -6,7 +6,7 @@ export default async function Nav() {
   return (
     <NavClient
       memberHref={member ? "/dashboard" : "/sign-in"}
-      memberLabel={member ? "the room ↗" : "sign in ↗"}
+      memberLabel={member ? "the room" : "sign in"}
     />
   );
 }

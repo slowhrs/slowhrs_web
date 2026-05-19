@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import ScrollRevealInit from "@/components/ScrollRevealInit";
+import WebVitals from "@/components/WebVitals";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -71,33 +72,14 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://checkout.stripe.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://api.stripe.com" />
+        {/* One high-priority preload only: the hero poster paints the first
+            frame instantly. Video sources are fetched by HeroVideo with
+            preload="auto"; preloading them here competes with critical CSS. */}
         <link
           rel="preload"
           as="image"
           href="/assets/videos/hero-poster.jpg"
           fetchPriority="high"
-        />
-        {/* Start fetching the right hero variant before React mounts. */}
-        <link
-          rel="preload"
-          as="video"
-          href="/assets/videos/hero-mobile.mp4"
-          type="video/mp4"
-          media="(max-width: 767px)"
-        />
-        <link
-          rel="preload"
-          as="video"
-          href="/assets/videos/hero-mobile.webm"
-          type="video/webm"
-          media="(max-width: 767px)"
-        />
-        <link
-          rel="preload"
-          as="video"
-          href="/assets/videos/hero-desktop.webm"
-          type="video/webm"
-          media="(min-width: 768px)"
         />
       </head>
       <body className="antialiased font-sans">
@@ -140,6 +122,9 @@ export default function RootLayout({
         
         {/* Scroll reveal observer */}
         <ScrollRevealInit />
+
+        {/* Passive Core Web Vitals reporter */}
+        <WebVitals />
 
         {/* Children will contain the Nav, Ticker, and Page content */}
         {children}

@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 import puppeteer from "puppeteer";
 
-const URL = "https://slowhrs.com/?_t=verify_pup#archive";
+const RAW_URL =
+  process.argv[2] ||
+  process.env.PREVIEW_URL ||
+  "https://slowhrs.com/";
+const u = new URL(RAW_URL);
+u.searchParams.set("_t", "verify_pup");
+u.hash = "#archive";
+const TARGET = u.toString();
 
 const browser = await puppeteer.launch({
   headless: "shell",
@@ -14,7 +21,8 @@ try {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "no-preference" },
   ]);
-  await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 60000 });
+  console.log(`[verify-autoplay] target=${TARGET}`);
+  await page.goto(TARGET, { waitUntil: "domcontentloaded", timeout: 60000 });
 
   await page.waitForSelector('[aria-roledescription="carousel"]', { timeout: 10000 });
 
